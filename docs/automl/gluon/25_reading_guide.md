@@ -1,1142 +1,1142 @@
-# Руководство по изучению учебника
+# Guide on learning the textbook
 
-**Автор:** NeoZorK (Shcherbyna Rostyslav)  
-**Дата:** 2025  
-**Местоположение:** Ukraine, Zaporizhzhya  
-**Версия:** 1.0  
+**Author:** NeoZorK (Shcherbyna Rostyslav)
+**Date:** 2025
+** Location:** Ukraine, Zaporizhzhya
+**Version:** 1.0
 
-## Почему руководство по изучению критически важно
+## Who Guide on Study Critical
 
-**Почему 90% людей бросают изучение ML, не имея четкого плана?** Потому что они пытаются изучить все сразу, не понимая, с чего начать и как двигаться дальше. Это как попытка построить дом без чертежей.
+**Why do 90% of people drop out of the ML study, not having a clear Plan?** Because they try to study everything at once, not understanding what to start with and how to move forward. It's like trying to build a house without drawings.
 
-### Проблемы без руководства по изучению
-- **Перегрузка информацией**: Пытаются изучить все сразу
-- **Неправильная последовательность**: Изучают сложное до простого
-- **Отсутствие практики**: Только теория без применения
-- **Потеря мотивации**: Не видят прогресса
+### Problems without a study guide
+- ** Transfer of information**: Try to study everything at once
+- ** Wrong sequence**: Studying complicated to simple
+- ** Absence of practice**: Only theory without application
+- ** Loss of motivation**: not seeing progress
 
-### Преимущества правильного руководства
-- **Поэтапное изучение**: От простого к сложному
-- **Практическая направленность**: Теория сразу применяется
-- **Измеримый прогресс**: Видят результаты на каждом этапе
-- **Мотивация**: Постоянное чувство достижения
+### The benefits of good leadership
+- ** Step-by-step study**: from simple to complex
+- ** Practical focus**: The theory is applied immediately
+- ** Measured progress**: See results on each stage
+- **motivation**: a constant sense of achievement
 
-## Введение
+## Introduction
 
-**Почему руководство по изучению - это карта к успеху?** Потому что оно показывает оптимальный путь изучения, учитывая ваш уровень подготовки и цели.
+Because it shows the best way to study, given your level of preparation and your goals.
 
-Это руководство поможет вам максимально эффективно изучить учебник AutoML Gluon в зависимости от вашего уровня подготовки и целей.
+This guide will help you to learn the AutoML Gloon in Dependencies from your level of training and goals as effectively as possible.
 
-## Для новичков (0-6 месяцев опыта)
+## for new recruits (0-6 months of experience)
 
-**Почему новичкам нужен особый подход?** Потому что они еще не понимают основ ML и могут легко запутаться в сложных концепциях. Нужен пошаговый подход с быстрыми результатами.
+Because they don't understand the basics of ML and can easily get confused in complex Conceptch. We need a step-by-step approach with quick results.
 
-### 🗺️ Путь обучения для новичков
+### ♪ The way to learn for the newbies
 
 ```mermaid
 graph TD
-    A[Начало изучения] --> B{Выбор пути}
-    B -->|Быстрый старт| C[1-2 недели]
-    B -->|Полное изучение| D[1-2 месяца]
-    
-    C --> C1[День 1-2: Основы]
-    C --> C2[День 3-4: Понимание]
-    C --> C3[День 5-7: Валидация]
-    C --> C4[День 8-10: Продакшен]
-    C --> C5[День 11-14: Углубление]
-    
-    D --> D1[Неделя 1: Основы]
-    D --> D2[Неделя 2: Оценка и валидация]
-    D --> D3[Неделя 3: Продакшен]
-    D --> D4[Неделя 4: Продвинутые темы]
-    
-    C1 --> E[Первый пример]
-    C2 --> F[Создание модели]
-    C3 --> G[Валидация модели]
-    C4 --> H[Деплой в продакшен]
-    C5 --> I[Система с переобучением]
-    
-    D1 --> J[3-5 простых моделей]
-    D2 --> K[Полная валидация]
-    D3 --> L[Продакшен система]
-    D4 --> M[Реальная задача]
-    
-    E --> N[Успех!]
-    F --> N
-    G --> N
-    H --> N
-    I --> N
-    J --> N
-    K --> N
-    L --> N
-    M --> N
+A [Initiated] -> B {Selection of the path}
+B--~~Quick start~ C[1-2 weeks]
+B-~ ♪ Full study ♪ D[1-2 months]
+
+C --> C1[Day 1-2: Basics]
+C --> C2 [Day 3-4: Understanding]
+C --> C3 [Day 5-7: validation]
+C --> C4 [Day 8-10: Sales]
+C --> C5 [Day 11-14: Deepening]
+
+D -> D1 [ Week 1: Basics]
+D -> D2 [Welcome 2: Evaluation and validation]
+D -> D3 [week 3: Sales]
+D -> D4 [week 4: advanced themes]
+
+C1-> E[First example]
+C2 --> F[create model]
+C3 --> G[validation model]
+C4 --> H [Business in sales]
+C5 --> I [system with re-education]
+
+D1 -> J[3-5 simple models]
+D2 --> K [full validation]
+D3 --> L [Sell system]
+D4 -> M [Achievable objective]
+
+E --> N [Success!]
+ F --> N
+ G --> N
+ H --> N
+ I --> N
+ J --> N
+ K --> N
+ L --> N
+ M --> N
 ```
 
-### 🚀 Быстрый старт (1-2 недели)
+### ♪ Quick start (1-2 weeks)
 
-**Почему быстрый старт критически важен для новичков?** Потому что они должны увидеть результаты как можно быстрее, чтобы не потерять мотивацию.
+Because they have to see the results as quickly as possible in order not to lose motivation.
 
-**Цель:** Запустить первый пример как можно быстрее
+**Goal:** Start the first example as soon as possible
 
-#### День 1-2: Основы
+### Day 1-2: Basics
 
-**Время:** 2-3 часа в день  
-**Фокус:** Установка и первый запуск
+**Time:** 2-3 hours in day
+**Focus:** installation and first Launch
 
-1. **Раздел 1** - Введение и установка
-   - **Параметры установки:**
-     - `pip install autogluon.tabular[all]` - полная установка
-     - `pip install autogluon.tabular` - минимальная установка
-     - `conda install -c conda-forge autogluon` - через conda
-   - **Системные требования:**
-     - Python 3.8+
-     - RAM: минимум 4GB, рекомендуется 8GB+
-     - CPU: 2+ ядра
-     - Диск: 2GB свободного места
+1. **Section 1** - Introduction and establishment
+ - **parameters installation:**
+- `pip install autogluon.tabular[all]' - complete installation
+`pip install autogluon.tabular' is the minimum installation
+- `conda install - c conda-forge autogluon' - through conda
+- ** Systems requirements:**
+ - Python 3.8+
+RAM: minimum 4GB, recommended 8GB+
+- CPU: 2+ Cores
+- Disc: 2GB available space
 
-2. **Раздел 2** - Базовое использование
-   - **Ключевые параметры TabularPredictor:**
-     - `label`: Целевая переменная (обязательно)
-     - `problem_type`: 'binary', 'multiclass', 'regression'
-     - `eval_metric`: 'accuracy', 'f1', 'roc_auc', 'log_loss'
-     - `path`: Путь для сохранения модели
-     - `verbosity`: Уровень вывода (0-4)
+2. **Section 2** - Basic use
+- ** Keys TabularPredictor:**
+- `label': Target variable (mandatory)
+ - `problem_type`: 'binary', 'multiclass', 'regression'
+ - `eval_metric`: 'accuracy', 'f1', 'roc_auc', 'log_loss'
+- `path': A way to preserve the model
+- `verbosity': Output level (0-4)
 
-3. **Практика:** Установите AutoML Gluon и запустите первый пример
-   ```python
-   # Минимальный пример с параметрами
-   from autogluon.tabular import TabularPredictor
-   import pandas as pd
-   
-   # Параметры для быстрого старта
-   predictor = TabularPredictor(
-       label='target',
-       problem_type='binary',
-       eval_metric='accuracy',
-       path='quickstart_model',
-       verbosity=2
-   )
-   ```
+3. **Practice: ** Install AutoML Gluon and launch the first example
+ ```python
+# Minimum example with parameters
+ from autogluon.tabular import TabularPredictor
+ import pandas as pd
 
-#### День 3-4: Понимание
+# Parameters for rapid start
+ predictor = TabularPredictor(
+ label='target',
+ problem_type='binary',
+ eval_metric='accuracy',
+ path='quickstart_model',
+ verbosity=2
+ )
+ ```
 
-**Время:** 2-3 часа в день  
-**Фокус:** Понимание параметров и создание модели
+### Day 3-4: Understanding
 
-4. **Раздел 3** - Продвинутая конфигурация
-   - **Параметры обучения:**
-     - `time_limit`: Лимит времени (секунды)
-     - `presets`: 'best_quality', 'high_quality', 'medium_quality'
-     - `num_trials`: Количество попыток hyperparameter tuning
-     - `holdout_frac`: Доля данных для holdout валидации
+**Time:** 2-3 hours in day
+**Focus:** Understanding the parameters and making model
 
-5. **Раздел 4** - Метрики и оценка качества
-   - **Доступные метрики:**
-     - Классификация: 'accuracy', 'f1', 'roc_auc', 'log_loss'
-     - Регрессия: 'rmse', 'mae', 'r2', 'pearsonr'
-   - **Параметры оценки:**
-     - `silent=True/False`: Тихий режим
-     - `auxiliary_metrics=True/False`: Дополнительные метрики
+4. **Section 3** - Advanced Conference
+- **pamesters of study:**
+- `time_limit': Time limitation (seconds)
+ - `presets`: 'best_quality', 'high_quality', 'medium_quality'
+- `num_trials': Number of attempts
+- `holdout_frac': Percentage of data for goldout recovery
 
-6. **Практика:** Создайте свою первую модель
-   ```python
-   # Расширенный пример с параметрами
-   predictor.fit(
-       data,
-       time_limit=300,              # 5 минут
-       presets='medium_quality',    # Среднее качество
-       num_trials=10,               # 10 попыток
-       holdout_frac=0.2,            # 20% для валидации
-       verbosity=2
-   )
-   ```
+5. **Section 4** - metrics and quality assessment
+- ** Accessible metrics:**
+- Classification: 'accuracy', 'f1', 'roc_auc', 'log_loss'
+- Regression: 'rmse', 'mae', 'r2', 'pearsonr'
+- **parameters estimate:**
+- `silent=True/False': Quiet Mode
+- `auxiliary_metrics=True/False': Additional metrics
 
-#### День 5-7: Валидация
+6. **Practice:** Create your first model
+ ```python
+# Extended example with parameters
+ predictor.fit(
+ data,
+ time_limit=300, # 5 minutes
+== sync, corrected by elderman == @elder_man
+num_trials=10, #10 attempts
+holdout_frac=0.2, # 20% for validation
+ verbosity=2
+ )
+ ```
 
-**Время:** 2-3 часа в день  
-**Фокус:** Валидация и оценка качества
+#### Day 5-7: appreciation
 
-7. **Раздел 5** - Валидация моделей
-   - **Параметры валидации:**
-     - `num_bag_folds`: Количество фолдов для бэггинга
-     - `num_stack_levels`: Уровни стекинга
-     - `auto_stack`: Автоматический стекинг
-     - `refit_full`: Переобучение на всех данных
+**Time:** 2-3 hours in day
+** Focus:** validation and quality assessment
 
-8. **Раздел 8** - Лучшие практики
-   - **Параметры качества:**
-     - `feature_prune`: Отбор признаков
-     - `excluded_model_types`: Исключенные типы моделей
-     - `included_model_types`: Включенные типы моделей
+**Section 5** - validation of models
+- **parameters validation:**
+- `num_bag_folds': Number of folds for bagging
+- `num_stack_levels': Glassing levels
+- `auto_stack': Automatic glassing
+- `refit_full': retraining on all data
 
-9. **Практика:** Проведите валидацию своей модели
-   ```python
-   # Валидация с параметрами
-   predictor.fit(
-       data,
-       time_limit=600,              # 10 минут
-       presets='high_quality',      # Высокое качество
-       num_bag_folds=5,             # 5-fold бэггинг
-       num_stack_levels=1,          # 1 уровень стекинга
-       auto_stack=True,             # Автоматический стекинг
-       refit_full=True,             # Переобучение
-       feature_prune=True           # Отбор признаков
-   )
-   ```
+8. **Section 8** - Best practices
+- **parameters of quality:**
+- `feature_prene': Selection of topics
+- `excluded_model_types':Excluded types of models
+- `included_model_types': Model types included
 
-#### День 8-10: Продакшен
+9. **Practice:** Re-approve your model
+ ```python
+# Validation with parameters
+ predictor.fit(
+ data,
+ time_limit=600, # 10 minutes
+presets='high_quality', #High quality
+num_bag_folds=5, #5-fold bagging
+num_stack_levels=1, #1 level of glass
+Auto_stack=True, #Automated glassing
+refit_full=True, # retraining
+Feature_prene=True # Selection of topics
+ )
+ ```
 
-**Время:** 3-4 часа в день  
-**Фокус:** Деплой в продакшен
+#### Day 8-10: Sales
 
-10. **Раздел 6** - Продакшен и деплой
-    - **Параметры продакшена:**
-      - `presets='optimize_for_deployment'`: Оптимизация для деплоя
-      - `save_space=True`: Экономия места
-      - `keep_only_best=True`: Только лучшая модель
+**Time:** 3-4 hours in day
+**Focus:** Deploy in sales
 
-11. **Раздел 12** - Простой пример продакшена
-    - **API параметры:**
-      - `HOST`: Хост сервера
-      - `PORT`: Порт сервера
-      - `DEBUG`: Режим отладки
-      - `MAX_BATCH_SIZE`: Максимальный размер батча
+10. **Section 6** - Sales and Detail
+- **parameters sold:**
+- `presets='optimise_for_development': Optimizing for depletion
+- 'save_space=True': Cost savings
+== sync, corrected by elderman == @elder_man
 
-12. **Практика:** Задеплойте модель в продакшен
-    ```python
-    # Продакшен конфигурация
-    predictor.fit(
-        data,
-        presets='optimize_for_deployment',
-        save_space=True,
-        keep_only_best=True,
-        time_limit=1200
-    )
-    ```
+11. **Section 12** - Simple example sold
+ - **API parameters:**
+- `HOST': server hosting
+- `PORT': server port
+- `DEBUG': debugging mode
+- `MAX_BATCH_SIZE': Maximum dimensions of the booth
 
-#### День 11-14: Углубление
+12. **Practice:** Hit the model in product
+ ```python
+# Sold configuration
+ predictor.fit(
+ data,
+ presets='optimize_for_deployment',
+ save_space=True,
+ keep_only_best=True,
+ time_limit=1200
+ )
+ ```
 
-**Время:** 2-3 часа в день  
-**Фокус:** Переобучение и продвинутые техники
+#### Day 11-14: Deepening
 
-13. **Раздел 7** - Переобучение моделей
-    - **Параметры переобучения:**
-      - `retrain_frequency`: Частота переобучения
-      - `drift_detection_window`: Окно обнаружения дрифта
-      - `performance_threshold`: Порог производительности
+**Time:** 2-3 hours in day
+**Focus:** Retraining and advanced technology
 
-14. **Раздел 9** - Примеры использования
-    - **Специализированные параметры:**
-      - Для временных рядов: `time_limit` увеличен
-      - Для больших данных: `num_cpus`, `memory_limit`
-      - Для GPU: `num_gpus`
+13. **Section 7** - Retraining models
+- **parameters retraining:**
+- `retrain_frequancy': Frequency retraining
+== sync, corrected by elderman == @elder_man
+- `Performance_threshold': The threshold of performance
 
-15. **Практика:** Создайте систему с переобучением
-    ```python
-    # Система переобучения
-    class RetrainingSystem:
-        def __init__(self, retrain_frequency=1000):
-            self.retrain_frequency = retrain_frequency
-            self.performance_threshold = 0.8
-        
-        def should_retrain(self, performance):
-            return performance < self.performance_threshold
-    ```
+14. **Section 9** - uses
+- **Specialized parameters:**
+- for time series: `time_limit' increased
+- for big data: `num_cpus', `memory_limit'
+ - for GPU: `num_gpus`
 
-### 📚 Полное изучение (1-2 месяца)
+15. **Practice:** Create a system with re-education
+ ```python
+# Retraining system
+ class Retrainingsystem:
+ def __init__(self, retrain_frequency=1000):
+ self.retrain_frequency = retrain_frequency
+ self.performance_threshold = 0.8
 
-**Цель:** Полное понимание AutoML Gluon
+ def should_retrain(self, performance):
+ return performance < self.performance_threshold
+ ```
 
-### 📊 Метрики прогресса обучения
+### * full study (1-2 months)
+
+**Goal:** Fully understood AutoML Gluon
+
+### ~ metrics on learning progress
 
 ```mermaid
 graph LR
-    A[Уровень 0<br/>Новичок] --> B[Уровень 1<br/>Основы]
-    B --> C[Уровень 2<br/>Практика]
-    C --> D[Уровень 3<br/>Продакшен]
-    D --> E[Уровень 4<br/>Эксперт]
-    
-    A1[0% понимания<br/>0 моделей<br/>0 проектов] --> A
-    B1[20% понимания<br/>1-3 модели<br/>1 простой проект] --> B
-    C1[50% понимания<br/>5-10 моделей<br/>2-3 проекта] --> C
-    D1[80% понимания<br/>10+ моделей<br/>Продакшен система] --> D
-    E1[100% понимания<br/>Сложные системы<br/>Супер-система] --> E
-    
-    style A fill:#ffcccc
-    style B fill:#ffffcc
-    style C fill:#ccffcc
-    style D fill:#ccccff
-    style E fill:#ffccff
+A[level 0<br/> Newcomer] -> B[level 1<br/> Basics]
+B -> C[Level 2<br/> Practice]
+C -> D[Level 3<br/> Sale]
+D -> E[Level 4<br/> Expert]
+
+A1[0 per cent understanding<br/>0 models<br/>0 projects] -> A
+B1[20% understanding<br/>1-3 model<br/>1 simple project] -> B
+C1[50 per cent understanding<br/>5-10 models<br/>2-3 of the project] -> C
+D1[80 per cent understanding<br/>10+ models<br/> System sold] --> D
+E1[100 per cent understanding<br/> Complex systems<br/> Super system] --> E
+
+ style A fill:#ffcccc
+ style B fill:#ffffcc
+ style C fill:#ccffcc
+ style D fill:#ccccff
+ style E fill:#ffccff
 ```
 
-#### Неделя 1: Основы
-1. **Раздел 1** - Введение и установка
-2. **Раздел 2** - Базовое использование
-3. **Раздел 3** - Продвинутая конфигурация
-4. **Практика:** Создайте 3-5 простых моделей
+### Week 1: Basics
+1. **Section 1** - Introduction and establishment
+2. **Section 2** - Basic use
+3. **Section 3** - Advanced Conference
+4. ** Practice:** Create 3-5 simple models
 
-#### Неделя 2: Оценка и валидация
-5. **Раздел 4** - Метрики и оценка качества
-6. **Раздел 5** - Валидация моделей
-7. **Раздел 8** - Лучшие практики
-8. **Практика:** Проведите полную валидацию
+#### Week 2: Evaluation and validation
+5. **Section 4** - metrics and quality assessment
+6. **Section 5** - model validation
+7. **Section 8** - Best practices
+8. ** Practice:** complete validation
 
-#### Неделя 3: Продакшен
-9. **Раздел 6** - Продакшен и деплой
-10. **Раздел 7** - Переобучение моделей
-11. **Раздел 12** - Простой пример продакшена
-12. **Практика:** Создайте продакшен систему
+### Week 3: Sales
+9. **Section 6** - Sales and Detail
+10. **Section 7** - Retraining models
+11. **Section 12** - Simple example sold
+12. **Practice:** Create a system sold
 
-#### Неделя 4: Продвинутые темы
-13. **Раздел 9** - Примеры использования
-14. **Раздел 10** - Troubleshooting
-15. **Раздел 13** - Сложный пример продакшена
-16. **Практика:** Решите реальную задачу
+### Week 4: Advanced themes
+13. ** Section 9** - examples of use
+14. **Section 10**-Troubleshooting
+15. **Section 13** - Complex example sold
+16. **Practice: **
 
-## Для продвинутых пользователей (6+ месяцев опыта)
+## for advanced users (6+ months of experience)
 
-### 🎯 Путь для продвинутых пользователей
+### ♪ The way for advanced users
 
 ```mermaid
 graph TD
-    A[Продвинутый пользователь] --> B{Выбор стратегии}
-    B -->|Быстрый деплой| C[Фокус на продакшене<br/>1 неделя]
-    B -->|Глубокое изучение| D[Углубленное изучение<br/>2-3 недели]
-    
-    C --> C1[День 1-2: Архитектура]
-    C --> C2[День 3-4: Валидация]
-    C --> C3[День 5-7: Деплой]
-    
-    D --> D1[Неделя 1: Теория и основы]
-    D --> D2[Неделя 2: Специализированные индикаторы]
-    D --> D3[Неделя 3: Супер-система]
-    
-    C1 --> E1[Архитектура системы]
-    C2 --> E2[Комплексная валидация]
-    C3 --> E3[Продакшен система]
-    
-    D1 --> F1[Продвинутые техники]
-    D2 --> F2[Модели для индикаторов]
-    D3 --> F3[Супер-система]
-    
-    E1 --> G[Успех!]
-    E2 --> G
-    E3 --> G
-    F1 --> G
-    F2 --> G
-    F3 --> G
+A [Proved user] --> B {Strategy selection}
+B---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+B------------------------------------------
+
+C --> C1[Day 1-2: Architecture]
+C --> C2 [Day 3-4: validation]
+C --> C3 [Day 5-7: Deploy]
+
+D -> D1 [Welcome 1: Theory and Framework]
+D -> D2 [ Week 2: Specialized indicators]
+D -> D3 [week 3: Super System]
+
+C1-> E1[architecture system]
+C2 --> E2 [integrated validation]
+C3 --> E3 [Selled system]
+
+D1 -> F1 [Processed machinery]
+D2 --> F2 [models for indicators]
+D3 --> F3 [Super-system]
+
+E1 --> G [Success!]
+ E2 --> G
+ E3 --> G
+ F1 --> G
+ F2 --> G
+ F3 --> G
 ```
 
-### 🎯 Фокус на продакшене (1 неделя)
+## # Focus on sales (1 week)
 
-**Цель:** Создать робастную продакшен систему
+**Goal:** Create a robotic sale system
 
-#### День 1-2: Архитектура
-1. **Раздел 6** - Продакшен и деплой
-2. **Раздел 12** - Простой пример продакшена
-3. **Раздел 13** - Сложный пример продакшена
-4. **Практика:** Спроектируйте архитектуру системы
+### Day 1-2: Architecture
+1. **Section 6** - Sales and Detail
+2. **Section 12** - Simple example sold
+3. **Section 13** - Complex example sold
+4. ** Practice:** Design the architecture of the system
 
-#### День 3-4: Валидация
-5. **Раздел 5** - Валидация моделей
-6. **Раздел 8** - Лучшие практики
-7. **Практика:** Проведите комплексную валидацию
+#### Day 3-4: validation
+5. **Section 5** - validation of models
+6. ** Section 8** - Best practices
+7. ** Practice:** Conduct comprehensive validation
 
-#### День 5-7: Деплой
-8. **Раздел 7** - Переобучение моделей
-9. **Раздел 9** - Примеры использования
-10. **Практика:** Задеплойте систему в продакшен
+### Day 5-7: Deploy
+8. **Section 7** - Retraining models
+9. **Section 9** - examples of use
+10. **Practice:** Hit the system in sales
 
-### 🔬 Углубленное изучение (2-3 недели)
+## ♪ In-depth study (2-3 weeks)
 
-**Цель:** Стать экспертом в AutoML Gluon
+**Goal:** Become an expert in AutoML Gluon
 
-#### Неделя 1: Теория и основы
-1. **Раздел 14** - Теория и основы AutoML
-2. **Раздел 15** - Интерпретируемость и объяснимость
-3. **Раздел 16** - Продвинутые темы
-4. **Практика:** Реализуйте продвинутые техники
+#### Week 1: Theory and foundations
+1. **Section 14** - AutoML theory and framework
+2. **Section 15** - Inspirability and Explainability
+3. **Section 16** - advanced topics
+4. ** Practice:** Implement advanced technology
 
-#### Неделя 2: Специализированные индикаторы
-5. **Раздел 19** - WAVE2 Индикатор
-6. **Раздел 20** - SCHR Levels
-7. **Раздел 21** - SCHR SHORT3
-8. **Практика:** Создайте модели для каждого индикатора
+#### Week 2: Specialized indicators
+5. **Section 19** - WAVE2 Indicator
+6. **Section 20** - SCHR Levels
+7. **Section 21** - SCHR SHORT3
+8. ** Practice:** Create models for each indicator
 
-#### Неделя 3: Супер-система
-9. **Раздел 22** - Супер-система
-10. **Раздел 17** - Этика и ответственный AI
-11. **Раздел 18** - Кейс-стади
-12. **Практика:** Создайте супер-систему
+### Week 3: Super System
+9. **Section 22** - Super System
+10. **Section 17** - Ethics and Responsible AI
+11. **Section 18** - Case Studies
+12. **Practice:** Create a super system
 
-## Для экспертов (2+ года опыта)
+## for experts (2+ years of experience)
 
-### 🚀 Максимальная эффективность (3-5 дней)
+### ♪ Maximum efficiency (3-5 days)
 
-**Цель:** Быстро освоить новые техники
+♪ Goal: ♪ Quickly learn new techniques ♪
 
-#### День 1: Обзор
-1. **Раздел 1** - Введение и установка (быстро)
-2. **Раздел 14** - Теория и основы AutoML
-3. **Раздел 16** - Продвинутые темы
-4. **Практика:** Оцените новые возможности
+#### Day 1: Review
+1. **Section 1** - Introduction and establishment (rapid)
+2. **Section 14** - AutoML theory and framework
+3. **Section 16** - advanced topics
+4. **Practice: ** Assess new opportunities
 
-#### День 2: Специализированные техники
-5. **Раздел 19** - WAVE2 Индикатор
-6. **Раздел 20** - SCHR Levels
-7. **Раздел 21** - SCHR SHORT3
-8. **Практика:** Протестируйте новые индикаторы
+#### Day 2: Specialized technicians
+5. **Section 19** - WAVE2 Indicator
+6. **Section 20** - SCHR Levels
+7. **Section 21** - SCHR SHORT3
+8. ** Practice:** Test new indicators
 
-#### День 3: Супер-система
-9. **Раздел 22** - Супер-система
-10. **Раздел 18** - Кейс-стади (выборочно)
-11. **Практика:** Создайте прототип супер-системы
+### Day 3: Super System
+9. **Section 22** - Super System
+10. **Section 18** - Case Studies (elected)
+11. **Practice:** Create a prototype of a super system
 
-#### День 4-5: Деплой и оптимизация
-12. **Раздел 6** - Продакшен и деплой
-13. **Раздел 7** - Переобучение моделей
-14. **Практика:** Задеплойте и оптимизируйте систему
+#### Day 4-5: Deploy and Optimize
+12. **Section 6** - Sales and Detail
+13. **Section 7** - Retraining models
+14. **Practice:** Hatch and optimize system
 
-## Специализированные пути изучения
+## Specialized ways to study
 
-### 🎯 Карта специализированных путей
+### ♪ Specialized route map
 
 ```mermaid
 graph TD
-    A[Выбор специализации] --> B{Тип специалиста}
-    
-    B -->|Аналитик данных| C[📊 Аналитик данных]
-    B -->|ML-инженер| D[🤖 ML-инженер]
-    B -->|Трейдер| E[💰 Трейдер]
-    B -->|Бизнес-аналитик| F[🏢 Бизнес-аналитик]
-    
-    C --> C1[Фокус: Понимание данных и метрик]
-    C --> C2[Разделы: 1,2,4,5,15,8]
-    C --> C3[Результат: Эксперт по анализу]
-    
-    D --> D1[Фокус: Продакшен и деплой]
-    D --> D2[Разделы: 1,2,6,7,12,13,22]
-    D --> D3[Результат: ML-системы в продакшене]
-    
-    E --> E1[Фокус: Торговые системы]
-    E --> E2[Разделы: 1,2,19,20,21,22,18]
-    E --> E3[Результат: Торговая супер-система]
-    
-    F --> F1[Фокус: Бизнес-применения]
-    F --> F2[Разделы: 1,2,4,18,17,8]
-    F --> F3[Результат: Бизнес-решения на AI]
-    
-    style C fill:#e1f5fe
-    style D fill:#f3e5f5
-    style E fill:#e8f5e8
-    style F fill:#fff3e0
+A [Selection of specialization] -> B {Specialist type}
+
+B---------------------------------------------------------------------------
+B--~~ML engineer ~ D[~ ML engineer]
+B--~ ~ Treider~ E[~ Trader]
+B-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+C -> C1 [Focus: Understanding data and metric]
+C -> C2 [Sections: 1.2, 4.5.15.8]
+C --> C3 [Result: Expert on analysis]
+
+D -> D1 [Focus: Production and Depletion]
+D -> D2 [Sections: 1.2,6.7,12.13.22]
+D -> D3 [Result: ML systems in sales]
+
+E --> E1 [Focus: trading systems]
+E --> E2 [Sections: 1.2.19.20.21.22.18]
+E --> E3 [Result: Super-Trade System]
+
+F --> F1 [Focus: Business Applications]
+F -> F2 [Sections: 1,2,4,18,178]
+F --> F3 [Result: Business decisions on AI]
+
+ style C fill:#e1f5fe
+ style D fill:#f3e5f5
+ style E fill:#e8f5e8
+ style F fill:#fff3e0
 ```
 
-### 📊 Для аналитиков данных
+### for data analysts
 
-**Фокус:** Понимание данных и метрик  
-**Время:** 2-3 недели  
-**Ключевые навыки:** Анализ данных, интерпретация результатов, выбор метрик
+** Focus: ** Data understanding and metric
+**Time:** 2-3 weeks
+** Key skills: ** Data analysis, interpretation of results, choice of metric
 
-#### Параметры для аналитиков данных
+#### Parameters for Data Analysts
 
-1. **Раздел 1** - Введение и установка
-   - **Параметры установки:**
-     - `pip install autogluon.tabular[all]` - полная установка с визуализацией
-     - `pip install matplotlib seaborn plotly` - дополнительные библиотеки визуализации
-   - **Системные требования:**
-     - RAM: 8GB+ (для больших датасетов)
-     - Диск: 5GB+ (для данных и моделей)
+1. **Section 1** - Introduction and establishment
+ - **parameters installation:**
+- `pip install autogluon.tabular[all]' is the complete installation with visualization
+- `pip install matplotlib seaborn tablely' - additional visualization libraries
+- ** Systems requirements:**
+- RAM: 8GB+ (for large datasets)
+- Disc: 5GB+ (for data and models)
 
-2. **Раздел 2** - Базовое использование
-   - **Ключевые параметры для анализа:**
-     ```python
-     predictor = TabularPredictor(
-         label='target',
-         problem_type='binary',
-         eval_metric='roc_auc',        # ROC-AUC для анализа
-         path='analysis_model',
-         verbosity=3,                  # Подробный вывод
-         presets='best_quality'        # Лучшее качество для анализа
-     )
-     ```
+2. **Section 2** - Basic use
+- ** Keys for Analysis:**
+ ```python
+ predictor = TabularPredictor(
+ label='target',
+ problem_type='binary',
+ eval_metric='roc_auc', # ROC-AUC for Analysis
+ path='Analysis_model',
+verbosity=3, # Detailed Conclusion
+best_quality' # Better quality for Analysis
+ )
+ ```
 
-3. **Раздел 4** - Метрики и оценка качества
-   - **Параметры метрик для анализа:**
-     - `eval_metric`: 'roc_auc', 'f1', 'precision', 'recall'
-     - `auxiliary_metrics=True`: Дополнительные метрики
-     - `silent=False`: Подробный вывод метрик
-   - **Анализ производительности:**
-     ```python
-     # Детальная оценка с параметрами
-     performance = predictor.evaluate(
-         test_data,
-         silent=False,
-         auxiliary_metrics=True,
-         detailed_report=True
-     )
-     ```
+3. **Section 4** - metrics and quality assessment
+- **parameters metric for Analysis:**
+ - `eval_metric`: 'roc_auc', 'f1', 'precision', 'recall'
+- `auxiliary_metrics=True': Additional metrics
+- `silent=False': Detailed output of metric
+- ** Analise performance:**
+ ```python
+# Detailed assessment with parameters
+ performance = predictor.evaluate(
+ test_data,
+ silent=False,
+ auxiliary_metrics=True,
+ Detailed_Report=True
+ )
+ ```
 
-4. **Раздел 5** - Валидация моделей
-   - **Параметры валидации для анализа:**
-     - `num_bag_folds=10`: Больше фолдов для стабильности
-     - `holdout_frac=0.3`: Больше данных для валидации
-     - `auto_stack=True`: Автоматический стекинг
-   - **Кросс-валидация:**
-     ```python
-     predictor.fit(
-         data,
-         num_bag_folds=10,             # 10-fold CV
-         holdout_frac=0.3,             # 30% для holdout
-         auto_stack=True,              # Стекинг
-         refit_full=True               # Переобучение
-     )
-     ```
+**Section 5** - validation of models
+- **parameters validation for Analysis:**
+- `num_bag_folds=10': More folks for stability
+- `holdout_frac=0.3': More data for validation
+- 'auto_stack=True': Automatic glassing
+- **Cross-validation:**
+ ```python
+ predictor.fit(
+ data,
+ num_bag_folds=10, # 10-fold CV
+ holdout_frac=0.3, # 30% for holdout
+Auto_stack=True, #Stacking
+refit_full=True # retraining
+ )
+ ```
 
-5. **Раздел 15** - Интерпретируемость и объяснимость
-   - **Параметры интерпретации:**
-     - `feature_importance=True`: Важность признаков
-     - `permutation_importance=True`: Перестановочная важность
-     - `shap_values=True`: SHAP значения
-   - **Анализ важности:**
-     ```python
-     # Важность признаков
-     importance = predictor.feature_importance(data)
-     
-     # SHAP значения
-     explainer = predictor.get_explainer()
-     shap_values = explainer.shap_values(data)
-     ```
+5. **Section 15** - Inspirability and Explainability
+- **parameters interpretation:**
+- `feature_importance=True': Importance of topics
+- `permutation_importance'=True': Reshuffling importance
+- `shap_valutes=True': SHAP values
+- **Analysis of importance:**
+ ```python
+# The importance of signs
+ importance = predictor.feature_importance(data)
 
-6. **Раздел 8** - Лучшие практики
-   - **Параметры качества для анализа:**
-     - `feature_prune=True`: Отбор признаков
-     - `excluded_model_types=['KNN']`: Исключение медленных моделей
-     - `included_model_types=['RF', 'GBM', 'XGB']`: Включение интерпретируемых моделей
+# SHAP values
+ explainer = predictor.get_explainer()
+ shap_values = explainer.shap_values(data)
+ ```
 
-### 🤖 Для ML-инженеров
+6. ** Section 8** - Best practices
+- **quality parameters for Analysis:**
+- `feature_prene=True': Selection of topics
+- `excluded_model_types=['KNN'] `: Deletion of Slow Models
+- `included_model_types=['RF', 'GBM', 'XGB'] `: Inclusion of interpreted models
 
-**Фокус:** Продакшен и деплой  
-**Время:** 2-3 недели  
-**Ключевые навыки:** Деплой, мониторинг, масштабирование, DevOps
+### for ML engineers
 
-#### Параметры для ML-инженеров
+**Focus:** Sold and delivered
+**Time:** 2-3 weeks
+** Key skills:**Deploy, Monitoring, scaling, DevOPs
 
-1. **Раздел 1** - Введение и установка
-   - **Параметры установки для продакшена:**
-     - `pip install autogluon.tabular[all]` - полная установка
-     - `pip install gunicorn uwsgi` - WSGI серверы
-     - `pip install docker kubernetes` - контейнеризация
-   - **Системные требования:**
-     - RAM: 16GB+ (для продакшена)
-     - CPU: 8+ ядер
-     - Диск: 20GB+ (для моделей и логов)
+#### parameters for ML engineers
 
-2. **Раздел 2** - Базовое использование
-   - **Параметры для продакшена:**
-     ```python
-     predictor = TabularPredictor(
-         label='target',
-         problem_type='binary',
-         eval_metric='accuracy',
-         path='production_model',
-         verbosity=1,                  # Минимальный вывод в продакшене
-         presets='optimize_for_deployment'  # Оптимизация для деплоя
-     )
-     ```
+1. **Section 1** - Introduction and establishment
+- **parameters installation for sale:**
+- `pip install autogluon.tabular[all]' - complete installation
+- 'pip install gunicorn uwsgi' - WSGI servers
+- `pip install docker kubernetes' - containerization
+- ** Systems requirements:**
+RAM: 16GB+ (for sale)
+- CPU: 8+ kernels
+- Disc: 20GB+ (for models and logs)
 
-3. **Раздел 6** - Продакшен и деплой
-   - **Параметры оптимизации:**
-     - `presets='optimize_for_deployment'`: Оптимизация для деплоя
-     - `save_space=True`: Экономия места
-     - `keep_only_best=True`: Только лучшая модель
-     - `refit_full=False`: Отключение переобучения
-   - **Конфигурация для продакшена:**
-     ```python
-     predictor.fit(
-         data,
-         presets='optimize_for_deployment',
-         save_space=True,
-         keep_only_best=True,
-         refit_full=False,
-         time_limit=3600,              # 1 час максимум
-         num_trials=50,                # Больше попыток
-         hyperparameter_tune_kwargs={
-             'scheduler': 'local',
-             'searcher': 'bayes',
-             'num_trials': 50
-         }
-     )
-     ```
+2. **Section 2** - Basic use
+- **parameters for sale:**
+ ```python
+ predictor = TabularPredictor(
+ label='target',
+ problem_type='binary',
+ eval_metric='accuracy',
+ path='production_model',
+verbosity=1, #Minimum output in sales
+priorities='optimise_for_deployment' # Optimization for Depletion
+ )
+ ```
 
-4. **Раздел 7** - Переобучение моделей
-   - **Параметры переобучения:**
-     - `retrain_frequency=1000`: Частота переобучения
-     - `drift_detection_window=200`: Окно обнаружения дрифта
-     - `performance_threshold=0.8`: Порог производительности
-     - `adaptation_rate=0.1`: Скорость адаптации
-   - **Система переобучения:**
-     ```python
-     class ProductionRetrainingSystem:
-         def __init__(self):
-             self.retrain_frequency = 1000
-             self.drift_threshold = 0.1
-             self.performance_threshold = 0.8
-             self.adaptation_rate = 0.1
-         
-         def should_retrain(self, performance, drift_score):
-             return (performance < self.performance_threshold or 
-                     drift_score > self.drift_threshold)
-     ```
+3. **Section 6** - Sales and Detail
+- **parameters optimization:**
+- `presets='optimise_for_development': Optimizing for depletion
+- 'save_space=True': Cost savings
+== sync, corrected by elderman == @elder_man
+- `refit_ful=False': Disabled retraining
+- **configuring for sale:**
+ ```python
+ predictor.fit(
+ data,
+ presets='optimize_for_deployment',
+ save_space=True,
+ keep_only_best=True,
+ refit_full=False,
+Time_limit=3600, #1 hour maximum
+num_trials=50, # More attempts
+ hyperparameter_tune_kwargs={
+ 'scheduler': 'local',
+ 'searcher': 'bayes',
+ 'num_trials': 50
+ }
+ )
+ ```
 
-5. **Раздел 12** - Простой пример продакшена
-   - **API параметры:**
-     - `HOST='0.0.0.0'`: Привязка ко всем интерфейсам
-     - `PORT=5000`: Порт сервера
-     - `DEBUG=False`: Отключение debug в продакшене
-     - `MAX_BATCH_SIZE=1000`: Максимальный размер батча
-     - `REQUEST_TIMEOUT=30`: Таймаут запроса
-   - **Конфигурация API:**
-     ```python
-     class ProductionConfig:
-         HOST = '0.0.0.0'
-         PORT = 5000
-         DEBUG = False
-         MAX_BATCH_SIZE = 1000
-         REQUEST_TIMEOUT = 30
-         API_KEY = os.getenv('API_KEY')
-         RATE_LIMIT = 100
-         ENABLE_METRICS = True
-     ```
+4. **Section 7** - Retraining models
+- **parameters retraining:**
+- `retrain_frequancy=1000': Frequency retraining
+== sync, corrected by elderman == @elder_man
+- `Performance_threshold=0.8': Performance threshold
+- `adaptation_rate=0.1': Adaptation speed
+- ** Retraining system:**
+ ```python
+ class ProductionRetrainingsystem:
+ def __init__(self):
+ self.retrain_frequency = 1000
+ self.drift_threshold = 0.1
+ self.performance_threshold = 0.8
+ self.adaptation_rate = 0.1
 
-6. **Раздел 13** - Сложный пример продакшена
-   - **Параметры масштабирования:**
-     - `num_workers=4`: Количество воркеров
-     - `max_connections=1000`: Максимальные соединения
-     - `memory_limit='2GB'`: Лимит памяти
-     - `cpu_limit=2`: Лимит CPU
-   - **Docker конфигурация:**
-     ```dockerfile
-     FROM python:3.9-slim
-     WORKDIR /app
-     COPY requirements.txt .
-     RUN pip install --no-cache-dir -r requirements.txt
-     COPY . .
-     EXPOSE 5000
-     CMD ["gunicorn", "--bind", "0.0.0.0:5000", 
-          "--workers", "4", "--timeout", "30", "app:app"]
-     ```
+ def should_retrain(self, performance, drift_score):
+ return (performance < self.performance_threshold or
+ drift_score > self.drift_threshold)
+ ```
 
-7. **Раздел 22** - Супер-система
-   - **Параметры супер-системы:**
-     - `ensemble_methods=['adaptive', 'context', 'temporal']`
-     - `weight_update_frequency=100`
-     - `confidence_threshold=0.7`
-     - `min_models_agreement=2`
-   - **Конфигурация супер-системы:**
-     ```python
-     super_system_config = {
-         'ensemble_methods': ['adaptive', 'context', 'temporal'],
-         'weight_update_frequency': 100,
-         'confidence_threshold': 0.7,
-         'min_models_agreement': 2,
-         'performance_window': 500,
-         'context_sensitivity': 0.8
-     }
-     ```
+5. **Section 12** - Simple example sold
+ - **API parameters:**
+- `HOST='0.0.0.0': Link to all interfaces
+- `PORT=5000': server port
+- `DEBUG=False': Disablement of debug in sales
+- `MAX_BATCH_SIZE=1000': Maximum dimensions of the batch
+- `REQUEST_TIMEOUT=30': Request Timeout
+ - **configuration API:**
+ ```python
+ class ProductionConfig:
+ HOST = '0.0.0.0'
+ PORT = 5000
+ DEBUG = False
+ MAX_BATCH_SIZE = 1000
+ REQUEST_TIMEOUT = 30
+ API_KEY = os.getenv('API_KEY')
+ RATE_LIMIT = 100
+ ENABLE_METRICS = True
+ ```
 
-### 💰 Для трейдеров
+6. **Section 13** - Complex example sold
+- **parameters scale:**
+- `num_workers=4': Number of vorkers
+- `max_connections=1000': Maximum connections
+- `memory_limit'='2GB': Memory Limited
+== sync, corrected by elderman ==
+ - **Docker configuration:**
+ ```dockerfile
+ FROM python:3.9-slim
+ WORKDIR /app
+ COPY requirements.txt .
+ RUN pip install --no-cache-dir -r requirements.txt
+ COPY . .
+ EXPOSE 5000
+ CMD ["gunicorn", "--bind", "0.0.0.0:5000",
+ "--workers", "4", "--timeout", "30", "app:app"]
+ ```
 
-**Фокус:** Торговые системы  
-**Время:** 3-4 недели  
-**Ключевые навыки:** Торговые индикаторы, риск-менеджмент, автоматизация торговли
+7. **Section 22** - Super System
+- **parameters supersystems:**
+ - `ensemble_methods=['adaptive', 'context', 'temporal']`
+ - `weight_update_frequency=100`
+ - `confidence_threshold=0.7`
+ - `min_models_agreement=2`
+- **configuring supersystems:**
+ ```python
+ super_system_config = {
+ 'ensemble_methods': ['adaptive', 'context', 'temporal'],
+ 'weight_update_frequency': 100,
+ 'confidence_threshold': 0.7,
+ 'min_models_agreement': 2,
+ 'performance_window': 500,
+ 'context_sensitivity': 0.8
+ }
+ ```
 
-#### Параметры для трейдеров
+### for traders
 
-1. **Раздел 1** - Введение и установка
-   - **Параметры установки для торговли:**
-     - `pip install autogluon.tabular[all]` - полная установка
-     - `pip install yfinance ccxt` - данные с бирж
-     - `pip install ta-lib` - технические индикаторы
-   - **Системные требования:**
-     - RAM: 16GB+ (для обработки больших объемов данных)
-     - CPU: 8+ ядер (для быстрых вычислений)
-     - Диск: 50GB+ (для исторических данных)
+**Focus:** Trading systems
+**Time:** 3-4 weeks
+** Key skills:** Trade indicators, risk management, trade automation
 
-2. **Раздел 2** - Базовое использование
-   - **Параметры для торговых систем:**
-     ```python
-     predictor = TabularPredictor(
-         label='target',
-         problem_type='binary',        # Покупка/продажа
-         eval_metric='f1',            # F1 для торговли
-         path='trading_model',
-         verbosity=2,
-         presets='best_quality'       # Лучшее качество критично
-     )
-     ```
+#### parameters for traders
 
-3. **Раздел 19** - WAVE2 Индикатор
-   - **Параметры WAVE2:**
-     - `min_wave_length=5`: Минимальная длина волны
-     - `max_wave_length=50`: Максимальная длина волны
-     - `amplitude_threshold=0.02`: Порог амплитуды (2%)
-     - `frequency_threshold=0.1`: Порог частоты
-     - `phase_threshold=0.3`: Порог фазы
-   - **Конфигурация WAVE2:**
-     ```python
-     wave2_config = {
-         'min_wave_length': 5,
-         'max_wave_length': 50,
-         'amplitude_threshold': 0.02,
-         'frequency_threshold': 0.1,
-         'phase_threshold': 0.3,
-         'signal_threshold': 0.6,
-         'risk_reward_ratio': 2.0
-     }
-     ```
+1. **Section 1** - Introduction and establishment
+ - **parameters installation for trading:**
+- `pip install autogluon.tabular[all]' - complete installation
+- `pip install youthccxt' - data with exchanges
+- `pip install ta-lib' - Technical indicators
+- ** Systems requirements:**
+- RAM: 16GB+ (for large volume processing)
+- CPU: 8+ kernels (for rapid calculations)
+- Disc: 50GB+ (for historical data)
 
-4. **Раздел 20** - SCHR Levels
-   - **Параметры SCHR Levels:**
-     - `lookback_period=50`: Период анализа уровней
-     - `min_touches=3`: Минимальные касания
-     - `tolerance=0.001`: Допуск (0.1%)
-     - `pressure_threshold=0.7`: Порог давления
-     - `breakout_threshold=0.8`: Порог пробоя
-   - **Конфигурация SCHR Levels:**
-     ```python
-     schr_config = {
-         'lookback_period': 50,
-         'min_touches': 3,
-         'tolerance': 0.001,
-         'pressure_threshold': 0.7,
-         'breakout_threshold': 0.8,
-         'volume_weight': 0.3,
-         'volume_confirmation': True
-     }
-     ```
+2. **Section 2** - Basic use
+- **passers for trading systems:**
+ ```python
+ predictor = TabularPredictor(
+ label='target',
+Problem_type='binary', # Buying/selling
+ eval_metric='f1', # F1 for trading
+ path='trading_model',
+ verbosity=2,
+"Presets"='best_quality' # Best quality critical
+ )
+ ```
 
-5. **Раздел 21** - SCHR SHORT3
-   - **Параметры SCHR SHORT3:**
-     - `short_period=3`: Краткосрочный период
-     - `volatility_window=10`: Окно волатильности
-     - `momentum_threshold=0.5`: Порог момента
-     - `volatility_threshold=0.02`: Порог волатильности (2%)
-     - `signal_strength=0.6`: Сила сигнала
-   - **Конфигурация SCHR SHORT3:**
-     ```python
-     short3_config = {
-         'short_period': 3,
-         'volatility_window': 10,
-         'momentum_threshold': 0.5,
-         'volatility_threshold': 0.02,
-         'signal_strength': 0.6,
-         'pattern_types': ['candlestick', 'price_action'],
-         'min_pattern_strength': 0.7
-     }
-     ```
+3. **Section 19** - WAVE2 Indicator
+ - **parameters WAVE2:**
+== sync, corrected by elderman == @elder_man
+- `max_wave_length=50': Maximum wave length
+- `amplitude_threshold=0.02': Amplitude threshold (2 per cent)
+- `frequancy_threshold=0.1': Frequency threshold
+- `phase_threshold=0.3': Phase threshold
+ - **configuration WAVE2:**
+ ```python
+ wave2_config = {
+ 'min_wave_length': 5,
+ 'max_wave_length': 50,
+ 'amplitude_threshold': 0.02,
+ 'frequency_threshold': 0.1,
+ 'phase_threshold': 0.3,
+ 'signal_threshold': 0.6,
+ 'risk_reward_ratio': 2.0
+ }
+ ```
 
-6. **Раздел 22** - Супер-система
-   - **Параметры супер-системы для торговли:**
-     - `ensemble_methods=['adaptive', 'context', 'temporal']`
-     - `weight_update_frequency=50`: Частое обновление весов
-     - `confidence_threshold=0.8`: Высокий порог уверенности
-     - `min_models_agreement=2`: Минимум 2 согласных модели
-   - **Торговая конфигурация:**
-     ```python
-     trading_system_config = {
-         'ensemble_methods': ['adaptive', 'context', 'temporal'],
-         'weight_update_frequency': 50,
-         'confidence_threshold': 0.8,
-         'min_models_agreement': 2,
-         'risk_management': {
-             'max_position_size': 0.1,      # 10% капитала
-             'stop_loss_threshold': 0.02,   # 2% стоп-лосс
-             'take_profit_threshold': 0.04, # 4% тейк-профит
-             'max_drawdown': 0.05          # 5% максимальная просадка
-         },
-         'trading_hours': {
-             'start': '09:00',
-             'end': '17:00',
-             'timezone': 'UTC'
-         }
-     }
-     ```
+4. **Section 20** - SCHR Levels
+ - **parameters SCHR Levels:**
+- `lookback_period=50': Period of Analysis levels
+- `min_touches=3': Minimum touching
+- `tolerance=0.001': Tolerance (0.1 per cent)
+- `pressure_threshold=0.7': Pressure threshold
+- `breakout_threshold=0.8': Passage threshold
+ - **configuration SCHR Levels:**
+ ```python
+ schr_config = {
+ 'lookback_period': 50,
+ 'min_touches': 3,
+ 'tolerance': 0.001,
+ 'pressure_threshold': 0.7,
+ 'breakout_threshold': 0.8,
+ 'volume_weight': 0.3,
+ 'volume_confirmation': True
+ }
+ ```
 
-7. **Раздел 18** - Кейс-стади (криптотрейдинг)
-   - **Параметры для криптотрейдинга:**
-     - `timeframe='1h'`: Таймфрейм (1 час)
-     - `lookback_days=365`: Год исторических данных
-     - `volatility_adjustment=True`: Корректировка по волатильности
-     - `market_hours_24_7=True`: Круглосуточная торговля
-   - **Крипто конфигурация:**
-     ```python
-     crypto_config = {
-         'timeframe': '1h',
-         'lookback_days': 365,
-         'volatility_adjustment': True,
-         'market_hours_24_7': True,
-         'exchanges': ['binance', 'coinbase', 'kraken'],
-         'pairs': ['BTC/USDT', 'ETH/USDT', 'ADA/USDT'],
-         'risk_management': {
-             'max_position_size': 0.05,     # 5% для крипто
-             'stop_loss_threshold': 0.03,   # 3% стоп-лосс
-             'take_profit_threshold': 0.06, # 6% тейк-профит
-             'max_drawdown': 0.03          # 3% максимальная просадка
-         }
-     }
-     ```
+5. **Section 21** - SCHR SHORT3
+ - **parameters SCHR SHORT3:**
+- `short_period=3': Short term
+- `volatility_Window=10': Velocity Window
+- `momentum_threshold=0.5': Time threshold
+- `volatility_threshold=0.02': Volatility threshold (2 per cent)
+- `signal_strength=0.6': Signal strength
+ - **configuration SCHR SHORT3:**
+ ```python
+ short3_config = {
+ 'short_period': 3,
+ 'volatility_window': 10,
+ 'momentum_threshold': 0.5,
+ 'volatility_threshold': 0.02,
+ 'signal_strength': 0.6,
+ 'pattern_types': ['candlestick', 'price_action'],
+ 'min_pattern_strength': 0.7
+ }
+ ```
 
-### 🏢 Для бизнес-аналитиков
+6. **Section 22** - Super System
+- **parameters super systems for trading:**
+ - `ensemble_methods=['adaptive', 'context', 'temporal']`
+- `weight_update_freequancy=50': Frequent extradate balance
+- `confidence_threshold=0.8': High threshold of confidence
+== sync, corrected by elderman == @elder_man
+- ** Trade configuring:**
+ ```python
+ trading_system_config = {
+ 'ensemble_methods': ['adaptive', 'context', 'temporal'],
+ 'weight_update_frequency': 50,
+ 'confidence_threshold': 0.8,
+ 'min_models_agreement': 2,
+ 'risk_Management': {
+'max_position_size': 0.1 # 10% capital
+'stop_loss_threshold': 0.02, #2% stop-loss
+'take_profit_threshold': 0.04, # 4% teak profile
+'max_drawdown': 0.05 # 5% maximum draught
+ },
+ 'trading_hours': {
+ 'start': '09:00',
+ 'end': '17:00',
+ 'timezone': 'UTC'
+ }
+ }
+ ```
 
-**Фокус:** Бизнес-применения  
-**Время:** 2-3 недели  
-**Ключевые навыки:** Бизнес-метрики, интерпретация результатов, ROI, этика AI
+7. **Section 18** - Case Studies (crypto-trade)
+- **parameters for crypto-trade:**
+- `Timeframe='1h' ': Timeframe (1 hour)
+- `lookback_days=365': Year of Historical Data
+- `volatility_adjustment=True': Adjustment on volatility
+- `Market_hours_24_7=True': 24-hour trade
+- **Crypto configuring:**
+ ```python
+ crypto_config = {
+ 'Timeframe': '1h',
+ 'lookback_days': 365,
+ 'volatility_adjustment': True,
+ 'market_hours_24_7': True,
+ 'exchanges': ['binance', 'coinbase', 'kraken'],
+ 'pairs': ['BTC/USDT', 'ETH/USDT', 'ADA/USDT'],
+ 'risk_Management': {
+'max_position_size': 0.05, #5 percent for crypto
+'stop_loss_threshold': 0.03, #3% stop-loss
+'take_profit_threshold': 0.06, #6% teak profile
+'max_drawdown': 0.03 # 3% maximum draught
+ }
+ }
+ ```
 
-#### Параметры для бизнес-аналитиков
+### for business analysts
 
-1. **Раздел 1** - Введение и установка
-   - **Параметры установки для бизнеса:**
-     - `pip install autogluon.tabular[all]` - полная установка
-     - `pip install plotly dash` - интерактивные дашборды
-     - `pip install jupyter voila` - презентации
-   - **Системные требования:**
-     - RAM: 8GB+ (для анализа больших датасетов)
-     - CPU: 4+ ядра
-     - Диск: 10GB+ (для данных и отчетов)
+**Focus:** Business applications
+**Time:** 2-3 weeks
+** Key skills:** Business metrics, interpretation of results, ROI, AI ethics
 
-2. **Раздел 2** - Базовое использование
-   - **Параметры для бизнес-анализа:**
-     ```python
-     predictor = TabularPredictor(
-         label='target',
-         problem_type='binary',
-         eval_metric='roc_auc',        # ROC-AUC для бизнеса
-         path='business_model',
-         verbosity=2,
-         presets='high_quality'        # Высокое качество
-     )
-     ```
+#### parameters for business analysts
 
-3. **Раздел 4** - Метрики и оценка качества
-   - **Бизнес-метрики:**
-     - `eval_metric='roc_auc'`: ROC-AUC для классификации
-     - `eval_metric='rmse'`: RMSE для регрессии
-     - `auxiliary_metrics=True`: Дополнительные метрики
-   - **Анализ ROI:**
-     ```python
-     # Бизнес-метрики
-     business_metrics = {
-         'roi': 0.15,                  # 15% ROI
-         'cost_per_prediction': 0.01,  # $0.01 за предсказание
-         'accuracy_threshold': 0.85,   # 85% точность
-         'false_positive_cost': 10.0,  # $10 за ложный положительный
-         'false_negative_cost': 50.0   # $50 за ложный отрицательный
-     }
-     ```
+1. **Section 1** - Introduction and establishment
+- **parameters installation for business:**
+- `pip install autogluon.tabular[all]' - complete installation
+- `pip install flatly dash' - interactive dashboards
+- `pip install jupyter voila' - presentations
+- ** Systems requirements:**
+- RAM: 8GB+
+- CPU: 4+ Cores
+- Disc: 10GB+ (for data and Reports)
 
-4. **Раздел 18** - Кейс-стади
-   - **Параметры для кейс-стади:**
-     - `time_limit=1800`: 30 минут на обучение
-     - `presets='best_quality'`: Лучшее качество
-     - `holdout_frac=0.2`: 20% для валидации
-     - `feature_prune=True`: Отбор признаков
-   - **Конфигурация кейс-стади:**
-     ```python
-     case_study_config = {
-         'time_limit': 1800,
-         'presets': 'best_quality',
-         'holdout_frac': 0.2,
-         'feature_prune': True,
-         'business_context': {
-             'industry': 'finance',
-             'use_case': 'credit_scoring',
-             'stakeholders': ['risk_team', 'business_team'],
-             'compliance_required': True
-         }
-     }
-     ```
+2. **Section 2** - Basic use
+- **parameters for Business Anallysis:**
+ ```python
+ predictor = TabularPredictor(
+ label='target',
+ problem_type='binary',
+Eval_metric='roc_auc', #ROC-AUC for Business
+ path='business_model',
+ verbosity=2,
+presets='high_quality' #High quality
+ )
+ ```
 
-5. **Раздел 17** - Этика и ответственный AI
-   - **Параметры этики:**
-     - `fairness_metrics=True`: Метрики справедливости
-     - `bias_detection=True`: Обнаружение смещений
-     - `explainability=True`: Объяснимость решений
-     - `privacy_preserving=True`: Сохранение приватности
-   - **Этическая конфигурация:**
-     ```python
-     ethics_config = {
-         'fairness_metrics': True,
-         'bias_detection': True,
-         'explainability': True,
-         'privacy_preserving': True,
-         'protected_attributes': ['age', 'gender', 'race'],
-         'fairness_threshold': 0.8,
-         'bias_threshold': 0.1
-     }
-     ```
+3. **Section 4** - metrics and quality assessment
+- ** Business-metrics:**
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+- `auxiliary_metrics=True': Additional metrics
+- **Analysis of ROI:**
+ ```python
+# Business-metics
+ business_metrics = {
+ 'roi': 0.15, # 15% ROI
+'cost_per_Predication': 0.01, # $0.01 for Prevention
+'accuracy_threshold': 0.85, #85% accuracy
+'False_positive_cost': 10.0, # $10 for false positive
+'False_negative_cost': 50.0 # $50 for false negative
+ }
+ ```
 
-6. **Раздел 8** - Лучшие практики
-   - **Параметры качества для бизнеса:**
-     - `feature_prune=True`: Отбор признаков
-     - `excluded_model_types=['KNN']`: Исключение медленных моделей
-     - `included_model_types=['RF', 'GBM', 'XGB']`: Интерпретируемые модели
-     - `refit_full=True`: Переобучение на всех данных
-   - **Бизнес-конфигурация:**
-     ```python
-     business_config = {
-         'feature_prune': True,
-         'excluded_model_types': ['KNN', 'NN_TORCH'],
-         'included_model_types': ['RF', 'GBM', 'XGB', 'CAT'],
-         'refit_full': True,
-         'business_requirements': {
-             'max_inference_time': 0.1,    # 100ms максимум
-             'min_accuracy': 0.85,         # 85% минимум
-             'max_model_size': 100,        # 100MB максимум
-             'interpretability_required': True
-         }
-     }
-     ```
+4. **Section 18** - Case Studies
+- **parameters for Case Studies:**
+- `time_limit= 1800': 30 minutes on education
+- `presets='best_quality':
+- `holdout_frac=0.2`: 20% for validation
+- `feature_prene=True': Selection of topics
+- **configuring the case:**
+ ```python
+ case_study_config = {
+ 'time_limit': 1800,
+ 'presets': 'best_quality',
+ 'holdout_frac': 0.2,
+ 'feature_prune': True,
+ 'business_context': {
+ 'industry': 'finance',
+ 'Use_case': 'credit_scoring',
+ 'stakeholders': ['risk_team', 'business_team'],
+ 'compliance_required': True
+ }
+ }
+ ```
 
-## Практические рекомендации
+5. **Section 17** - Ethics and Responsible AI
+- **parameters ethics:**
+- `fairness_metrics=True': metrics justice
+- `bias_detection=True': Detection of displacements
+- `explainability=True': Explainability of decisions
+- `Privacy_preserving'=True': Maintaining privacy
+- **Ethical conference:**
+ ```python
+ ethics_config = {
+ 'fairness_metrics': True,
+ 'bias_detection': True,
+ 'explainability': True,
+ 'privacy_preserving': True,
+ 'protected_attributes': ['age', 'gender', 'race'],
+ 'fairness_threshold': 0.8,
+ 'bias_threshold': 0.1
+ }
+ ```
 
-### 📝 Ведение заметок
+6. ** Section 8** - Best practices
+- **quality tools for business:**
+- `feature_prene=True': Selection of topics
+- `excluded_model_types=['KNN'] `: Deletion of Slow Models
+- `Included_model_types=['RF', 'GBM', 'XGB'] `: Inspired models
+- `refit_full=True': Retraining on all data
+- ** Business-configuring:**
+ ```python
+ business_config = {
+ 'feature_prune': True,
+ 'excluded_model_types': ['KNN', 'NN_TORCH'],
+ 'included_model_types': ['RF', 'GBM', 'XGB', 'CAT'],
+ 'refit_full': True,
+ 'business_requirements': {
+'max_inference_time': 0.1 #100m maximum
+'min_accuracy': 0.85, #85% minimum
+'max_model_size': 100, #100MB maximum
+ 'interpretability_required': True
+ }
+ }
+ ```
 
-1. **Создайте файл заметок** для каждого раздела
-2. **Записывайте код** который вы пробуете
-3. **Фиксируйте ошибки** и их решения
-4. **Отмечайте важные моменты** для будущего использования
+## Practical recommendations
 
-### 🧪 Практические упражнения
+♪ ## ♪ Note keeping
 
-### 🔄 Блок-схема практических упражнений
+1. ** Create a note file** for each section
+2. ** Write down the code** you're trying.
+3. **Fix the errors** and their decisions
+4. ** Note important points** for future use
+
+### ♪ Practical exercises
+
+### ♪ Practical exercise block
 
 ```mermaid
 graph TD
-    A[Начало практики] --> B[Упражнение 1: Первая модель<br/>30 минут]
-    B --> C{Модель работает?}
-    C -->|Да| D[Упражнение 2: Валидация<br/>1 час]
-    C -->|Нет| E[Исправление ошибок<br/>15 минут]
-    E --> B
-    
-    D --> F{Валидация прошла?}
-    F -->|Да| G[Упражнение 3: Продакшен<br/>2 часа]
-    F -->|Нет| H[Анализ проблем<br/>30 минут]
-    H --> D
-    
-    G --> I{API работает?}
-    I -->|Да| J[Успех!<br/>Готов к реальным задачам]
-    I -->|Нет| K[Отладка продакшена<br/>1 час]
-    K --> G
-    
-    style A fill:#e3f2fd
-    style B fill:#f3e5f5
-    style D fill:#e8f5e8
-    style G fill:#fff3e0
-    style J fill:#e0f2f1
+A [Initiated] --> B [Exercise 1: First model<br/>30 minutes]
+B --> C {Workinget Model?}
+C -->\\\\D[Exercise 2: appreciation\br/>1 hour]
+C -->\\\No\E[fix errors\br/>15 minutes]
+ E --> B
+
+D --> F {validation gone?}
+F -->\\\\\G[Exercise 3: Sales >br/>2 hours]
+F -->\\\\\H[Analysis of problems\br/>30 minutes]
+ H --> D
+
+G --> I {API Workinget?}
+I --\\\\\\\J[Achieves!\br/> Ready for real tasks]
+I--~ ~ No ~ K[Delete sold <br/>1 hour]
+ K --> G
+
+ style A fill:#e3f2fd
+ style B fill:#f3e5f5
+ style D fill:#e8f5e8
+ style G fill:#fff3e0
+ style J fill:#e0f2f1
 ```
 
-#### Упражнение 1: Первая модель (30 минут)
+#### Exercise 1: First model (30 minutes)
 
-**Цель:** Создать первую модель AutoML Gluon с пониманием всех параметров
+**Goal:** Create the first AutoML Gluon with understanding all parameters
 
 ```python
-# Создайте простую модель на датасете Iris
+# Create a simple model on Iris's dateset
 from autogluon.tabular import TabularPredictor
 import pandas as pd
 from sklearn.datasets import load_iris
 
-# Загрузка данных
+# Loading data
 iris = load_iris()
-data = pd.DataFrame(iris.data, columns=iris.feature_names)
+data = pd.dataFrame(iris.data, columns=iris.feature_names)
 data['target'] = iris.target
 
-# Создание модели с детальными параметрами
+# creative models with detailed parameters
 predictor = TabularPredictor(
-    label='target',                    # Целевая переменная (обязательный параметр)
-    problem_type='multiclass',         # Тип задачи: 'binary', 'multiclass', 'regression'
-    eval_metric='accuracy',            # Метрика оценки: 'accuracy', 'f1', 'roc_auc', 'log_loss'
-    path='iris_model',                 # Путь для сохранения модели
-    verbosity=2,                       # Уровень вывода: 0-4 (0=тихо, 4=подробно)
-    presets='medium_quality_faster_inference'  # Предустановки качества
+Label='target', #Target (compulsory parameter)
+program_type='multiclass', # Task type: 'binary', 'multiclass', 'regression'
+Eval_metric='accuracy', #Metrics assessment: 'accuracy', 'f1', 'roc_auc', 'log_loss'
+path='iris_model', #The way to preserve the model
+verbosity=2, # Output level: 0-4 (0=silent, 4=detailed)
+presets='media_quality_caster_inference' #Preinstallation of quality
 )
 
-# Обучение модели с параметрами
+# Training the model with parameters
 predictor.fit(
-    data,                              # Обучающие данные
-    time_limit=60,                     # Лимит времени обучения (секунды)
-    presets='medium_quality',          # Качество моделей: 'best_quality', 'high_quality', 'medium_quality', 'optimize_for_deployment'
-    num_trials=10,                     # Количество попыток для hyperparameter tuning
-    hyperparameter_tune_kwargs={       # Параметры настройки гиперпараметров
-        'scheduler': 'local',          # Планировщик: 'local', 'ray'
-        'searcher': 'auto',            # Поисковик: 'auto', 'random', 'bayes'
-        'num_trials': 10,              # Количество попыток
-        'search_space': 'default'      # Пространство поиска
-    },
-    holdout_frac=0.2,                  # Доля данных для holdout валидации
-    num_bag_folds=0,                   # Количество фолдов для бэггинга (0=отключить)
-    num_stack_levels=0,                # Количество уровней стекинга (0=отключить)
-    auto_stack=True,                   # Автоматический стекинг
-    num_gpus=0,                        # Количество GPU для обучения
-    num_cpus=None,                     # Количество CPU (None=автоопределение)
-    memory_limit=None,                 # Лимит памяти (None=без ограничений)
-    feature_prune=True,                # Отбор признаков
-    excluded_model_types=[],           # Исключенные типы моделей
-    included_model_types=[],           # Включенные типы моделей ([]=все)
-    refit_full=True,                   # Переобучение на всех данных
-    set_best_to_refit_full=True,       # Установка лучшей модели как refit_full
-    save_space=True,                   # Экономия места на диске
-    save_bag_folds=True,               # Сохранение бэггинг фолдов
-    keep_only_best=True,               # Сохранение только лучшей модели
-    num_bag_sets=1,                    # Количество наборов бэггинга
-    num_stack_levels=0,                # Количество уровней стекинга
-    num_bag_folds=0,                   # Количество фолдов бэггинга
-    ag_args_fit={                      # Дополнительные аргументы для fit
-        'num_gpus': 0,
-        'num_cpus': None,
-        'time_limit': 60
-    },
-    ag_args_ensemble={                 # Аргументы для ансамбля
-        'num_gpus': 0,
-        'num_cpus': None
-    }
+Data, #Learning Data
+Time_limit=60, #Little time of study (seconds)
+model quality: 'best_quality', 'high_quality', 'mediam_quality', 'optimise_for_development'
+num_trials=10, #Number of attempts for Hyperparameter tuning
+Hyperparameter_tune_kwargs={ #paraters Settings hyperparameters
+'Scheduler': 'local', #Planner: 'local', 'ray'
+'Searcher': 'auto', #Surveyer: 'auto', 'random', 'bayes'
+'num_trials': 10, #Number of attempts
+'Search_space': 'Default' # Search Space
+ },
+Goldout_frac=0.2, # Proportion of data for goldout validation
+num_bag_folds=0, #Number of folks for bagging (0=unset)
+num_stack_levels=0, #Number of glass levels (0=unplug)
+Auto_stack=True, #Automated glassing
+number_gpus=0, #GPU number for learning
+num_cpus = Non, # Quantity of CPU (none=autodefinition)
+memory_limit=None, #None=no limit
+Feature_prene=True, #Selection of topics
+Excluded_model_types=, #Excluded types of models
+including_model_types=[], # Model types included[]=all
+refit_full=True, #retraining on all data
+Set_best_to_refit_ful=True, #installation of the best model as refit_ful
+Save_space=True, #savings space on disk
+♪ Save_bag_folds=True, ♪ Save Bagging Folds
+keep_only_best=True, #Save only the best model
+num_bag_sects=1, #Number of Bagging Sets
+num_stack_levels=0, #Number of glass levels
+num_bag_folds=0, #Number of Bagging Folds
+ag_args_fit={# Additional arguments for fat
+ 'num_gpus': 0,
+ 'num_cpus': None,
+ 'time_limit': 60
+ },
+ag_args_ensemble={# Arguments for an ensemble
+ 'num_gpus': 0,
+ 'num_cpus': None
+ }
 )
 
-# Оценка модели
+# Model evaluation
 predictions = predictor.predict(data)
-print(f"Точность: {predictor.evaluate(data)}")
+Print(f) "Totality: {predicator.evaluate(data)}")
 
-# Дополнительная информация о модели
-print(f"Лучшая модель: {predictor.get_model_best()}")
-print(f"Доступные модели: {predictor.get_model_names()}")
-print(f"Важность признаков: {predictor.feature_importance(data)}")
+# Further information on the model
+print(f) "Best model: {predictor.get_model_best()}")
+print(f) "Acceptance models: {predictor.get_model_names()}")
+(f "The importance of the signs: {predictor.feature_importance(data)}")
 ```
 
-#### Упражнение 2: Валидация (1 час)
+#### Exercise 2: appreciation (1 hour)
 
-**Цель:** Провести полную валидацию модели с пониманием всех параметров валидации
+**Goal:** To fully validate the model with understanding all parameters validation
 
 ```python
-# Проведите полную валидацию модели
+# Do a full model validation
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_Report, confusion_matrix
 import numpy as np
 
-# Разделение данных с параметрами
+# Data split with parameters
 train_data, test_data = train_test_split(
-    data, 
-    test_size=0.2,                      # Доля тестовых данных (20%)
-    random_state=42,                    # Случайное состояние для воспроизводимости
-    stratify=data['target']             # Стратификация по целевой переменной
+ data,
+test_size=0.2, # Testsy share (20%)
+Random_state=42, # Random state for reproduction
+stratehy=data['target'] #Stratification on target variable
 )
 
-# Создание модели с параметрами валидации
+♪ Create model with parameters of validation
 predictor = TabularPredictor(
-    label='target',
-    problem_type='multiclass',
-    eval_metric='accuracy',
-    path='iris_validation_model',
-    verbosity=2
+ label='target',
+ problem_type='multiclass',
+ eval_metric='accuracy',
+ path='iris_validation_model',
+ verbosity=2
 )
 
-# Обучение с параметрами валидации
+# Training with parameters of validation
 predictor.fit(
-    train_data,
-    time_limit=120,                     # Увеличенное время для лучшего качества
-    presets='high_quality',             # Высокое качество для валидации
-    holdout_frac=0.2,                   # 20% данных для holdout валидации
-    num_bag_folds=5,                    # 5-fold бэггинг для стабильности
-    num_stack_levels=1,                 # 1 уровень стекинга
-    auto_stack=True,                    # Автоматический стекинг
-    num_trials=20,                      # Больше попыток для hyperparameter tuning
-    hyperparameter_tune_kwargs={
-        'scheduler': 'local',
-        'searcher': 'bayes',            # Байесовский поиск для лучших результатов
-        'num_trials': 20,
-        'search_space': 'default'
-    },
-    feature_prune=True,                 # Отбор признаков
-    refit_full=True,                    # Переобучение на всех данных
-    set_best_to_refit_full=True
+ train_data,
+Time_limit=120, #Augmented time for better quality
+== sync, corrected by elderman == @elder_man
+Holdout_frac=0.2, # 20% data for goldout validation
+num_bag_folds=5, #5-fold bagging for stability
+num_stack_levels=1, #1 level of glass
+Auto_stack=True, #Automated glassing
+num_trials=20, # More attempts for Hyperparameter tuning
+ hyperparameter_tune_kwargs={
+ 'scheduler': 'local',
+'Searcher': 'Bayes', # Bayesian search for better results
+ 'num_trials': 20,
+ 'search_space': 'default'
+ },
+Feature_prene=True, #Selection of topics
+refit_full=True, #retraining on all data
+ set_best_to_refit_full=True
 )
 
-# Валидация на тестовых данных
+# validation on test data
 test_predictions = predictor.predict(test_data)
 test_accuracy = predictor.evaluate(test_data, silent=True)
 
-# Детальная оценка производительности
-print(f"Точность на тесте: {test_accuracy}")
+# Detailed assessment of performance
+pprint(f "Treat on test: {test_accuracy}")
 
-# Кросс-валидация на обучающих данных
+# Cross-validation on learning data
 cv_scores = []
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 for train_idx, val_idx in skf.split(train_data.drop('target', axis=1), train_data['target']):
-    cv_train = train_data.iloc[train_idx]
-    cv_val = train_data.iloc[val_idx]
-    
-    # Обучение на фолде
-    cv_predictor = TabularPredictor(
-        label='target',
-        problem_type='multiclass',
-        eval_metric='accuracy',
-        path=f'cv_model_{len(cv_scores)}',
-        verbosity=0
-    )
-    cv_predictor.fit(cv_train, time_limit=60, presets='medium_quality')
-    
-    # Оценка на валидационном фолде
-    cv_pred = cv_predictor.predict(cv_val)
-    cv_acc = cv_predictor.evaluate(cv_val, silent=True)
-    cv_scores.append(cv_acc)
+ cv_train = train_data.iloc[train_idx]
+ cv_val = train_data.iloc[val_idx]
 
-print(f"Средняя точность CV: {np.mean(cv_scores):.4f} (+/- {np.std(cv_scores)*2:.4f})")
+# Learning on the Fold
+ cv_predictor = TabularPredictor(
+ label='target',
+ problem_type='multiclass',
+ eval_metric='accuracy',
+ path=f'cv_model_{len(cv_scores)}',
+ verbosity=0
+ )
+ cv_predictor.fit(cv_train, time_limit=60, presets='medium_quality')
 
-# Детальный отчет о классификации
-print("\nОтчет о классификации:")
-print(classification_report(test_data['target'], test_predictions))
+# Assessment on validation fold
+ cv_pred = cv_predictor.predict(cv_val)
+ cv_acc = cv_predictor.evaluate(cv_val, silent=True)
+ cv_scores.append(cv_acc)
 
-# Матрица ошибок
-print("\nМатрица ошибок:")
+Print(f" Average accuracy CV: {np.mean(cv_scores): 4f} (+/- {np.std(cv_scores*2:4f}})
+
+# Detailed Classification Report
+Print("nReport on classification:")
+print(classification_Report(test_data['target'], test_predictions))
+
+# A matrix of errors
+Print('nMart of Errors: )
 print(confusion_matrix(test_data['target'], test_predictions))
 
-# Анализ важности признаков
+# Analysis of the importance of the signs
 feature_importance = predictor.feature_importance(test_data)
-print(f"\nВажность признаков:")
+the importance of the signs:)
 print(feature_importance)
 
-# Анализ производительности по классам
+# Analysis of performance on classes
 class_names = iris.target_names
 for i, class_name in enumerate(class_names):
-    class_mask = test_data['target'] == i
-    if np.sum(class_mask) > 0:
-        class_accuracy = np.mean(test_predictions[class_mask] == test_data['target'][class_mask])
-        print(f"Точность для класса {class_name}: {class_accuracy:.4f}")
+ class_mask = test_data['target'] == i
+ if np.sum(class_mask) > 0:
+ class_accuracy = np.mean(test_predictions[class_mask] == test_data['target'][class_mask])
+print(f) "Treatness for class {class_name}: {class_accuracy:4f}")
 
-# Анализ уверенности предсказаний
+# A confidence analysis of preferences
 pred_proba = predictor.predict_proba(test_data)
 confidence = np.max(pred_proba, axis=1)
-print(f"\nСредняя уверенность предсказаний: {np.mean(confidence):.4f}")
-print(f"Минимальная уверенность: {np.min(confidence):.4f}")
-print(f"Максимальная уверенность: {np.max(confidence):.4f}")
+(f) Average confidence preferences:(np.mean(confidence): 4f})
+(f "Minimum confidence: {np.min(confidence): 4f}")
+(f "Maximal confidence: {np.max(confidence): 4f}")
 
-# Анализ ошибок
+# Mistake analysis
 errors = test_predictions != test_data['target']
 if np.sum(errors) > 0:
-    print(f"\nАнализ ошибок ({np.sum(errors)} из {len(test_data)}):")
-    error_indices = np.where(errors)[0]
-    for idx in error_indices[:5]:  # Показываем первые 5 ошибок
-        true_class = class_names[test_data['target'].iloc[idx]]
-        pred_class = class_names[test_predictions[idx]]
-        confidence_error = confidence[idx]
-        print(f"  Индекс {idx}: Истина={true_class}, Предсказание={pred_class}, Уверенность={confidence_error:.4f}")
+((np.sum(errors)} from {len(test_data)})
+ error_indices = np.where(errors)[0]
+for idx in error_indices[:5]: # Shows the first 5 errors
+ true_class = class_names[test_data['target'].iloc[idx]]
+ pred_class = class_names[test_predictions[idx]]
+ confidence_error = confidence[idx]
+Print(f) index {idx}: Truth= {true_class}, Pradition={pred_class}, Confidence={confidence_error:.4f}}
 ```
 
-#### Упражнение 3: Продакшен (2 часа)
+#### Exercise 3: Sales (2 hours)
 
-**Цель:** Создать полноценную продакшен API с пониманием всех параметров деплоя
+**Goal:** Create full-scale API with understanding all parameters
 
 ```python
-# Создайте простую API для модели
+# Create a simple API for a model
 from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
 import joblib
@@ -1150,306 +1150,306 @@ import json
 from functools import wraps
 import traceback
 
-# Настройка логирования
+# configuring Logs
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('api.log'),
-        logging.StreamHandler()
-    ]
+ level=logging.INFO,
+ format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+ handlers=[
+ logging.FileHandler('api.log'),
+ logging.StreamHandler()
+ ]
 )
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)  # Включение CORS для фронтенда
+CORS(app) # Inclusion of CORS for Frontend
 
-# Конфигурация приложения
+# configuring application
 class Config:
-    # Параметры модели
-    MODEL_PATH = os.getenv('MODEL_PATH', 'iris_validation_model')
-    MODEL_TYPE = os.getenv('MODEL_TYPE', 'TabularPredictor')
-    
-    # Параметры API
-    HOST = os.getenv('HOST', '0.0.0.0')
-    PORT = int(os.getenv('PORT', 5000))
-    DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
-    
-    # Параметры производительности
-    MAX_BATCH_SIZE = int(os.getenv('MAX_BATCH_SIZE', 1000))
-    MAX_REQUEST_SIZE = int(os.getenv('MAX_REQUEST_SIZE', 1024 * 1024))  # 1MB
-    REQUEST_TIMEOUT = int(os.getenv('REQUEST_TIMEOUT', 30))  # 30 секунд
-    
-    # Параметры мониторинга
-    ENABLE_METRICS = os.getenv('ENABLE_METRICS', 'True').lower() == 'true'
-    METRICS_INTERVAL = int(os.getenv('METRICS_INTERVAL', 60))  # 60 секунд
-    
-    # Параметры безопасности
-    API_KEY = os.getenv('API_KEY', None)
-    RATE_LIMIT = int(os.getenv('RATE_LIMIT', 100))  # запросов в минуту
-    
-    # Параметры валидации
-    REQUIRED_FEATURES = ['sepal length (cm)', 'sepal width (cm)', 
-                        'petal length (cm)', 'petal width (cm)']
-    FEATURE_RANGES = {
-        'sepal length (cm)': (4.0, 8.0),
-        'sepal width (cm)': (2.0, 4.5),
-        'petal length (cm)': (1.0, 7.0),
-        'petal width (cm)': (0.1, 2.5)
-    }
+# Parameters Model
+ MODEL_PATH = os.getenv('MODEL_PATH', 'iris_validation_model')
+ MODEL_TYPE = os.getenv('MODEL_TYPE', 'TabularPredictor')
+
+ # parameters API
+ HOST = os.getenv('HOST', '0.0.0.0')
+ PORT = int(os.getenv('PORT', 5000))
+ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
+# parameters performance
+ MAX_BATCH_SIZE = int(os.getenv('MAX_BATCH_SIZE', 1000))
+ MAX_REQUEST_SIZE = int(os.getenv('MAX_REQUEST_SIZE', 1024 * 1024)) # 1MB
+REQUEST_TIMEOUT = int(os.getenv('REQUEST_TIMEUT', 30)) #30 seconds
+
+# Parameters Monitoring
+ ENABLE_METRICS = os.getenv('ENABLE_METRICS', 'True').lower() == 'true'
+METRICS_INTERVAL = int(os.getenv('METRICS_INTERVAL', 60)) #60 seconds
+
+# Parameters of safety
+ API_KEY = os.getenv('API_KEY', None)
+RATE_LIMIT = int(os.getenv('RATE_LIMIT', 100)) # requests in minutes
+
+# parameters validation
+ required_FEATURES = ['sepal length (cm)', 'sepal width (cm)',
+ 'petal length (cm)', 'petal width (cm)']
+ FEATURE_RANGES = {
+ 'sepal length (cm)': (4.0, 8.0),
+ 'sepal width (cm)': (2.0, 4.5),
+ 'petal length (cm)': (1.0, 7.0),
+ 'petal width (cm)': (0.1, 2.5)
+ }
 
 app.config.from_object(Config)
 
-# Глобальные переменные для мониторинга
+# Global variables for Monitoring
 request_count = 0
 error_count = 0
-total_prediction_time = 0
+total_Prediction_time = 0
 start_time = time.time()
 
-# Загрузка модели с обработкой ошибок
+# Loading the model with error processing
 try:
-    predictor = TabularPredictor.load(Config.MODEL_PATH)
-    logger.info(f"Модель загружена из {Config.MODEL_PATH}")
-    logger.info(f"Доступные модели: {predictor.get_model_names()}")
-    logger.info(f"Лучшая модель: {predictor.get_model_best()}")
+ predictor = TabularPredictor.load(Config.MODEL_PATH)
+logger.info(f" Model downloaded from {Config.MODEL_PATH}")
+logger.info(f) Accessible models: {predictor.get_model_names()})
+logger.info(f "Best Model: {predicator.get_model_best()}")
 except Exception as e:
-    logger.error(f"Ошибка загрузки модели: {e}")
-    predictor = None
+logger.error(f Model upload error: {e})
+ predictor = None
 
-# Декораторы для обработки ошибок и мониторинга
+# Decorators for Error Processing and Monitoring
 def handle_errors(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        global error_count
-        try:
-            return f(*args, **kwargs)
-        except Exception as e:
-            error_count += 1
-            logger.error(f"Ошибка в {f.__name__}: {str(e)}")
-            logger.error(traceback.format_exc())
-            return jsonify({
-                'error': 'Internal Server Error',
-                'message': str(e),
-                'timestamp': datetime.now().isoformat()
-            }), 500
-    return decorated_function
+ @wraps(f)
+ def decorated_function(*args, **kwargs):
+ global error_count
+ try:
+ return f(*args, **kwargs)
+ except Exception as e:
+ error_count += 1
+logger.error(f" Mistake in {f._name__}: {str(e)}})
+ logger.error(traceback.format_exc())
+ return jsonify({
+ 'error': 'Internal Server Error',
+ 'message': str(e),
+ 'timestamp': datetime.now().isoformat()
+ }), 500
+ return decorated_function
 
 def monitor_performance(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        global request_count, total_prediction_time
-        start_time = time.time()
-        request_count += 1
-        
-        result = f(*args, **kwargs)
-        
-        prediction_time = time.time() - start_time
-        total_prediction_time += prediction_time
-        
-        logger.info(f"Запрос {request_count}: время выполнения {prediction_time:.4f}с")
-        return result
-    return decorated_function
+ @wraps(f)
+ def decorated_function(*args, **kwargs):
+ global request_count, total_Prediction_time
+ start_time = time.time()
+ request_count += 1
+
+ result = f(*args, **kwargs)
+
+ Prediction_time = time.time() - start_time
+ total_Prediction_time += Prediction_time
+
+logger.info(f) Request {request_account}: time of execution {Predication_time:.4f}with)
+ return result
+ return decorated_function
 
 def validate_api_key(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if Config.API_KEY:
-            api_key = request.headers.get('X-API-Key')
-            if not api_key or api_key != Config.API_KEY:
-                return jsonify({'error': 'Invalid API Key'}), 401
-        return f(*args, **kwargs)
-    return decorated_function
+ @wraps(f)
+ def decorated_function(*args, **kwargs):
+ if Config.API_KEY:
+ api_key = request.headers.get('X-API-Key')
+ if not api_key or api_key != Config.API_KEY:
+ return jsonify({'error': 'Invalid API Key'}), 401
+ return f(*args, **kwargs)
+ return decorated_function
 
 def validate_input_data(data):
-    """Валидация входных данных"""
-    if not isinstance(data, (list, dict)):
-        raise ValueError("Данные должны быть списком или словарем")
-    
-    if isinstance(data, dict):
-        data = [data]
-    
-    if len(data) > Config.MAX_BATCH_SIZE:
-        raise ValueError(f"Превышен максимальный размер батча: {len(data)} > {Config.MAX_BATCH_SIZE}")
-    
-    validated_data = []
-    for i, item in enumerate(data):
-        if not isinstance(item, dict):
-            raise ValueError(f"Элемент {i} должен быть словарем")
-        
-        # Проверка обязательных признаков
-        for feature in Config.REQUIRED_FEATURES:
-            if feature not in item:
-                raise ValueError(f"Отсутствует обязательный признак: {feature}")
-        
-        # Проверка типов и диапазонов значений
-        validated_item = {}
-        for feature, value in item.items():
-            if feature in Config.REQUIRED_FEATURES:
-                try:
-                    float_value = float(value)
-                    min_val, max_val = Config.FEATURE_RANGES[feature]
-                    if not (min_val <= float_value <= max_val):
-                        raise ValueError(f"Значение {feature}={float_value} вне диапазона [{min_val}, {max_val}]")
-                    validated_item[feature] = float_value
-                except (ValueError, TypeError):
-                    raise ValueError(f"Некорректное значение для {feature}: {value}")
-            else:
-                validated_item[feature] = value
-        
-        validated_data.append(validated_item)
-    
-    return validated_data
+"Validation of input data."
+ if not isinstance(data, (List, dict)):
+Raise ValueError("data should be a list or dictionary")
+
+ if isinstance(data, dict):
+ data = [data]
+
+ if len(data) > Config.MAX_BATCH_SIZE:
+raise ValueError(f"Exceeded maximum fatch size: {len(data)} > {Config.MAX_BATCH_SIZE})
+
+ validated_data = []
+ for i, item in enumerate(data):
+ if not isinstance(item, dict):
+Raise ValueError(f "Element {i} shall be a dictionary")
+
+# Check mandatory signs
+ for feature in Config.required_FEATURES:
+ if feature not in item:
+Raise ValueError(f "No mandatory topic: {feature}")
+
+# sheck types and range of values
+ validated_item = {}
+ for feature, value in item.items():
+ if feature in Config.required_FEATURES:
+ try:
+ float_value = float(value)
+ min_val, max_val = Config.FEATURE_RANGES[feature]
+ if not (min_val <= float_value <= max_val):
+raise ValueError(f"Purity {feature}={float_value} outside [{min_val}, {max_val}]]
+ validated_item[feature] = float_value
+ except (ValueError, TypeError):
+Raise ValueError(f" Uncorrect value for {feature}: {value})
+ else:
+ validated_item[feature] = value
+
+ validated_data.append(validated_item)
+
+ return validated_data
 
 @app.route('/health', methods=['GET'])
 @handle_errors
 def health_check():
-    """Проверка здоровья API"""
-    global request_count, error_count, total_prediction_time, start_time
-    
-    uptime = time.time() - start_time
-    avg_prediction_time = total_prediction_time / max(request_count, 1)
-    error_rate = error_count / max(request_count, 1)
-    
-    health_status = {
-        'status': 'healthy' if predictor is not None else 'unhealthy',
-        'timestamp': datetime.now().isoformat(),
-        'uptime_seconds': uptime,
-        'model_loaded': predictor is not None,
-        'metrics': {
-            'total_requests': request_count,
-            'total_errors': error_count,
-            'error_rate': error_rate,
-            'average_prediction_time': avg_prediction_time
-        }
-    }
-    
-    status_code = 200 if predictor is not None else 503
-    return jsonify(health_status), status_code
+ """health check API"""
+ global request_count, error_count, total_Prediction_time, start_time
+
+ uptime = time.time() - start_time
+ avg_Prediction_time = total_Prediction_time / max(request_count, 1)
+ error_rate = error_count / max(request_count, 1)
+
+ health_status = {
+ 'status': 'healthy' if predictor is not None else 'unhealthy',
+ 'timestamp': datetime.now().isoformat(),
+ 'uptime_seconds': uptime,
+ 'model_loaded': predictor is not None,
+ 'metrics': {
+ 'total_requests': request_count,
+ 'total_errors': error_count,
+ 'error_rate': error_rate,
+ 'average_Prediction_time': avg_Prediction_time
+ }
+ }
+
+ status_code = 200 if predictor is not None else 503
+ return jsonify(health_status), status_code
 
 @app.route('/predict', methods=['POST'])
 @handle_errors
 @monitor_performance
 @validate_api_key
 def predict():
-    """Основной endpoint для предсказаний"""
-    if predictor is None:
-        return jsonify({'error': 'Model not loaded'}), 503
-    
-    # Валидация размера запроса
-    content_length = request.content_length
-    if content_length and content_length > Config.MAX_REQUEST_SIZE:
-        return jsonify({'error': 'Request too large'}), 413
-    
-    # Получение и валидация данных
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({'error': 'No JSON data provided'}), 400
-        
-        validated_data = validate_input_data(data)
-    except ValueError as e:
-        return jsonify({'error': f'Validation error: {str(e)}'}), 400
-    except Exception as e:
-        return jsonify({'error': f'Data processing error: {str(e)}'}), 400
-    
-    # Преобразование в DataFrame
-    df = pd.DataFrame(validated_data)
-    
-    # Предсказания
-    try:
-        predictions = predictor.predict(df)
-        probabilities = predictor.predict_proba(df)
-        
-        # Формирование ответа
-        results = []
-        for i, (pred, prob) in enumerate(zip(predictions, probabilities)):
-            result = {
-                'index': i,
-                'prediction': int(pred),
-                'prediction_class': ['setosa', 'versicolor', 'virginica'][int(pred)],
-                'probabilities': {
-                    'setosa': float(prob[0]),
-                    'versicolor': float(prob[1]),
-                    'virginica': float(prob[2])
-                },
-                'confidence': float(np.max(prob))
-            }
-            results.append(result)
-        
-        response = {
-            'predictions': results,
-            'metadata': {
-                'model_name': predictor.get_model_best(),
-                'timestamp': datetime.now().isoformat(),
-                'total_predictions': len(results)
-            }
-        }
-        
-        return jsonify(response)
-        
-    except Exception as e:
-        logger.error(f"Ошибка предсказания: {str(e)}")
-        return jsonify({'error': f'Prediction error: {str(e)}'}), 500
+""The Basic Endpoint for Preventions""
+ if predictor is None:
+ return jsonify({'error': 'Model not loaded'}), 503
+
+# Calidation of the size of the request
+ content_length = request.content_length
+ if content_length and content_length > Config.MAX_REQUEST_SIZE:
+ return jsonify({'error': 'Request too large'}), 413
+
+# Collection and validation of data
+ try:
+ data = request.get_json()
+ if not data:
+ return jsonify({'error': 'No JSON data provided'}), 400
+
+ validated_data = validate_input_data(data)
+ except ValueError as e:
+ return jsonify({'error': f'Validation error: {str(e)}'}), 400
+ except Exception as e:
+ return jsonify({'error': f'data processing error: {str(e)}'}), 400
+
+# Transforming in dataFrame
+ df = pd.dataFrame(validated_data)
+
+# Premonition
+ try:
+ predictions = predictor.predict(df)
+ probabilities = predictor.predict_proba(df)
+
+# Forming the answer
+ results = []
+ for i, (pred, prob) in enumerate(zip(predictions, probabilities)):
+ result = {
+ 'index': i,
+ 'Prediction': int(pred),
+ 'Prediction_class': ['setosa', 'versicolor', 'virginica'][int(pred)],
+ 'probabilities': {
+ 'setosa': float(prob[0]),
+ 'versicolor': float(prob[1]),
+ 'virginica': float(prob[2])
+ },
+ 'confidence': float(np.max(prob))
+ }
+ results.append(result)
+
+ response = {
+ 'predictions': results,
+ 'metadata': {
+ 'model_name': predictor.get_model_best(),
+ 'timestamp': datetime.now().isoformat(),
+ 'total_predictions': len(results)
+ }
+ }
+
+ return jsonify(response)
+
+ except Exception as e:
+logger.error(f "The prediction error: {str(e)}")
+ return jsonify({'error': f'Prediction error: {str(e)}'}), 500
 
 @app.route('/model_info', methods=['GET'])
 @handle_errors
 def model_info():
-    """Информация о модели"""
-    if predictor is None:
-        return jsonify({'error': 'Model not loaded'}), 503
-    
-    info = {
-        'model_type': 'TabularPredictor',
-        'best_model': predictor.get_model_best(),
-        'available_models': predictor.get_model_names(),
-        'feature_importance': predictor.feature_importance().to_dict() if hasattr(predictor, 'feature_importance') else None,
-        'model_path': Config.MODEL_PATH,
-        'timestamp': datetime.now().isoformat()
-    }
-    
-    return jsonify(info)
+""""""""" "model information"""
+ if predictor is None:
+ return jsonify({'error': 'Model not loaded'}), 503
+
+ info = {
+ 'model_type': 'TabularPredictor',
+ 'best_model': predictor.get_model_best(),
+ 'available_models': predictor.get_model_names(),
+ 'feature_importance': predictor.feature_importance().to_dict() if hasattr(predictor, 'feature_importance') else None,
+ 'model_path': Config.MODEL_PATH,
+ 'timestamp': datetime.now().isoformat()
+ }
+
+ return jsonify(info)
 
 @app.route('/metrics', methods=['GET'])
 @handle_errors
 def get_metrics():
-    """Метрики производительности"""
-    if not Config.ENABLE_METRICS:
-        return jsonify({'error': 'Metrics disabled'}), 403
-    
-    global request_count, error_count, total_prediction_time, start_time
-    
-    uptime = time.time() - start_time
-    avg_prediction_time = total_prediction_time / max(request_count, 1)
-    error_rate = error_count / max(request_count, 1)
-    requests_per_second = request_count / max(uptime, 1)
-    
-    metrics = {
-        'uptime_seconds': uptime,
-        'total_requests': request_count,
-        'total_errors': error_count,
-        'error_rate': error_rate,
-        'average_prediction_time': avg_prediction_time,
-        'requests_per_second': requests_per_second,
-        'timestamp': datetime.now().isoformat()
-    }
-    
-    return jsonify(metrics)
+"""Metrics performance"""
+ if not Config.ENABLE_METRICS:
+ return jsonify({'error': 'Metrics disabled'}), 403
+
+ global request_count, error_count, total_Prediction_time, start_time
+
+ uptime = time.time() - start_time
+ avg_Prediction_time = total_Prediction_time / max(request_count, 1)
+ error_rate = error_count / max(request_count, 1)
+ requests_per_second = request_count / max(uptime, 1)
+
+ metrics = {
+ 'uptime_seconds': uptime,
+ 'total_requests': request_count,
+ 'total_errors': error_count,
+ 'error_rate': error_rate,
+ 'average_Prediction_time': avg_Prediction_time,
+ 'requests_per_second': requests_per_second,
+ 'timestamp': datetime.now().isoformat()
+ }
+
+ return jsonify(metrics)
 
 if __name__ == '__main__':
-    logger.info(f"Запуск API сервера на {Config.HOST}:{Config.PORT}")
-    logger.info(f"Debug режим: {Config.DEBUG}")
-    logger.info(f"Модель: {Config.MODEL_PATH}")
-    
-    app.run(
-        host=Config.HOST,
-        port=Config.PORT,
-        debug=Config.DEBUG,
-        threaded=True,  # Многопоточность
-        use_reloader=False  # Отключение автоперезагрузки в продакшене
-    )
+logger.info(f"Launch API server on {Config.HOST}: {Config.PORT}})
+logger.info(f"Debug mode: {Config.DEBUG}}
+logger.info(f "model: {Config.MODEL_PATH}")
+
+ app.run(
+ host=Config.HOST,
+ port=Config.PORT,
+ debug=Config.DEBUG,
+True, # Multiaccuracy
+Use_reloader=False # Disabled auto reload in sales
+ )
 ```
 
-### Дополнительные файлы для продакшена
+### Additional files for sale
 
 #### requirements.txt
 ```txt
@@ -1480,172 +1480,172 @@ CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "30", 
 
 #### docker-compose.yml
 ```yaml
-version: '3.8'
+Version: '3.8'
 services:
-  api:
-    build: .
-    ports:
-      - "5000:5000"
-    environment:
-      - MODEL_PATH=/app/models/iris_validation_model
-      - DEBUG=False
-      - API_KEY=your-secret-key
-      - MAX_BATCH_SIZE=1000
-      - RATE_LIMIT=100
-    volumes:
-      - ./models:/app/models
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+ api:
+ build: .
+ ports:
+ - "5000:5000"
+ environment:
+ - MODEL_PATH=/app/models/iris_validation_model
+ - DEBUG=False
+ - API_KEY=your-secret-key
+ - MAX_BATCH_SIZE=1000
+ - RATE_LIMIT=100
+ volumes:
+ - ./models:/app/models
+ restart: unless-stopped
+ healthcheck:
+ test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+ interval: 30s
+ timeout: 10s
+ retries: 3
 ```
 
-### 🔄 Итеративный подход
+### ♪ Inertial approach
 
-### 🔁 Цикл обучения
+### ♪ Learning cycle
 
 ```mermaid
 graph LR
-    A[Читайте раздел<br/>10-15 мин] --> B[Пробуйте код<br/>20-30 мин]
-    B --> C[Анализируйте результаты<br/>5-10 мин]
-    C --> D[Делайте заметки<br/>5 мин]
-    D --> E[Переходите к следующему разделу]
-    E --> A
-    
-    B --> F{Код работает?}
-    F -->|Нет| G[Исправьте ошибки<br/>10-15 мин]
-    G --> B
-    F -->|Да| C
-    
-    C --> H{Понятно?}
-    H -->|Нет| I[Перечитайте раздел<br/>10 мин]
-    I --> A
-    H -->|Да| D
-    
-    style A fill:#e3f2fd
-    style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style D fill:#fff3e0
-    style E fill:#e0f2f1
+A[Read section<br/>10-15 min] -> B[Ask code<br/>20-30 min]
+B -> C[Analyze the results<br/>5-10 min]
+C --> D[Do notes<br/>5 min]
+D -> E [Go to the next section]
+ E --> A
+
+B --> F {Workinget Code?}
+F --\\\\\\G[Rectify errors\br/>10-15 min]
+ G --> B
+F -->\\\\\\\C
+
+C --> H {\cHFFFFFF}
+H -->\\\\\I[Reread section\br/>10 min]
+ I --> A
+H - ♪ Yes ♪ D
+
+ style A fill:#e3f2fd
+ style B fill:#f3e5f5
+ style C fill:#e8f5e8
+ style D fill:#fff3e0
+ style E fill:#e0f2f1
 ```
 
-1. **Читайте раздел** (10-15 минут)
-2. **Пробуйте код** (20-30 минут)
-3. **Анализируйте результаты** (5-10 минут)
-4. **Делайте заметки** (5 минут)
-5. **Переходите к следующему разделу**
+1. **Read section** (10-15 minutes)
+2. ** Try the code** (20-30 minutes)
+3. ** Analyze the results** (5-10 minutes)
+4. ** Make notes** (5 minutes)
+5. ** Move to the next section**
 
-### 🎯 Постановка целей
+### ♪ Target setting
 
-### ⏰ Временная шкала целей обучения
+### ♪ Timetable for learning goals
 
 ```mermaid
 gantt
-    title Временная шкала целей обучения AutoML Gluon
-    dateFormat X
-    axisFormat %s
-    
-    section Краткосрочные (1-2 недели)
-    Запуск первого примера    :done, short1, 0, 1
-    Понимание основ          :done, short2, 1, 2
-    Создание простой модели  :done, short3, 2, 3
-    
-    section Среднесрочные (1-2 месяца)
-    Продакшен система        :active, medium1, 3, 5
-    Продвинутые техники      :medium2, 5, 7
-    Реальная задача          :medium3, 7, 9
-    
-    section Долгосрочные (3-6 месяцев)
-    Эксперт в AutoML Gluon   :long1, 9, 12
-    Супер-система            :long2, 12, 15
-    Обмен знаниями           :long3, 15, 18
+Title Timetable of Learning Purposes AutoML Gluon
+ dateFormat X
+ axisFormat %s
+
+Section Short-term (1-2 weeks)
+Launch first example: done, short1, 0, 1
+Understanding the basics :done, short2, 1, 2
+core simple model :done, short3, 2, 3
+
+Medium term (1-2 months)
+Sold system :active, medium1, 3, 5
+Advanced technology :medium2, 5, 7
+Real challenge :mediam3, 7, 9
+
+Long-term (3-6 months)
+Expert in AutoML Gluon :long1, 9, 12
+Super system :long2, 12, 15
+Knowledge sharing :long3, 15, 18
 ```
 
-#### Краткосрочные цели (1-2 недели)
-- Запустить первый пример
-- Понять основные концепции
-- Создать простую модель
+#### Short-term targets (1-2 weeks)
+- Start the first example
+- Understand the basic concepts
+- Create a simple model
 
-#### Среднесрочные цели (1-2 месяца)
-- Создать продакшен систему
-- Понять продвинутые техники
-- Решить реальную задачу
+#### Medium-term objectives (1-2 months)
+- Create a sold system
+- Understand advanced techniques
+- To solve a real problem.
 
-#### Долгосрочные цели (3-6 месяцев)
-- Стать экспертом в AutoML Gluon
-- Создать супер-систему
-- Поделиться знаниями с другими
+#### Long-term goals (3-6 months)
+- To become an expert in AutoML Gluon
+- Create a super-system
+- Share knowledge with others
 
-## Ресурсы для углубления
+## Resources for Deepening
 
-### 📚 Дополнительная литература
-- "AutoML: Methods, Systems, Challenges" - Frank Hutter
+### ♪ Additional literature
+- "AutoML: Methods, systems, Challenges" - Frank Hutter
 - "Hands-On Machine Learning" - Aurélien Géron
 - "The Elements of Statistical Learning" - Hastie, Tibshirani, Friedman
 
-### 🌐 Онлайн ресурсы
+### ♪ Online resources
 - [AutoML Gluon Documentation](https://auto.gluon.ai/)
 - [Amazon SageMaker](https://aws.amazon.com/sagemaker/)
 - [Kaggle Learn](https://www.kaggle.com/learn)
 
-### 👥 Сообщество
+### ♪ Commons
 - [AutoML Gluon GitHub](https://github.com/autogluon/autogluon)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/autogluon)
 - [Reddit r/MachineLearning](https://www.reddit.com/r/MachineLearning/)
 
-## Заключение
+## Conclusion
 
-### 🎯 Путь к успеху
+♪ ♪ The way to success
 
 ```mermaid
 graph TD
-    A[Начало изучения] --> B[Выбор подходящего пути]
-    B --> C[Следование практическим рекомендациям]
-    C --> D[Постоянная практика]
-    D --> E[Достижение целей]
-    E --> F[Становление экспертом]
-    F --> G[Создание супер-системы]
-    G --> H[Успех! 🎉]
-    
-    B --> B1[Новичок: 1-2 месяца]
-    B --> B2[Продвинутый: 2-3 недели]
-    B --> B3[Эксперт: 3-5 дней]
-    
-    C --> C1[Итеративный подход]
-    C --> C2[Практические упражнения]
-    C --> C3[Ведение заметок]
-    
-    D --> D1[Создание моделей]
-    D --> D2[Валидация результатов]
-    D --> D3[Деплой в продакшен]
-    
-    style A fill:#e3f2fd
-    style H fill:#e8f5e8
-    style F fill:#fff3e0
-    style G fill:#f3e5f5
+A [Initiated] -> B [Selection of the appropriate path]
+B -> C [Follow-up to practical recommendations]
+C -> D [Continuing practice]
+D -> E [Achieving objectives]
+E -> F[Standing by an expert]
+F --> G[create supersystem]
+G --> H [Success! ♪]
+
+B -> B1[New: 1-2 months]
+B -> B2 [Processed: 2-3 weeks]
+B --> B3 [Expert: 3-5 days]
+
+C --> C1 [Inertial approach]
+C --> C2 [Practice exercise]
+C --> C3 [Maintaining notes]
+
+D --> D1[create models]
+D --> D2 [validation of results]
+D --> D3 [Sales in sales]
+
+ style A fill:#e3f2fd
+ style H fill:#e8f5e8
+ style F fill:#fff3e0
+ style G fill:#f3e5f5
 ```
 
-## Справочная таблица параметров по уровням
+## Reference table of parameters on levels
 
-### Параметры для разных уровней подготовки
+### parameters for different levels of preparation
 
-| Параметр | Новичок | Продвинутый | Эксперт | Описание |
+♪ ♪ Newcomer ♪ ♪ Advanced ♪ Expert ♪ Describe ♪
 |----------|---------|-------------|---------|----------|
-| **time_limit** | 60-300 | 600-1800 | 3600+ | Лимит времени обучения (сек) |
-| **presets** | 'medium_quality' | 'high_quality' | 'best_quality' | Качество моделей |
-| **num_trials** | 5-10 | 20-50 | 100+ | Количество попыток tuning |
-| **holdout_frac** | 0.2 | 0.2-0.3 | 0.1-0.2 | Доля данных для валидации |
-| **num_bag_folds** | 0-3 | 5-10 | 10+ | Количество фолдов бэггинга |
-| **num_stack_levels** | 0-1 | 1-2 | 2+ | Уровни стекинга |
-| **verbosity** | 2-3 | 1-2 | 0-1 | Уровень вывода |
-| **feature_prune** | False | True | True | Отбор признаков |
-| **refit_full** | False | True | True | Переобучение на всех данных |
+*time_limit** * 60-300 * 600-800 * 3600+ * Limited learning time (s) *
+*Presets*** ♪ medium_quality' ♪ 'high_quality' ♪ 'best_quality' ♪ model quality ♪
+♪ ♪ number_trials** ♪ 5 - 10 ♪ 20 - 50 ♪ 100+ ♪ number of attempts ♪
+*oldout_frac** * 0.2 * 0.2-0.3 * 0.1-0.2 * Data share for validation  *
+♪ ♪ number_bag_folds** ♪ 0-3 ♪ 5 ♪ 10+ ♪ Number of bagging folds ♪
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+*False *True * True * Selection of features *
+*Refit_full** * False * True * True * retraining on all data *
 
-### Параметры по специализациям
+### pagers on specialization
 
-| Параметр | Аналитик | ML-инженер | Трейдер | Бизнес-аналитик |
+♪ The analyst ♪ ♪ ML engineer ♪ Trader ♪ ♪ Business analyst ♪
 |----------|----------|------------|---------|-----------------|
 | **eval_metric** | 'roc_auc' | 'accuracy' | 'f1' | 'roc_auc' |
 | **presets** | 'best_quality' | 'optimize_for_deployment' | 'best_quality' | 'high_quality' |
@@ -1655,83 +1655,83 @@ graph TD
 | **excluded_model_types** | ['KNN'] | ['KNN', 'NN_TORCH'] | [] | ['KNN', 'NN_TORCH'] |
 | **included_model_types** | ['RF', 'GBM', 'XGB'] | [] | [] | ['RF', 'GBM', 'XGB', 'CAT'] |
 
-### Системные требования по уровням
+### System requirements on levels
 
-| Компонент | Новичок | Продвинутый | Эксперт | Продакшен |
+♪ The newcomer ♪ ♪ The advanced expert ♪ Sold ♪
 |-----------|---------|-------------|---------|-----------|
 | **RAM** | 4-8GB | 8-16GB | 16-32GB | 32GB+ |
-| **CPU** | 2-4 ядра | 4-8 ядер | 8-16 ядер | 16+ ядер |
-| **Диск** | 2-5GB | 5-20GB | 20-50GB | 50GB+ |
-| **GPU** | Не требуется | Опционально | Рекомендуется | Обязательно |
+*CPU** 2-4 nuclei 4-8 nuclei 8-16 nuclei 16+
+♪ Disc** ♪ 2-5GB ♪ 5-20GB ♪ 20-50GB ♪ 50GB+ ♪
+*GPU** * not required *
 
-### Параметры производительности
+### parameters performance
 
-| Параметр | Значение | Описание | Влияние |
+== sync, corrected by elderman ==
 |----------|----------|----------|---------|
-| **time_limit** | 60-3600 | Лимит времени обучения | Качество vs скорость |
-| **num_trials** | 5-100 | Количество попыток tuning | Качество vs время |
-| **num_bag_folds** | 0-20 | Количество фолдов | Стабильность vs время |
-| **num_stack_levels** | 0-3 | Уровни стекинга | Качество vs сложность |
-| **holdout_frac** | 0.1-0.3 | Доля валидации | Надежность vs данные |
+♪ ♪ Time_limit** ♪ 60-3600 ♪ Limited learning time ♪ ♪ quality vs speed ♪
+♪ ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh o o o ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh ooh o
+*num_bag_folds** * 0-20 * Quantity of folds * Stable vs time *
+== sync, corrected by elderman == @elder_man
+♪ ♪ Holdout_frac** ♪ 0.1-0.3 ♪ share of validation ♪ Reliability vs data ♪
 
-### Рекомендации по выбору параметров
+### Recommendations on the choice of parameters
 
-#### Для быстрого прототипирования
-
-```python
-predictor = TabularPredictor(
-    label='target',
-    problem_type='binary',
-    eval_metric='accuracy',
-    presets='medium_quality',
-    time_limit=300,
-    num_trials=10,
-    verbosity=2
-)
-```
-
-#### Для продакшена
+#### for rapid prototype
 
 ```python
 predictor = TabularPredictor(
-    label='target',
-    problem_type='binary',
-    eval_metric='accuracy',
-    presets='optimize_for_deployment',
-    time_limit=3600,
-    num_trials=50,
-    feature_prune=True,
-    save_space=True,
-    keep_only_best=True,
-    verbosity=1
+ label='target',
+ problem_type='binary',
+ eval_metric='accuracy',
+ presets='medium_quality',
+ time_limit=300,
+ num_trials=10,
+ verbosity=2
 )
 ```
 
-#### Для исследований
+#### # For sale
 
 ```python
 predictor = TabularPredictor(
-    label='target',
-    problem_type='binary',
-    eval_metric='roc_auc',
-    presets='best_quality',
-    time_limit=7200,
-    num_trials=100,
-    num_bag_folds=10,
-    num_stack_levels=2,
-    feature_prune=True,
-    refit_full=True,
-    verbosity=3
+ label='target',
+ problem_type='binary',
+ eval_metric='accuracy',
+ presets='optimize_for_deployment',
+ time_limit=3600,
+ num_trials=50,
+ feature_prune=True,
+ save_space=True,
+ keep_only_best=True,
+ verbosity=1
 )
 ```
 
-## Заключение
+##### For research
 
-Этот учебник рассчитан на разные уровни подготовки. Выберите подходящий путь изучения и следуйте практическим рекомендациям. Помните: лучший способ изучить AutoML Gluon - это практика!
+```python
+predictor = TabularPredictor(
+ label='target',
+ problem_type='binary',
+ eval_metric='roc_auc',
+ presets='best_quality',
+ time_limit=7200,
+ num_trials=100,
+ num_bag_folds=10,
+ num_stack_levels=2,
+ feature_prune=True,
+ refit_full=True,
+ verbosity=3
+)
+```
 
-**Ключевые принципы успешного изучения:**
-1. **Начните с простого** - используйте параметры по умолчанию
-2. **Практикуйтесь постоянно** - создавайте модели каждый день
-3. **Экспериментируйте с параметрами** - изучайте их влияние
-4. **Документируйте результаты** - ведите записи экспериментов
-5. **Применяйте на реальных задачах** - решайте практические проблемы
+## Conclusion
+
+This textbook is designed on different levels of training. Choose the appropriate way to study and follow the practical recommendations. Remember: The best way to learn AutoML Gluon is practice.
+
+** Key principles for successful learning:**
+1. ** Start with simple** - Use alternatives on default
+2. ** Practice constantly** - Make models every day
+3. **Experition with parameters** - study their influence
+4. ** Document the results** - Record the experiments
+5. ** Apply on real tasks** - Address practical problems

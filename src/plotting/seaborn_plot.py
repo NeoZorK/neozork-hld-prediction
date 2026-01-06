@@ -152,7 +152,14 @@ def plot_indicator_results_seaborn(
     # Set price chart title and labels
     ax_price.set_title(plot_title)
     ax_price.set_ylabel("Price")
-    ax_price.legend()
+    try:
+        ax_price.legend()
+    except RecursionError:
+        # Fallback for Python 3.14.2 compatibility
+        try:
+            ax_price.legend(loc='upper left', fontsize=9)
+        except Exception:
+            pass  # Skip legend if it still fails
     ax_price.grid(True, alpha=0.3)
 
     # --- Add Indicator Subplots ---
@@ -173,7 +180,14 @@ def plot_indicator_results_seaborn(
             if indicator_col in ['PV', 'Pressure', 'pressure_vector', 'pressure']:
                 ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
             ax_panel.set_ylabel(indicator_name)
-        ax_panel.legend(loc='upper left', fontsize=9)
+        try:
+            ax_panel.legend(loc='upper left', fontsize=9)
+        except RecursionError:
+            # Fallback for Python 3.14.2 compatibility
+            try:
+                ax_panel.legend(loc='upper left')
+            except Exception:
+                pass  # Skip legend if it still fails
         ax_panel.grid(True, alpha=0.3)
         current_row += 1
 

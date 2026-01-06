@@ -54,7 +54,14 @@ def auto_plot_from_parquet(parquet_path):
     else:
         ax_main.plot(df.index, df[df.columns[0]], label=df.columns[0])
         ax_main.set_title('Main Chart')
-    ax_main.legend()
+    try:
+        ax_main.legend()
+    except RecursionError:
+        # Fallback for Python 3.14.2 compatibility
+        try:
+            ax_main.legend(loc='upper left')
+        except Exception:
+            pass  # Skip legend if it still fails
 
     # Volume panel
     ax_vol = fig.add_subplot(gs[1], sharex=ax_main)
@@ -71,7 +78,14 @@ def auto_plot_from_parquet(parquet_path):
         color = color_cycle[i % len(color_cycle)] if color_cycle else None
         ax.plot(df.index, df[col], label=col, color=color, linewidth=2)
         ax.set_ylabel(col)
-        ax.legend(loc='upper right')
+        try:
+            ax.legend(loc='upper right')
+        except RecursionError:
+            # Fallback for Python 3.14.2 compatibility
+            try:
+                ax.legend(loc='upper right', fontsize=9)
+            except Exception:
+                pass  # Skip legend if it still fails
 
     plt.tight_layout()
     plt.show()

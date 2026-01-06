@@ -44,11 +44,39 @@ print_menu() {
 
 # Function to check if Docker is running
 check_docker_running() {
+    # First check if container system service is running
+    if ! container system status >/dev/null 2>&1; then
+        print_warning "Container system service is not running"
+        print_status "Starting container system service..."
+        if container system start >/dev/null 2>&1; then
+            print_success "Container system service started"
+            sleep 2  # Wait for service to fully initialize
+        else
+            print_error "Failed to start container system service"
+            print_status "Please start the container service manually:"
+            print_status "  container system start"
+            return 1
+        fi
+    fi
+    
+    # Then check if we can list containers
     if ! container list --all >/dev/null 2>&1; then
-        print_error "Docker/native container service is not running"
-        print_status "Please start the container service first:"
-        print_status "  container system start"
-        return 1
+        print_error "Cannot access container service"
+        print_status "Trying to restart container system service..."
+        if container system start >/dev/null 2>&1; then
+            print_success "Container system service restarted"
+            sleep 2  # Wait for service to fully initialize
+            # Try again
+            if ! container list --all >/dev/null 2>&1; then
+                print_error "Still cannot access container service after restart"
+                return 1
+            fi
+        else
+            print_error "Failed to restart container system service"
+            print_status "Please start the container service manually:"
+            print_status "  container system start"
+            return 1
+        fi
     fi
     return 0
 }
@@ -91,15 +119,22 @@ start_container_sequence() {
         print_status "Skipping setup and start steps..."
         print_status "Opening interactive shell directly..."
         echo
-        if [ -t 0 ]; then
-            read -p "Press Enter to continue to shell..." 2>/dev/null || true
-        fi
         
-        # Execute shell and exit immediately to prevent restart
+        # Don't use read here - it can interfere with stdin for exec.sh
+        # Just launch shell directly
+        print_status "Launching shell..."
+        
+        # Execute shell - exec.sh now uses temp file approach, so stdin state doesn't matter
         ./scripts/native-container/exec.sh --shell
-        # If we reach here, it means exec.sh exited, so we should also exit
-        print_success "Container session completed"
-        exit 0
+        exit_code=$?
+        
+        # Check exit code
+        if [ $exit_code -eq 0 ]; then
+            print_success "Container session completed"
+        else
+            print_warning "Container session exited with code $exit_code"
+        fi
+        exit $exit_code
     fi
     
     # Check if container exists but is stopped

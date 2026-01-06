@@ -1,64 +1,64 @@
 # Kubernetes Documentation
 
-This section contains comprehensive documentation for deploying and managing the Neozork HLD Prediction project using Kubernetes.
+This section contains comprehensive documentation for deploying and managing the Neozork HLD Prediction project Using Kubernetes.
 
 ## Table of Contents
 
 ### English Documentation
-- [Getting Started with Kubernetes](./english/getting-started-en.md) - Basic setup and deployment
-- [Deployment Guide](./english/deployment-guide-en.md) - Complete deployment instructions
-- [Configuration Reference](./english/configuration-reference-en.md) - All configuration options
-- [Monitoring and Logging](./english/monitoring-logging-en.md) - Observability setup
-- [Troubleshooting](./english/troubleshooting-en.md) - Common issues and solutions
+- [Getting started with Kubernetes](./english/getting-started-en.md) - Basic setup and deployment
+- [deployment Guide](./english/deployment-guide-en.md) - Complete deployment instructions
+- [Configuration Reference](./english/configuration-reference-en.md) - all configuration options
+- [Monitoring and Logging](./english/Monitoring-logging-en.md) - Observability setup
+- [Troubleshooting](./english/Troubleshooting-en.md) - Common Issues and solutions
 - [Advanced Topics](./english/advanced-topics-en.md) - Scaling, security, and optimization
 
-### Russian Documentation (Русская документация)
-- [Начало работы с Kubernetes](./russian/getting-started-ru.md) - Базовая настройка и развертывание
-- [Руководство по развертыванию](./russian/deployment-guide-ru.md) - Полные инструкции по развертыванию
-- [Справочник конфигурации](./russian/configuration-reference-ru.md) - Все параметры конфигурации
-- [Мониторинг и логирование](./russian/monitoring-logging-ru.md) - Настройка наблюдаемости
-- [Устранение неполадок](./russian/troubleshooting-ru.md) - Частые проблемы и решения
-- [Продвинутые темы](./russian/advanced-topics-ru.md) - Масштабирование, безопасность и оптимизация
+### Russian Documentation
+- [Initiating work with Kubernets](./russian/getting-started-ru.md) - Basic conference and deployment
+- [Guide on release](./russian/deployment-guid-ru.md) - Complete instruments on withdrawal
+- [Framework Handbook](./russian/configuring-reference-en.md) - All parameters of configuration
+- [Monitoring and Logsoring](/russian/Monitoring-logging-ru.md) - configuring observation
+- [Troubleshooting](./russian/Troubleshooting-ru.md) - Common Issues and Decisions
+- [Advanced themes](./russian/advanced-topics-ru.md) - Scale, security and optimization
 
-## Quick Start
+## Quick start
 
 ### Prerequisites
 - Kubernetes cluster (v1.20+)
 - kubectl configured
-- Docker images built and pushed to registry
+- Docker images built and Pushed to registry
 
-### Basic Deployment
+### Basic deployment
 ```bash
 # Apply the basic deployment
 kubectl apply -f k8s/neozork-apple-deployment.yaml
 
-# Check deployment status
+# check deployment status
 kubectl get pods -l app=neozork-interactive
 
 # Access the service
 kubectl port-forward service/neozork-interactive-service 8080:80
 ```
 
-## Architecture Overview
+## Architecture OverView
 
 The project supports multiple deployment strategies:
 
-1. **Apple Silicon Deployment** - Optimized for ARM64 architecture
-2. **x86 Deployment** - Standard AMD64 architecture
-3. **Multi-platform Deployment** - Hybrid approach
+1. **Apple Silicon deployment** - Optimized for ARM64 architecture
+2. **x86 deployment** - Standard AMD64 architecture
+3. **Multi-platform deployment** - Hybrid approach
 
 ## Key Features
 
 - **Multi-platform Support**: ARM64 and AMD64 architectures
-- **Persistent Storage**: Data, logs, plots, and results volumes
-- **Health Checks**: Liveness and readiness probes
+- **Persistent Storage**: data, Logs, plots, and results volumes
+- **health checks**: Liveness and readiness probes
 - **Resource Management**: CPU and memory limits/requests
-- **Service Discovery**: LoadBalancer and ClusterIP services
-- **Monitoring Integration**: Prometheus and Grafana support
+- **service Discovery**: LoadBalancer and ClusterIP services
+- **Monitoring integration**: Prometheus and Grafana support
 
 ## Support
 
 For issues and questions:
-- Check the troubleshooting guides
-- Review the configuration reference
+- check the Troubleshooting guides
+- ReView the configuration reference
 - Open an issue in the project repository

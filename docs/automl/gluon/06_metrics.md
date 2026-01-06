@@ -1,573 +1,573 @@
-# Метрики и оценка качества в AutoML Gluon
+# metrics and quality assessment in AutoML Gluon
 
-**Автор:** Shcherbyna Rostyslav  
-**Дата:** 2024  
+**Author:** Shcherbyna Rostyslav
+**Date:** 2024
 
-## Почему метрики критически важны
+## Who metrics is critical
 
-**Почему 80% ML-проектов терпят неудачу из-за неправильного выбора метрик?** Потому что метрики - это единственный способ понять, работает ли ваша модель. Это как медицинские анализы - без них нельзя поставить диагноз.
+Why is 80% of ML projects failing because of the wrong choice of metrics?
 
-### Что происходит без правильных метрик?
-- **Ложная уверенность**: Модель кажется хорошей, но работает плохо
-- **Неправильные решения**: Выбираете плохую модель вместо хорошей
-- **Потеря времени**: Тратите месяцы на неэффективные подходы
-- **Бизнес-провалы**: Модель не решает реальные задачи
+♪ ♪ What's going on without the right metric?
+The model looks good, but Working's not good.
+- ** Wrong decisions**: Choose a bad model instead of a good one.
+- ** Loss of time**: Spend months on inefficient approaches
+- ** Business failures**: No model solves real problems
 
-### Что дает правильный выбор метрик?
-- **Точная оценка**: Вы точно знаете качество модели
-- **Правильный выбор**: Выбираете лучшую модель для задачи
-- **Быстрая итерация**: Быстро находите проблемы и исправляете их
-- **Бизнес-успех**: Модель действительно помогает бизнесу
+♪ ♪ What gives the right choice of metric?
+- ** Exact assessment**: You know exactly the quality of the model.
+- **The right choice**: Choose the best model for the task
+- ** Rapid iteration**: Quickly find problems and fix them.
+- ** Business success**: The model really helps business.
 
-## Введение в метрики
+## Introduction in metrics
 
-<img src="images/optimized/metrics_comparison.png" alt="Сравнение метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 1: Сравнение метрик для классификации и регрессии*
+<img src="images/optimized/metrics_comparison.png" alt="comparison metric" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 1: Comparative metric for classification and regression*
 
-<img src="images/optimized/metrics_detailed.png" alt="Детальная визуализация метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 2: Детальная визуализация метрик - ROC Curve, Precision-Recall, Confusion Matrix, Accuracy vs Threshold, F1 Score vs Threshold*
+<img src="images/optimized/metrics_Detained.png" alt="Detail visualization of metric" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 2: Detailed visualization of metrics - ROC Curve, Precion-Recall, Conference Matrix, Accuracy vs Threshold, F1 Score vs Threshold*
 
-**Почему метрики - это язык машинного обучения?** Потому что они переводят сложные алгоритмы в понятные числа. Это как переводчик между техническими деталями и бизнес-результатами.
+**Why metrics is the language of machine lightning?** Because they translate complex algorithms in understandable numbers. It's like an interpreter between technical details and business results.
 
-Метрики в AutoML Gluon используются для:
-- **Оценки качества моделей**: Понимание того, насколько хорошо работает модель
-- **Сравнения различных алгоритмов**: Выбор лучшего алгоритма для задачи
-- **Выбора лучшей модели**: Автоматический отбор оптимальной модели
-- **Мониторинга производительности**: Отслеживание качества в продакшене
+metrics in AutoML Gloon are used for:
+- ** Model quality assessments**: Understanding how good the model is
+- ** Comparisons of different algorithms**: Choice of a better algorithm for a task
+- ** Selection of the best model**: Automatic selection of the best model
+- **Monitoringa performance**: Quality tracking in sales
 
-## Метрики для классификации
+## metrics for classification
 
-<img src="images/optimized/robustness_analysis.png" alt="Метрики классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: Метрики для задач классификации и их интерпретация*
+<img src="images/optimized/robustness_Analesis.png" alt="metrics classification" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Figure 3: metrics for classification tasks and their interpretation*
 
-**Почему классификация требует особых метрик?** Потому что здесь важны не только правильные ответы, но и типы ошибок. Ложные срабатывания и пропуски имеют разную цену.
+**Why does classification require special metrics?** Because not only the correct answers but also the types of errors are important here. False responses and omissions have different prices.
 
-### 🎯 Ключевые концепции метрик классификации
+###\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\######\\\\\\\\\\\\\\ \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\##########\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-**Почему важно понимать типы ошибок?** Потому что разные ошибки имеют разную стоимость:
+Why is it important to understand the types of errors?
 
-- **True Positive (TP)**: Правильно предсказанные положительные случаи
-- **True Negative (TN)**: Правильно предсказанные отрицательные случаи  
-- **False Positive (FP)**: Ложные срабатывания (ошибки I рода)
-- **False Negative (FN)**: Пропуски (ошибки II рода)
-- **Precision**: Точность - доля правильных среди предсказанных положительных
-- **Recall**: Полнота - доля найденных среди всех положительных
-- **F1-Score**: Гармоническое среднее precision и recall
+- **True Positive (TP)**: Correctly predicted positive cases
+- **True Negative (TN)**: Correctly predicted negative cases
+- **False Positive (FP)**: False Reactions (I-type errors)
+- **False Negative (FN)**: Mistakes (Speed II)
+- **Precision**: Accuracy is the proportion of the positives predicted
+- **Recall**: Fullness - share of all positives
+- **F1-Score**: Harmonic average precision and recall
 
-### Базовые метрики
+### Basic metrics
 
-#### Accuracy (Точность)
-**Почему Accuracy - самая популярная метрика?** Потому что она интуитивно понятна - это просто процент правильных ответов.
+#### Accuracy
+Because it's intuitively understandable, it's just a percentage of the right answers.
 
-**Когда Accuracy вводит в заблуждение?**
-- При несбалансированных данных (99% одного класса)
-- При разной важности ошибок (медицинская диагностика)
-- При небольшом количестве данных
+When does Accuracy insane?
+- Unbalanced (99 per cent of the same class)
+- Different importance of errors (medical diagnosis)
+- With little data
 
 ```python
-# Процент правильных предсказаний
+# Percentage of correct preferences
 from sklearn.metrics import accuracy_score
 
 accuracy = accuracy_score(y_true, y_pred)
 print(f"Accuracy: {accuracy:.4f}")
 ```
 
-**🔧 Детальное описание параметров accuracy_score:**
+** Detailed describe parameters accuracy_score:**
 
-**Функция accuracy_score:**
-- **Назначение**: Вычисление точности классификации (процент правильных предсказаний)
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив истинных меток классов
-    - **Примеры**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
-  - **`y_pred`**: Предсказанные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных меток классов
-    - **Примеры**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
-  - **`normalize`**: Нормализация результата (по умолчанию True)
-    - **Тип**: bool
-    - **Описание**: True - возвращает долю правильных предсказаний, False - количество
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении точности
-- **Возвращаемое значение**: float - точность классификации (0.0 - 1.0)
-- **Использование**:
-  - **Быстрая оценка**: Первоначальная оценка качества модели
-  - **Сравнение моделей**: Сравнение разных алгоритмов
-  - **Мониторинг**: Отслеживание качества во время обучения
+**function accuracy_score:**
+- ** Designation**: Calculation of the accuracy of the classification (percentage of correct preferences)
+- **parameters**:
+- **'y_tree'**: True class labels
+-** Type**: Array-lake
+- **describe**: Massive of true class tags
+ - **examples**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
+- **'y_pred'**: Presumed class labels
+-** Type**: Array-lake
+- **describe**: Mass of predicted class tags
+ - **examples**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
+- **'normalyze'**: Normalization of result (on default True)
+-**Teep**: bool
+- **describe**:True - returns the share of correct preferences, False - quantity
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example in calculating accuracy
+**Return value**: float - accuracy of classification (0.0 - 1.0)
+- ** Use**:
+** Rapid evaluation**: Initial model quality assessment
+- **comparison models**: comparison different algorithms
+- **Monitoring**: Quality tracking during training
 
-**Почему Accuracy может быть обманчивой?**
-- Модель может просто предсказывать мажоритарный класс
-- Не показывает, какие ошибки делает модель
-- Не учитывает важность разных типов ошибок
+# Why can Accuracy be deceiving? #
+- The model can just predict the majority class.
+- not shows what errors make the model
+-not takes into account the importance of different types of errors
 
-#### 🔧 Детальное описание параметров метрик классификации
+#### ♪ Detailed descriebe parameters of classification metric
 
-**Метрика Accuracy:**
-- **Что означает**: Процент правильных предсказаний от общего количества
-- **Формула**: `(TP + TN) / (TP + TN + FP + FN)`
-- **Диапазон значений**: `[0, 1]` (0% - 100%)
-- **Когда использовать**:
-  - **Сбалансированные данные**: Когда классы примерно равны по количеству
-  - **Простые задачи**: Когда все ошибки одинаково важны
-  - **Быстрая оценка**: Для первоначальной оценки качества
-- **Когда НЕ использовать**:
-  - **Несбалансированные данные**: Когда один класс значительно больше
-  - **Критичные ошибки**: Когда разные типы ошибок имеют разную важность
-  - **Медицинская диагностика**: Когда ложные отрицания опаснее ложных положиний
-- **Практические примеры**:
-  - **Хорошая точность**: `> 0.9` (90%+)
-  - **Приемлемая точность**: `0.8-0.9` (80-90%)
-  - **Плохая точность**: `< 0.8` (< 80%)
-- **Ограничения**:
-  - **Не показывает типы ошибок**: Не различает ложные положиния и отрицания
-  - **Мажоритарный класс**: Может быть высокой при предсказании только одного класса
-  - **Не учитывает важность**: Все ошибки считаются одинаково важными
+**Methric Accuracy:**
+- ** Which means**: Percentage of correct productions from total
+- **Formoule**: `(TP + TN) / (TP + TN + FP + FN) `
+- ** Value range**: `[0,1]' (0% - 100%)
+- ** When to use**:
+** Balanced data**: When classes are approximately equal on number
+- ** Simple tasks**: When all mistakes are equally important
+- ** Rapid evaluation**: for initial quality assessment
+- ** When not used**:
+- ** Unbalanced data**: When one class is much larger
+- ** Critical errors**: When different types of errors are of different importance
+- ** Medical diagnosis**: When false denials are more dangerous than false diarrhea
+- ** Practical examples**:
+- ** Good accuracy**: `> 0.9' (90 per cent+)
+- ** Acceptable accuracy**: `0.8-0.9' (80-90 per cent)
+- ** Bad accuracy**: `< 0.8' (< 80 per cent)
+- ** Limitations**:
+**not shows the types of errors:** not distinguish between false positions and denials
+- **Material class**: May be high when predicting only one class
+- **not takes into account the importance**: All errors are considered equally important
 
-#### Precision (Точность)
-**Почему Precision критически важен?** Потому что он показывает, насколько можно доверять положительным предсказаниям модели.
+#### Precion (Total)
+Because it shows how much you can trust the positive predictions of the model.
 
-**Когда Precision особенно важен?**
-- Медицинская диагностика (ложные диагнозы опасны)
-- Обнаружение мошенничества (ложные обвинения дороги)
-- Спам-фильтры (важные письма не должны попадать в спам)
+When is Precion especially important?
+- Medical diagnosis (fake diagnosis is dangerous)
+- Detection of fraud (falsification of roads)
+- Spam filters (important letters not should be in spam)
 
 ```python
-# Доля правильно предсказанных положительных случаев
+# Proportion of positive cases correctly predicted
 from sklearn.metrics import precision_score
 
 precision = precision_score(y_true, y_pred, average='binary')
 print(f"Precision: {precision:.4f}")
 
-# Для многоклассовой классификации
-precision_macro = precision_score(y_true, y_pred, average='macro')  # Среднее по классам
-precision_micro = precision_score(y_true, y_pred, average='micro')  # Глобальное среднее
+# for multi-class classification
+== sync, corrected by elderman == @elder_man
+===Precution_micro===Précion_score(y_tree, y_pred, average='micro') #Global average
 ```
 
-**🔧 Детальное описание параметров precision_score:**
+**/ Detailed descrie parameters precision_score:**
 
-**Функция precision_score:**
-- **Назначение**: Вычисление точности (precision) для классификации
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив истинных меток классов
-    - **Примеры**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
-  - **`y_pred`**: Предсказанные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных меток классов
-    - **Примеры**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
-  - **`average`**: Тип усреднения (по умолчанию 'binary')
-    - **Тип**: str или None
-    - **Описание**: Способ усреднения для многоклассовой классификации
-    - **Варианты**: 'binary', 'micro', 'macro', 'weighted', 'samples', None
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении precision
-  - **`zero_division`**: Значение при делении на ноль (по умолчанию 'warn')
-    - **Тип**: str или float
-    - **Описание**: Что возвращать когда precision не определен
-    - **Варианты**: 'warn', 0, 1
-- **Возвращаемое значение**: float или array - precision для каждого класса
-- **Типы усреднения**:
-  - **`'binary'`**: Для бинарной классификации (по умолчанию)
-  - **`'micro'`**: Глобальное среднее (учитывает количество примеров)
-  - **`'macro'`**: Среднее арифметическое по классам (равные веса)
-  - **`'weighted'`**: Среднее взвешенное по количеству примеров
-  - **`'samples'`**: Precision для каждого примера отдельно
-  - **`None`**: Precision для каждого класса отдельно
-- **Использование**:
-  - **Критичные ложные положиния**: Когда ложные срабатывания дороги
-  - **Медицинская диагностика**: Когда ложные диагнозы опасны
-  - **Обнаружение мошенничества**: Когда ложные обвинения дороги
+**function precision_score:**
+- ** Designation**: Calculation of accuracy (precision) for classification
+- **parameters**:
+- **'y_tree'**: True class labels
+-** Type**: Array-lake
+- **describe**: Massive of true class tags
+ - **examples**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
+- **'y_pred'**: Presumed class labels
+-** Type**: Array-lake
+- **describe**: Mass of predicted class tags
+ - **examples**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
+- ** `overrange'**: Averaging type (on default 'binary')
+- **Typ**: str or None
+- **describe**: Method of averaging for multiclass classification
+- **Options**: 'binary', 'micro', 'macro', 'weighted', 'samples', None
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example in the calculation of the definition
+- ** `Zero_diviction'**: Value when dividing on zero (on default 'warn')
+- ** Type**: str or float
+- **describe**: What to return when the definition not is specified
+- **Options**: 'warn', 0, 1
+- **Return value**: float or array - definition for each class
+- ** Averages**:
+- **'binary'**: for binary classification (on default)
+- **'micro'**: Global average (takes into account the number of examples)
+- **'macro'**: Average arithmetical on classes (equal weights)
+- **'weated'**: Average weighted on number of examples
+- **'samples'**: Precion for each example separately
+** `Nene'**: Precion for each class separately
+- ** Use**:
+- ** Critical false position**: When the road has been broken
+- **Medical diagnosis**: When false diagnosis is dangerous
+- ** Detection of fraud**: When false accusations are made on the road
 
-**Почему нужны разные типы усреднения?**
-- **macro**: Каждый класс имеет равный вес (хорошо для несбалансированных данных)
-- **micro**: Учитывает количество примеров в каждом классе (хорошо для сбалансированных данных)
+# Why do you need different types of averaging? #
+- **macro**: Each class has equal weight (good for unbalanced data)
+- **micro**: Considers the number of examples in each class (good for balanced data)
 
-**Метрика Precision:**
-- **Что означает**: Доля правильно предсказанных положительных случаев от всех предсказанных положительных
-- **Формула**: `TP / (TP + FP)`
-- **Диапазон значений**: `[0, 1]` (0% - 100%)
-- **Когда использовать**:
-  - **Критичные ложные положиния**: Когда ложные срабатывания дороги
-  - **Медицинская диагностика**: Когда ложные диагнозы опасны
-  - **Обнаружение мошенничества**: Когда ложные обвинения дороги
-  - **Спам-фильтры**: Когда важные письма не должны попадать в спам
-- **Когда НЕ использовать**:
-  - **Критичные ложные отрицания**: Когда пропуски опаснее ложных срабатываний
-  - **Несбалансированные данные**: Когда положительный класс очень редкий
-- **Практические примеры**:
-  - **Отличная точность**: `> 0.95` (95%+)
-  - **Хорошая точность**: `0.8-0.95` (80-95%)
-  - **Приемлемая точность**: `0.6-0.8` (60-80%)
-  - **Плохая точность**: `< 0.6` (< 60%)
-- **Параметр `average`**:
-  - **`'binary'`**: Для бинарной классификации (по умолчанию)
-  - **`'macro'`**: Среднее арифметическое по классам (равные веса)
-  - **`'micro'`**: Глобальное среднее (веса по количеству примеров)
-  - **`'weighted'`**: Среднее взвешенное по количеству примеров
-- **Выбор типа усреднения**:
-  - **Несбалансированные данные**: Используйте `'macro'`
-  - **Сбалансированные данные**: Используйте `'micro'`
-  - **Важны все классы**: Используйте `'macro'`
-  - **Важен общий результат**: Используйте `'micro'`
+**Methic Precion:**
+- Which means**: Proportion of correctly predicted positive cases from all predicted positive
+- **Formoule**: `TP / (TP + FP) `
+- ** Value range**: `[0,1]' (0% - 100%)
+- ** When to use**:
+- ** Critical false position**: When the road has been broken
+- **Medical diagnosis**: When false diagnosis is dangerous
+- ** Detection of fraud**: When false accusations are made on the road
+- **Spam filter**: When important letters not should be in spam
+- ** When not used**:
+- ** Critical false denials**: When omissions are more dangerous than false operations
+- ** Unbalanced data**: When a positive class is very rare
+- ** Practical examples**:
+- ** Excellent accuracy**: `> 0.95' (95 per cent+)
+- ** Good accuracy**: `0.8-0.95' (80-95 per cent)
+- ** Acceptable accuracy**: `0.6-0.8' (60-80 per cent)
+- ** Bad accuracy**: `< 0.6' (< 60%)
+- **parameter `average`**:
+- **'binary'**: for binary classification (on default)
+- **'macro'**: Average arithmetical on classes (equal weights)
+- **'micro'**: Global average (weight on number of examples)
+- **'weated'**: Average weighted on number of examples
+- ** Averaging type selection**:
+- ** Unbalanced data**: Use `'macro''
+- ** Balanced data**: Use `'micro''
+- **All classes are important**: Use `'macro''
+- **Amount of total value**: Use `'micro''
 
-#### Recall (Полнота)
+### Recall
 ```python
-# Доля положительных случаев, которые были правильно предсказаны
+# Proportion of positive cases that were correctly predicted
 from sklearn.metrics import recall_score
 
 recall = recall_score(y_true, y_pred, average='binary')
 print(f"Recall: {recall:.4f}")
 
-# Для многоклассовой классификации
+# for multi-class classification
 recall_macro = recall_score(y_true, y_pred, average='macro')
 recall_micro = recall_score(y_true, y_pred, average='micro')
 ```
 
-**🔧 Детальное описание параметров recall_score:**
+** Detailed describe parameters recall_score:**
 
-**Функция recall_score:**
-- **Назначение**: Вычисление полноты (recall) для классификации
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив истинных меток классов
-    - **Примеры**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
-  - **`y_pred`**: Предсказанные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных меток классов
-    - **Примеры**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
-  - **`average`**: Тип усреднения (по умолчанию 'binary')
-    - **Тип**: str или None
-    - **Описание**: Способ усреднения для многоклассовой классификации
-    - **Варианты**: 'binary', 'micro', 'macro', 'weighted', 'samples', None
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении recall
-  - **`zero_division`**: Значение при делении на ноль (по умолчанию 'warn')
-    - **Тип**: str или float
-    - **Описание**: Что возвращать когда recall не определен
-    - **Варианты**: 'warn', 0, 1
-- **Возвращаемое значение**: float или array - recall для каждого класса
-- **Типы усреднения**:
-  - **`'binary'`**: Для бинарной классификации (по умолчанию)
-  - **`'micro'`**: Глобальное среднее (учитывает количество примеров)
-  - **`'macro'`**: Среднее арифметическое по классам (равные веса)
-  - **`'weighted'`**: Среднее взвешенное по количеству примеров
-  - **`'samples'`**: Recall для каждого примера отдельно
-  - **`None`**: Recall для каждого класса отдельно
-- **Использование**:
-  - **Критичные ложные отрицания**: Когда пропуски опаснее ложных срабатываний
-  - **Медицинская диагностика**: Когда пропуск болезни опаснее ложного диагноза
-  - **Обнаружение мошенничества**: Когда пропуск мошенничества дороже ложных обвинений
+**function recall_score:**
+- ** Designation**: Calculation of completeness for classification
+- **parameters**:
+- **'y_tree'**: True class labels
+-** Type**: Array-lake
+- **describe**: Massive of true class tags
+ - **examples**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
+- **'y_pred'**: Presumed class labels
+-** Type**: Array-lake
+- **describe**: Mass of predicted class tags
+ - **examples**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
+- ** `overrange'**: Averaging type (on default 'binary')
+- **Typ**: str or None
+- **describe**: Method of averaging for multiclass classification
+- **Options**: 'binary', 'micro', 'macro', 'weighted', 'samples', None
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating recall
+- ** `Zero_diviction'**: Value when dividing on zero (on default 'warn')
+- ** Type**: str or float
+- **describe**: What to return when recall not specified
+- **Options**: 'warn', 0, 1
+- **Return value**: float or array - recall for each class
+- ** Averages**:
+- **'binary'**: for binary classification (on default)
+- **'micro'**: Global average (takes into account the number of examples)
+- **'macro'**: Average arithmetical on classes (equal weights)
+- **'weated'**: Average weighted on number of examples
+- **'samples'**: Recall for each example separately
+- ** `Nene'**: Recall for each class separately
+- ** Use**:
+- ** Critical false denials**: When omissions are more dangerous than false operations
+- **Medical diagnosis**: When the absence of a disease is more dangerous than a false diagnosis
+- ** Fraud detection**: When fraud is more expensive than false accusations
 
-**Метрика Recall:**
-- **Что означает**: Доля положительных случаев, которые были правильно предсказаны
-- **Формула**: `TP / (TP + FN)`
-- **Диапазон значений**: `[0, 1]` (0% - 100%)
-- **Когда использовать**:
-  - **Критичные ложные отрицания**: Когда пропуски опаснее ложных срабатываний
-  - **Медицинская диагностика**: Когда пропуск болезни опаснее ложного диагноза
-  - **Обнаружение мошенничества**: Когда пропуск мошенничества дороже ложных обвинений
-  - **Поиск информации**: Когда важно найти все релевантные документы
-- **Когда НЕ использовать**:
-  - **Критичные ложные положиния**: Когда ложные срабатывания дороги
-  - **Несбалансированные данные**: Когда положительный класс очень редкий
-- **Практические примеры**:
-  - **Отличная полнота**: `> 0.95` (95%+)
-  - **Хорошая полнота**: `0.8-0.95` (80-95%)
-  - **Приемлемая полнота**: `0.6-0.8` (60-80%)
-  - **Плохая полнота**: `< 0.6` (< 60%)
-- **Параметр `average`**:
-  - **`'binary'`**: Для бинарной классификации (по умолчанию)
-  - **`'macro'`**: Среднее арифметическое по классам (равные веса)
-  - **`'micro'`**: Глобальное среднее (веса по количеству примеров)
-  - **`'weighted'`**: Среднее взвешенное по количеству примеров
-- **Выбор типа усреднения**:
-  - **Несбалансированные данные**: Используйте `'macro'`
-  - **Сбалансированные данные**: Используйте `'micro'`
-  - **Важны все классы**: Используйте `'macro'`
-  - **Важен общий результат**: Используйте `'micro'`
+**Metric Recall:**
+- ** Meaning**: Percentage of positive cases that were correctly predicted
+- **Formoule**: `TP / (TP + FN) `
+- ** Value range**: `[0,1]' (0% - 100%)
+- ** When to use**:
+- ** Critical false denials**: When omissions are more dangerous than false operations
+- **Medical diagnosis**: When the absence of a disease is more dangerous than a false diagnosis
+- ** Fraud detection**: When fraud is more expensive than false accusations
+- ** Search for information**: When it's important to find all relevant documents
+- ** When not used**:
+- ** Critical false position**: When the road has been broken
+- ** Unbalanced data**: When a positive class is very rare
+- ** Practical examples**:
+- ** Excellent completeness**: `> 0.95' (95 per cent+)
+- **Good completeness**: `0.8-0.95' (80-95 per cent)
+** Acceptable completeness**: `0.6-0.8' (60-80 per cent)
+- ** Bad completeness**: `< 0.6' (< 60%)
+- **parameter `average`**:
+- **'binary'**: for binary classification (on default)
+- **'macro'**: Average arithmetical on classes (equal weights)
+- **'micro'**: Global average (weight on number of examples)
+- **'weated'**: Average weighted on number of examples
+- ** Averaging type selection**:
+- ** Unbalanced data**: Use `'macro''
+- ** Balanced data**: Use `'micro''
+- **All classes are important**: Use `'macro''
+- **Amount of total value**: Use `'micro''
 
 #### F1-Score
 ```python
-# Гармоническое среднее precision и recall
+# Harmonic average precinct and recall
 from sklearn.metrics import f1_score
 
 f1 = f1_score(y_true, y_pred, average='binary')
 print(f"F1-Score: {f1:.4f}")
 
-# Для многоклассовой классификации
+# for multi-class classification
 f1_macro = f1_score(y_true, y_pred, average='macro')
 f1_micro = f1_score(y_true, y_pred, average='micro')
 ```
 
-**🔧 Детальное описание параметров f1_score:**
+**/ Detailed descrie parameters f1_score:**
 
-**Функция f1_score:**
-- **Назначение**: Вычисление F1-меры (гармоническое среднее precision и recall)
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив истинных меток классов
-    - **Примеры**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
-  - **`y_pred`**: Предсказанные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных меток классов
-    - **Примеры**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
-  - **`average`**: Тип усреднения (по умолчанию 'binary')
-    - **Тип**: str или None
-    - **Описание**: Способ усреднения для многоклассовой классификации
-    - **Варианты**: 'binary', 'micro', 'macro', 'weighted', 'samples', None
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении F1-score
-  - **`zero_division`**: Значение при делении на ноль (по умолчанию 'warn')
-    - **Тип**: str или float
-    - **Описание**: Что возвращать когда F1-score не определен
-    - **Варианты**: 'warn', 0, 1
-- **Возвращаемое значение**: float или array - F1-score для каждого класса
-- **Типы усреднения**:
-  - **`'binary'`**: Для бинарной классификации (по умолчанию)
-  - **`'micro'`**: Глобальное среднее (учитывает количество примеров)
-  - **`'macro'`**: Среднее арифметическое по классам (равные веса)
-  - **`'weighted'`**: Среднее взвешенное по количеству примеров
-  - **`'samples'`**: F1-score для каждого примера отдельно
-  - **`None`**: F1-score для каждого класса отдельно
-- **Использование**:
-  - **Баланс precision и recall**: Когда важны и точность, и полнота
-  - **Несбалансированные данные**: F1-score хорошо работает с несбалансированными данными
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
+**function f1_score:**
+- ** Designation**: Calculation of F1-measures (harmonic average precision and recall)
+- **parameters**:
+- **'y_tree'**: True class labels
+-** Type**: Array-lake
+- **describe**: Massive of true class tags
+ - **examples**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
+- **'y_pred'**: Presumed class labels
+-** Type**: Array-lake
+- **describe**: Mass of predicted class tags
+ - **examples**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
+- ** `overrange'**: Averaging type (on default 'binary')
+- **Typ**: str or None
+- **describe**: Method of averaging for multiclass classification
+- **Options**: 'binary', 'micro', 'macro', 'weighted', 'samples', None
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating F1-score
+- ** `Zero_diviction'**: Value when dividing on zero (on default 'warn')
+- ** Type**: str or float
+- **describe**: What to return when F1-score not specified
+- **Options**: 'warn', 0, 1
+- **Return value**: float or array - F1-score for each class
+- ** Averages**:
+- **'binary'**: for binary classification (on default)
+- **'micro'**: Global average (takes into account the number of examples)
+- **'macro'**: Average arithmetical on classes (equal weights)
+- **'weated'**: Average weighted on number of examples
+- **'samples'**: F1-score for each example separately
+** `Nene'**: F1-score for each class separately
+- ** Use**:
+- ** Budget preparation and review**: When both accuracy and completeness are important
+- ** Unbalanced data**: F1-score good Workinget with unbalanced data
+- **comparison models**: Good metrics for comparing different algorithms
 
-### Продвинутые метрики
+### Moved metrics
 
 #### ROC AUC
 ```python
-# Площадь под ROC кривой
+# Area under ROC curve
 from sklearn.metrics import roc_auc_score
 
-# Для бинарной классификации
+# for binary classification
 roc_auc = roc_auc_score(y_true, y_prob)
 print(f"ROC AUC: {roc_auc:.4f}")
 
-# Для многоклассовой классификации
+# for multi-class classification
 roc_auc_ovo = roc_auc_score(y_true, y_prob, multi_class='ovo')
 roc_auc_ovr = roc_auc_score(y_true, y_prob, multi_class='ovr')
 ```
 
-**🔧 Детальное описание параметров roc_auc_score:**
+** Detailed describe parameters roc_auc_score:**
 
-**Функция roc_auc_score:**
-- **Назначение**: Вычисление площади под ROC кривой (AUC)
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив истинных меток классов (0 и 1 для бинарной классификации)
-    - **Примеры**: [0, 1, 1, 0, 1], [0, 1, 2, 0, 1] (многоклассовая)
-  - **`y_score`**: Предсказанные вероятности или оценки
-    - **Тип**: array-like
-    - **Описание**: Массив вероятностей положительного класса или оценок
-    - **Примеры**: [0.1, 0.9, 0.8, 0.2, 0.7]
-  - **`average`**: Тип усреднения для многоклассовой классификации (по умолчанию 'macro')
-    - **Тип**: str или None
-    - **Описание**: Способ усреднения AUC для многоклассовой классификации
-    - **Варианты**: 'macro', 'micro', 'weighted', 'samples', None
-  - **`multi_class`**: Стратегия для многоклассовой классификации (по умолчанию 'raise')
-    - **Тип**: str
-    - **Описание**: Стратегия вычисления AUC для многоклассовой классификации
-    - **Варианты**: 'raise', 'ovr', 'ovo'
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении AUC
-  - **`max_fpr`**: Максимальный FPR для частичного AUC (по умолчанию None)
-    - **Тип**: float или None
-    - **Описание**: Максимальный False Positive Rate для вычисления частичного AUC
-- **Возвращаемое значение**: float - AUC (0.0 - 1.0)
-- **Стратегии многоклассовой классификации**:
-  - **`'ovr'` (One-vs-Rest)**: Каждый класс против остальных
-    - **Преимущества**: Быстрее вычисляется
-    - **Недостатки**: Может быть неточным для несбалансированных данных
-  - **`'ovo'` (One-vs-One)**: Каждый класс против каждого другого
-    - **Преимущества**: Более точная оценка для несбалансированных данных
-    - **Недостатки**: Вычислительно дороже
-- **Использование**:
-  - **Бинарная классификация**: Оценка качества разделения классов
-  - **Несбалансированные данные**: ROC AUC устойчива к дисбалансу классов
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
+**function roc_auc_score:**
+- ** Designation**: Calculation of the area under the ROC curve (AUC)
+- **parameters**:
+- **'y_tree'**: True class labels
+-** Type**: Array-lake
+- **describe**: Massive of true class tags (0 and 1 for binary classification)
+- **examples**: [0, 1, 1, 0, 1], [0, 1, 2, 0, 1] (multi-class)
+**'y_score'**: Projected probabilities or estimates
+-** Type**: Array-lake
+- **describe**: Massive probabilities of the positive class or estimates
+ - **examples**: [0.1, 0.9, 0.8, 0.2, 0.7]
+- **'overage'**: Type of averaging for multiclass classification (on default 'macro')
+- **Typ**: str or None
+- **describe**: Mode of averaging AUC for multiclass classification
+- **Options**: 'Macro', 'micro', 'weighted', 'samples', None
+- ** `multi_class'**: Strategy for multiclass classification (on default 'raise')
+- **Typ**: str
+- **describe**: AUC computation strategy for multiclass classification
+- **Options**: 'raise', 'ovr', 'ovo'
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating AUC
+- **'max_fpr'**: Maximum FPR for partial AUC (on default Non)
+- ** Type**: float or None
+- **describe**: Maximum False Positative Rate for the calculation of partial AUC
+**Return value**: float - AUC (0.0 - 1.0)
+- ** Multi-class classification strategies**:
+- **'ovr' (One-vs-Rest)**: Each class versus the others
+- ** Benefits**: Compute faster
+- ** Disadvantages**: Could be inaccurate for unbalanced data
+- ** `'oovo'' (One-vs-One)**: Each class against each other
+- ** Benefits**: More accurate assessment for unbalanced data
+- ** Disadvantages**: Calculated more expensive
+- ** Use**:
+**binary classification**: Quality assessment of grade separation
+- ** Unbalanced data**: ROC AUC is resistant to class imbalance
+- **comparison models**: Good metrics for comparing different algorithms
 
-**🔧 Детальное описание параметров ROC AUC:**
+**/ Detailed describe of ROC AUC parameters:**
 
-**Метрика ROC AUC:**
-- **Что означает**: Площадь под кривой ROC (Receiver Operating Characteristic)
-- **Формула**: `∫ TPR d(FPR)` где TPR = TP/(TP+FN), FPR = FP/(FP+TN)
-- **Диапазон значений**: `[0, 1]` (0% - 100%)
-- **Когда использовать**:
-  - **Бинарная классификация**: Когда нужно оценить качество разделения классов
-  - **Несбалансированные данные**: ROC AUC устойчива к дисбалансу классов
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-  - **Выбор порога**: Помогает найти оптимальный порог классификации
-- **Когда НЕ использовать**:
-  - **Многоклассовая классификация**: Сложно интерпретировать
-  - **Критичные ложные положиния**: Не учитывает важность разных ошибок
-- **Практические примеры**:
-  - **Отличное качество**: `> 0.9` (90%+)
-  - **Хорошее качество**: `0.8-0.9` (80-90%)
-  - **Приемлемое качество**: `0.7-0.8` (70-80%)
-  - **Плохое качество**: `< 0.7` (< 70%)
-- **Параметр `multi_class`**:
-  - **`'ovo'` (One-vs-One)**: Каждый класс сравнивается с каждым другим
-    - **Преимущества**: Более точная оценка для несбалансированных данных
-    - **Недостатки**: Вычислительно дороже для большого количества классов
-    - **Когда использовать**: Когда классы несбалансированы
-  - **`'ovr'` (One-vs-Rest)**: Каждый класс сравнивается с остальными
-    - **Преимущества**: Быстрее вычисляется
-    - **Недостатки**: Может быть неточным для несбалансированных данных
-    - **Когда использовать**: Когда классы сбалансированы
-- **Параметр `average`** (для многоклассовой классификации):
-  - **`'macro'`**: Среднее арифметическое по классам (равные веса)
-  - **`'micro'`**: Глобальное среднее (веса по количеству примеров)
-  - **`'weighted'`**: Среднее взвешенное по количеству примеров
-- **Интерпретация значений**:
-  - **0.5**: Случайное предсказание (модель не лучше случайного)
-  - **0.7-0.8**: Приемлемое качество
-  - **0.8-0.9**: Хорошее качество
-  - **0.9+**: Отличное качество
-  - **1.0**: Идеальное разделение классов
+**ROC AUC Meter:**
+- Which means**: Area under the ROC curve
+- **Formoule**: ``TPR d(FPR)'' where TPR = TP/(TP+FN), FPR = FP/(FP+TN)
+- ** Value range**: `[0,1]' (0% - 100%)
+- ** When to use**:
+**binary classification**: When to assess the quality of grade segregation
+- ** Unbalanced data**: ROC AUC is resistant to class imbalance
+- **comparison models**: Good metrics for comparing different algorithms
+- **Search selection**: Helps find the optimum classification threshold
+- ** When not used**:
+- ** Multiclass Classification**: It is difficult to interpret
+- ** Critical false statements**:not takes into account the importance of different errors
+- ** Practical examples**:
+- ** Excellent quality**: `> 0.9' (90 per cent+)
+- ** Good quality**: `0.8-0.9' (80-90 per cent)
+** Acceptable quality**: `0.7-0.8' (70-80 per cent)
+- ** Bad quality**: `< 0.7' (< 70 per cent)
+- **parameter `multi_class`**:
+- ** `'oovo'' (One-vs-One)**: Each class is compared with each other
+- ** Benefits**: More accurate assessment for unbalanced data
+- ** Disadvantages**: Calculated more expensive for a large number of classes
+- ** When to use**: When classes are unbalanced
+- **'ovr' (One-vs-Rest)**: Each class is compared with the others
+- ** Benefits**: Compute faster
+- ** Disadvantages**: Could be inaccurate for unbalanced data
+- ** When to use**: When classes are balanced
+- **parameter `overage'** (for multiclass classification):
+- **'macro'**: Average arithmetical on classes (equal weights)
+- **'micro'**: Global average (weight on number of examples)
+- **'weated'**: Average weighted on number of examples
+- ** Interpretation**:
+- **0.5**: Random Predation (not better than random)
+**0.7-0.8**: Acceptable quality
+- **0.8-0.9**: Good quality
+- **0.9+**: Excellent quality
+**1.0**: Perfect division of classes
 
 #### PR AUC
 ```python
-# Площадь под Precision-Recall кривой
+# Area under Precion-Recall curve
 from sklearn.metrics import average_precision_score
 
 pr_auc = average_precision_score(y_true, y_prob)
 print(f"PR AUC: {pr_auc:.4f}")
 ```
 
-**🔧 Детальное описание параметров PR AUC:**
+** Detailed describe of PR AUC parameters:**
 
-**Метрика PR AUC:**
-- **Что означает**: Площадь под кривой Precision-Recall
-- **Формула**: `∫ Precision d(Recall)` где Precision = TP/(TP+FP), Recall = TP/(TP+FN)
-- **Диапазон значений**: `[0, 1]` (0% - 100%)
-- **Когда использовать**:
-  - **Несбалансированные данные**: PR AUC лучше ROC AUC для редких классов
-  - **Критичные ложные положиния**: Когда ложные срабатывания дороги
-  - **Медицинская диагностика**: Когда важна точность положительных предсказаний
-  - **Обнаружение мошенничества**: Когда ложные обвинения дороги
-- **Когда НЕ использовать**:
-  - **Сбалансированные данные**: ROC AUC может быть более информативной
-  - **Критичные ложные отрицания**: Когда пропуски опаснее ложных срабатываний
-- **Практические примеры**:
-  - **Отличное качество**: `> 0.8` (80%+)
-  - **Хорошее качество**: `0.6-0.8` (60-80%)
-  - **Приемлемое качество**: `0.4-0.6` (40-60%)
-  - **Плохое качество**: `< 0.4` (< 40%)
-- **Преимущества перед ROC AUC**:
-  - **Несбалансированные данные**: Более информативна для редких классов
-  - **Практическая интерпретация**: Прямо связана с precision и recall
-  - **Чувствительность к дисбалансу**: Лучше отражает качество на редких классах
-- **Недостатки**:
-  - **Сложность интерпретации**: Менее интуитивна чем ROC AUC
-  - **Зависимость от порога**: Может быть нестабильной при изменении порога
-- **Интерпретация значений**:
-  - **0.0**: Модель не лучше случайного
-  - **0.3-0.5**: Приемлемое качество
-  - **0.5-0.7**: Хорошее качество
-  - **0.7+**: Отличное качество
-  - **1.0**: Идеальное качество
+**PR AUC Meter:**
+- Which means**: Area under Precion-Recall curve
+- **Formoula**: `\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\} where} where} where} where} where} where} where/} where/} where/} where} where/} where/} where/} where/} where/} where/} where/} where/}==============================================================================================================********************************************************************************
+- ** Value range**: `[0,1]' (0% - 100%)
+- ** When to use**:
+- ** Unbalanced data**: PR AUC is better than ROC AUC for rare classes
+- ** Critical false position**: When the road has been broken
+- **Medical diagnostics**: When accuracy of positive preferences is important
+- ** Detection of fraud**: When false accusations are made on the road
+- ** When not used**:
+- ** Balanced data**: ROC AUC may be more informative
+- ** Critical false denials**: When omissions are more dangerous than false operations
+- ** Practical examples**:
+- ** Excellent quality**: `> 0.8' (80 per cent+)
+- ** Good quality**: `0.6-0.8' (60-80 per cent)
+** Acceptable quality**: `0.4-0.6' (40-60 per cent)
+- ** Bad quality**: `< 0.4' (< 40 per cent)
+- ** Benefits before ROC AUC**:
+- ** Unbalanced data**: More informative for rare classes
+- ** Practical interpretation**: directly related with preparation and review
+- ** Sensitivity to imbalance**: Better reflects quality on rare classes
+- ** Disadvantages**:
+- **Complicity of interpretation**: Less intuitive than ROC AUC
+- **dependency from the threshold**: May be unstable when changing the threshold
+- ** Interpretation**:
+- **0.0**: Model not better than random
+**0.3-0.5**: Acceptable quality
+- **0.5-0.7**: Good quality
+- **0.7+**: Excellent quality
+- **1.0**: Perfect quality
 
 #### Log Loss
 ```python
-# Логарифмическая функция потерь
+# Logarithmic function loss
 from sklearn.metrics import log_loss
 
 log_loss_score = log_loss(y_true, y_prob)
 print(f"Log Loss: {log_loss_score:.4f}")
 ```
 
-**🔧 Детальное описание параметров Log Loss:**
+**Detail describe parameters Log Loss:**
 
-**Метрика Log Loss:**
-- **Что означает**: Логарифмическая функция потерь (логистическая функция потерь)
-- **Формула**: `-1/N * Σ[y*log(p) + (1-y)*log(1-p)]` где p - вероятность положительного класса
-- **Диапазон значений**: `[0, +∞)` (0 - идеальное предсказание, +∞ - худшее)
-- **Когда использовать**:
-  - **Оценка вероятностей**: Когда важны не только предсказания, но и их уверенность
-  - **Несбалансированные данные**: Log Loss чувствительна к качеству вероятностей
-  - **Сравнение моделей**: Хорошая метрика для сравнения качества вероятностей
-  - **Калибровка модели**: Помогает оценить, насколько хорошо откалиброваны вероятности
-- **Когда НЕ использовать**:
-  - **Только предсказания**: Когда важны только классы, а не вероятности
-  - **Очень несбалансированные данные**: Может быть нестабильной
-- **Практические примеры**:
-  - **Отличное качество**: `< 0.1` (очень низкая ошибка)
-  - **Хорошее качество**: `0.1-0.3` (низкая ошибка)
-  - **Приемлемое качество**: `0.3-0.5` (умеренная ошибка)
-  - **Плохое качество**: `> 0.5` (высокая ошибка)
-- **Параметр `eps`** (по умолчанию 1e-15):
-  - **Назначение**: Минимальное значение для вероятностей (избежание log(0))
-  - **Рекомендуемые значения**: `1e-15` до `1e-7`
-  - **Влияние**: Слишком большое значение может исказить результаты
-- **Параметр `normalize`** (по умолчанию True):
-  - **True**: Нормализованная ошибка (деленная на количество примеров)
-  - **False**: Суммарная ошибка
-- **Параметр `sample_weight`**:
-  - **Назначение**: Веса для каждого примера
-  - **Использование**: Для несбалансированных данных или важных примеров
-- **Интерпретация значений**:
-  - **0.0**: Идеальное предсказание (вероятности точно соответствуют истине)
-  - **0.1-0.3**: Очень хорошее качество
-  - **0.3-0.5**: Хорошее качество
-  - **0.5-0.7**: Приемлемое качество
-  - **> 0.7**: Плохое качество
-  - **+∞**: Худшее возможное предсказание
+**Metrick Log Loss:**
+- ** Meaning**: Logarithmic function of losses (Logsstic function of losses)
+- **Formoula**: `-1/N* \[y*log(p) + (1-y)*log(1-p)] / where p is the probability of a positive class
+- ** Value range**: `[0, +] &apos; (0 = ideal Pradition, +\] - worst)
+- ** When to use**:
+- ** Probability Assessment**: When not only predictions but also their confidence matter
+- ** Unbalanced data**: Log Loss is sensitive to probability quality
+- **comparison models**: Good metric for probabilities quality comparison
+- ** Model calibration**: Helps to assess how well the probability is calibrated
+- ** When not used**:
+- ** Only predictions**: When only classes are important and no probability are important
+- **Very unbalanced data**: May be unstable
+- ** Practical examples**:
+- ** Excellent quality**: `< 0.1' (very low error)
+- ** Good quality**: `0.1-0.3' (low error)
+- ** Acceptable quality**: `0.3-0.5' (moderate error)
+- ** Bad quality**: `> 0.5' (high error)
+- **parameter `eps'** (on default 1e-15):
+- ** Designation**: Minimum value for probabilities (failure log(0))
+- ** Recommended values**: `1e-15' to `1e-7'
+- **Effluence**: Too important can distort results
+- **parameter `normalyze'** (on default True):
+- **True**: Normalized error (done on number of examples)
+- **False**: Total error
+- **parameter `sample_weight`**:
+- ** Designation**: Weights for each example
+- ** Use**: For unbalanced or important examples
+- ** Interpretation**:
+- **0.0**: Perfect Predation.
+- **0.1-0.3**: Very good quality
+- **0.3-0.5**: Good quality
+**0.5-0.7**: Acceptable quality
+- **> 0.7**: Poor quality
+- **+**: Worst possible implementation
 
 #### Balanced Accuracy
 ```python
-# Сбалансированная точность для несбалансированных данных
+# Balanced accuracy for unbalanced data
 from sklearn.metrics import balanced_accuracy_score
 
 balanced_acc = balanced_accuracy_score(y_true, y_pred)
 print(f"Balanced Accuracy: {balanced_acc:.4f}")
 ```
 
-**🔧 Детальное описание параметров Balanced Accuracy:**
+**/ Detailed describe parameters of Balanced Accuracy:**
 
-**Метрика Balanced Accuracy:**
-- **Что означает**: Среднее арифметическое чувствительности (recall) для каждого класса
-- **Формула**: `(Sensitivity + Specificity) / 2` где Sensitivity = TP/(TP+FN), Specificity = TN/(TN+FP)
-- **Диапазон значений**: `[0, 1]` (0% - 100%)
-- **Когда использовать**:
-  - **Несбалансированные данные**: Когда один класс значительно больше другого
-  - **Медицинская диагностика**: Когда важны и ложные положиния, и ложные отрицания
-  - **Обнаружение мошенничества**: Когда важны и пропуски, и ложные срабатывания
-  - **Сравнение моделей**: Более справедливая оценка для несбалансированных данных
-- **Когда НЕ использовать**:
-  - **Сбалансированные данные**: Обычная accuracy может быть более информативной
-  - **Критичные ошибки**: Когда разные типы ошибок имеют разную важность
-- **Практические примеры**:
-  - **Отличное качество**: `> 0.9` (90%+)
-  - **Хорошее качество**: `0.8-0.9` (80-90%)
-  - **Приемлемое качество**: `0.7-0.8` (70-80%)
-  - **Плохое качество**: `< 0.7` (< 70%)
-- **Преимущества перед обычной Accuracy**:
-  - **Справедливость**: Каждый класс имеет равный вес
-  - **Устойчивость к дисбалансу**: Не зависит от распределения классов
-  - **Интерпретируемость**: Показывает среднее качество по классам
-- **Недостатки**:
-  - **Не учитывает важность**: Все классы считаются одинаково важными
-  - **Может быть обманчивой**: Высокое значение не гарантирует хорошее качество
-- **Интерпретация значений**:
-  - **0.5**: Случайное предсказание (модель не лучше случайного)
-  - **0.7-0.8**: Приемлемое качество
-  - **0.8-0.9**: Хорошее качество
-  - **0.9+**: Отличное качество
-  - **1.0**: Идеальное качество
+**Balanced Accuracy Meter:**
+- ** Meaning**: Mean arithmetic sensitivity (recall) for each class
+- **Formoula**: `(Sensitity + Specification) / 2' where Sensity = TP/(TP+FN), Specification = TN/(TN+FP)
+- ** Value range**: `[0,1]' (0% - 100%)
+- ** When to use**:
+- ** Unbalanced data**: When one class is much larger than the other
+- **Medical diagnostics**: When false depositions and false denials are important
+- ** Fraud detection**: When both omissions and false reactions are important
+- **comparison of models**: More equitable assessment for unbalanced data
+- ** When not used**:
+- ** Balanced data**: Normal accuracy may be more informative
+- ** Critical errors**: When different types of errors are of different importance
+- ** Practical examples**:
+- ** Excellent quality**: `> 0.9' (90 per cent+)
+- ** Good quality**: `0.8-0.9' (80-90 per cent)
+** Acceptable quality**: `0.7-0.8' (70-80 per cent)
+- ** Bad quality**: `< 0.7' (< 70 per cent)
+- ** Benefits prior to normal Accuracy**:
+- **justice**: Each class has equal weight
+- ** Resistance to imbalance**: not dependent on from class distribution
+- ** Interpretation**: Shows average quality on classes
+- ** Disadvantages**:
+**not takes into account the importance**: All classes are considered equally important
+- ** May be deceiving**: The high not guarantees good quality
+- ** Interpretation**:
+- **0.5**: Random Predation (not better than random)
+**0.7-0.8**: Acceptable quality
+- **0.8-0.9**: Good quality
+- **0.9+**: Excellent quality
+- **1.0**: Perfect quality
 
-### Метрики для несбалансированных данных
+### metrics for unbalanced data
 
 #### Matthews Correlation Coefficient (MCC)
 ```python
@@ -577,39 +577,39 @@ mcc = matthews_corrcoef(y_true, y_pred)
 print(f"MCC: {mcc:.4f}")
 ```
 
-**🔧 Детальное описание параметров MCC:**
+**/ Detailed descrie parameters MCC:**
 
-**Метрика Matthews Correlation Coefficient (MCC):**
-- **Что означает**: Корреляция между истинными и предсказанными классами
-- **Формула**: `(TP*TN - FP*FN) / sqrt((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN))`
-- **Диапазон значений**: `[-1, 1]` (-1 - худшее, 0 - случайное, 1 - идеальное)
-- **Когда использовать**:
-  - **Несбалансированные данные**: MCC устойчива к дисбалансу классов
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-  - **Медицинская диагностика**: Когда важны все типы ошибок
-  - **Обнаружение мошенничества**: Когда важны и пропуски, и ложные срабатывания
-- **Когда НЕ использовать**:
-  - **Сбалансированные данные**: Может быть менее информативной чем accuracy
-  - **Только предсказания**: Когда важны только классы, а не корреляция
-- **Практические примеры**:
-  - **Отличное качество**: `> 0.7` (сильная корреляция)
-  - **Хорошее качество**: `0.5-0.7` (умеренная корреляция)
-  - **Приемлемое качество**: `0.3-0.5` (слабая корреляция)
-  - **Плохое качество**: `< 0.3` (очень слабая корреляция)
-- **Преимущества**:
-  - **Устойчивость к дисбалансу**: Не зависит от распределения классов
-  - **Симметричность**: Одинаково чувствительна ко всем типам ошибок
-  - **Интерпретируемость**: Показывает качество корреляции
-- **Недостатки**:
-  - **Сложность интерпретации**: Менее интуитивна чем accuracy
-  - **Вычислительная сложность**: Требует больше вычислений
-- **Интерпретация значений**:
-  - **1.0**: Идеальная корреляция (все предсказания правильные)
-  - **0.7-1.0**: Сильная корреляция
-  - **0.5-0.7**: Умеренная корреляция
-  - **0.3-0.5**: Слабая корреляция
-  - **0.0**: Нет корреляции (случайное предсказание)
-  - **-1.0**: Отрицательная корреляция (все предсказания неправильные)
+**Metrick Matthews Correlation Associate (MCC):**
+- ** Meaning**: Correlation between true and foretold classes
+- **Formoula**: `(TP*TN - FP*FN) / sqrt((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN) `
+- ** Range**: `[-1, 1]' (1 - worst, 0 - accidental, 1 - ideal)
+- ** When to use**:
+- ** Unbalanced data**: MSC is resistant to class imbalance
+- **comparison models**: Good metrics for comparing different algorithms
+- **Medical diagnostic**: When all types of errors matter
+- ** Fraud detection**: When both omissions and false reactions are important
+- ** When not used**:
+- ** Balanced data**: Could be less informative than accuracy
+- ** Only predictions**: When only classes are important and no correlation
+- ** Practical examples**:
+- ** Excellent quality**: `> 0.7' (strong correlation)
+- ** Good quality**: `0.5-0.7' (moderate correlation)
+- ** Acceptable quality**: `0.3-0.5' (low correlation)
+- ** Poor quality**: `< 0.3' (very weak correlation)
+- ** Benefits**:
+- ** Resistance to imbalance**: not dependent on from class distribution
+- ** Symmetry**: Single sensitivity to all types of errors
+- ** Interpretation**: Shows the quality of correlation
+- ** Disadvantages**:
+- **Complicity of interpretation**: Less intuitive than accuracy
+- ** Computation complexity**: Requires more calculation
+- ** Interpretation**:
+- **1.0**: Perfect correlation (all predictions are correct)
+- **0.7-1.0**: Strong correlation
+**0.5-0.7**: Moderate correlation
+- **0.3-0.5**: Weak correlation
+- **0.0**: No correlation (accident)
+- **-1.0**: Negative correlation (all predictions are wrong)
 
 #### Cohen's Kappa
 ```python
@@ -619,60 +619,60 @@ kappa = cohen_kappa_score(y_true, y_pred)
 print(f"Cohen's Kappa: {kappa:.4f}")
 ```
 
-**🔧 Детальное описание параметров Cohen's Kappa:**
+**Detail describe parameters Cohen's Kappa:**
 
-**Метрика Cohen's Kappa:**
-- **Что означает**: Согласованность между истинными и предсказанными классами с учетом случайного согласия
-- **Формула**: `(Po - Pe) / (1 - Pe)` где Po - наблюдаемое согласие, Pe - ожидаемое случайное согласие
-- **Диапазон значений**: `[-1, 1]` (-1 - худшее, 0 - случайное, 1 - идеальное)
-- **Когда использовать**:
-  - **Несбалансированные данные**: Kappa учитывает случайное согласие
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-  - **Медицинская диагностика**: Когда важны все типы ошибок
-  - **Обнаружение мошенничества**: Когда важны и пропуски, и ложные срабатывания
-- **Когда НЕ использовать**:
-  - **Сбалансированные данные**: Может быть менее информативной чем accuracy
-  - **Только предсказания**: Когда важны только классы, а не согласованность
-- **Практические примеры**:
-  - **Отличное качество**: `> 0.8` (почти идеальное согласие)
-  - **Хорошее качество**: `0.6-0.8` (существенное согласие)
-  - **Приемлемое качество**: `0.4-0.6` (умеренное согласие)
-  - **Плохое качество**: `< 0.4` (слабое согласие)
-- **Преимущества**:
-  - **Учет случайности**: Учитывает случайное согласие
-  - **Устойчивость к дисбалансу**: Не зависит от распределения классов
-  - **Интерпретируемость**: Показывает качество согласованности
-- **Недостатки**:
-  - **Сложность интерпретации**: Менее интуитивна чем accuracy
-  - **Вычислительная сложность**: Требует больше вычислений
-- **Интерпретация значений**:
-  - **1.0**: Идеальное согласие (все предсказания правильные)
-  - **0.8-1.0**: Почти идеальное согласие
-  - **0.6-0.8**: Существенное согласие
-  - **0.4-0.6**: Умеренное согласие
-  - **0.2-0.4**: Слабое согласие
-  - **0.0**: Нет согласия (случайное предсказание)
-  - **-1.0**: Отрицательное согласие (все предсказания неправильные)
+**Methric Cohen's Kappa:**
+- ** Meaning**: Coherence between true and predicted classes with random consent
+- **Formoula**: `(Po-Pe) / (1-Pe)' where Po is the observed agreement, Pe is the expected accidental agreement
+- ** Range**: `[-1, 1]' (1 - worst, 0 - accidental, 1 - ideal)
+- ** When to use**:
+- ** Unbalanced data**: Kappa takes into account accidental consent
+- **comparison models**: Good metrics for comparing different algorithms
+- **Medical diagnostic**: When all types of errors matter
+- ** Fraud detection**: When both omissions and false reactions are important
+- ** When not used**:
+- ** Balanced data**: Could be less informative than accuracy
+- ** Only predictions**: When only classes are important and no consistency
+- ** Practical examples**:
+- ** Excellent quality**: `> 0.8' (almost perfect agreement)
+- ** Good quality**: `0.6-0.8' (significant agreement)
+- ** Acceptable quality**: `0.4-0.6' (moderate consent)
+- ** Poor quality**: `< 0.4' (negative agreement)
+- ** Benefits**:
+- **Measurement of accident**: Considers accidental agreement
+- ** Resistance to imbalance**: not dependent on from class distribution
+- ** Interpretation**: Shows the quality of consistency
+- ** Disadvantages**:
+- **Complicity of interpretation**: Less intuitive than accuracy
+- ** Computation complexity**: Requires more calculation
+- ** Interpretation**:
+- **1.0**: Perfect consent (all predictions are correct)
+- **0.8-1.0**: Almost perfect agreement
+**0.6-0.8**: Substantive agreement
+**0.4-0.6**: Moderate consent
+**0.2-0.4**: Weak agreement
+- **0.0**: No consent (accident)
+- **-1.0**: Negative consent (all predictions are wrong)
 
-## Метрики для регрессии
+## metrics for regression
 
-<img src="images/optimized/performance_comparison.png" alt="Метрики регрессии" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: Метрики для задач регрессии и их интерпретация*
+<img src="images/optimized/performance_comparison.png" alt="metrics regression" style="max-width: 100 per cent; exercise: auto; display: lock; marguin: 20px auto;">
+*Picture 4: metrics for regression tasks and their interpretation*
 
-**Почему регрессия требует других метрик?** Потому что здесь мы предсказываем непрерывные значения, а не классы. Важна не только правильность, но и точность предсказаний.
+Why does regression require other metrics?** Because here we predict continuous values and no classes.
 
-### 🎯 Ключевые концепции метрик регрессии
+### ♪ The key concepts of regression metric
 
-**Почему важно понимать типы ошибок в регрессии?** Потому что разные метрики показывают разные аспекты качества:
+** Why is it important to understand the types of errors in regression?** Because different metrics show different aspects of quality:
 
-- **MAE (Mean Absolute Error)**: Средняя абсолютная ошибка - простая и понятная метрика
-- **MSE (Mean Squared Error)**: Среднеквадратичная ошибка - штрафует большие ошибки сильнее
-- **RMSE (Root Mean Squared Error)**: Корень из MSE - в тех же единицах, что и целевая переменная
-- **R² (Coefficient of Determination)**: Коэффициент детерминации - доля объясненной дисперсии
-- **MAPE (Mean Absolute Percentage Error)**: Средняя абсолютная процентная ошибка
-- **MAE vs MSE**: MAE менее чувствительна к выбросам, MSE сильнее штрафует большие ошибки
+- **MAE (Mean Absolute Error)**: Average absolute error - simple and understandable metric
+- **MSE (Mean Squared Error)**: Medium error - fines big mistakes harder
+- **RMSE (Root Mean Squared Error)**: root of MSE in the same units as target variable
+**R2 (Office of Determination)**: Determination coefficient - percentage of explained variance
+- **MAPE (Mean Absolute Percentage Error)**: Average absolute percentage error
+- **MAE vs MSE**: MAE is less sensitive to emissions, MSE more severely fines large errors
 
-### Базовые метрики
+### Basic metrics
 
 #### Mean Absolute Error (MAE)
 ```python
@@ -682,72 +682,72 @@ mae = mean_absolute_error(y_true, y_pred)
 print(f"MAE: {mae:.4f}")
 ```
 
-**🔧 Детальное описание параметров mean_absolute_error:**
+** Detailed describe parameters mean_absolute_error:**
 
-**Функция mean_absolute_error:**
-- **Назначение**: Вычисление средней абсолютной ошибки (MAE)
-- **Параметры**:
-  - **`y_true`**: Истинные значения
-    - **Тип**: array-like
-    - **Описание**: Массив истинных значений целевой переменной
-    - **Примеры**: [1.5, 2.3, 3.1, 4.0], [100, 200, 150, 300]
-  - **`y_pred`**: Предсказанные значения
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных значений
-    - **Примеры**: [1.2, 2.5, 2.8, 4.2], [95, 210, 145, 320]
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении MAE
-    - **Примеры**: [1.0, 2.0, 1.5, 0.5]
-  - **`multioutput`**: Тип усреднения для многомерных выходов (по умолчанию 'uniform_average')
-    - **Тип**: str или array-like
-    - **Описание**: Способ усреднения для многомерных выходов
-    - **Варианты**: 'uniform_average', 'raw_values', array весов
-- **Возвращаемое значение**: float или array - MAE для каждого выхода
-- **Типы усреднения для многомерных выходов**:
-  - **`'uniform_average'`**: Равномерное усреднение по всем выходам
-  - **`'raw_values'`**: Возвращает MAE для каждого выхода отдельно
-  - **array весов**: Взвешенное усреднение с заданными весами
-- **Использование**:
-  - **Оценка точности**: Когда важна средняя ошибка предсказаний
-  - **Устойчивость к выбросам**: MAE менее чувствительна к выбросам чем MSE
-  - **Интерпретируемость**: Легко интерпретировать (средняя ошибка в единицах целевой переменной)
+**function mean_absolute_error:**
+- ** Designation**: Calculation of average absolute error (MAE)
+- **parameters**:
+- **'y_tree'**: True values
+-** Type**: Array-lake
+- **describe**: Mass of true values of target variable
+ - **examples**: [1.5, 2.3, 3.1, 4.0], [100, 200, 150, 300]
+- **'y_pred'**: Projected values
+-** Type**: Array-lake
+- **describe**: Mass of predicted values
+ - **examples**: [1.2, 2.5, 2.8, 4.2], [95, 210, 145, 320]
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating MAE
+ - **examples**: [1.0, 2.0, 1.5, 0.5]
+**/ 'multioutput'**: Type of averaging for multidimensional exits (on default 'uniform_overage')
+- ** Type**: str or array-lake
+- **describe**: Mode of averaging for multidimensional exits
+- **Options**: 'uniform_overage', 'raw_valutes', array balance
+- **Return value**: float or array - MAE for each output
+- ** Averagings for multidimensional exits**:
+- **'uniform_overage'**: Equivalent average on all exits
+- **'raw_valutes'**: Returns MAE for each exit separately
+- **array balance**: Weighted average with given balance
+- ** Use**:
+- ** Assessment of accuracy**: When an average error of preferences is important
+- ** Emission stability**: MAE is less sensitive to emissions than MSE
+- ** Interpretation**: Easy to interpret (average error in target variable units)
 
-**🔧 Детальное описание параметров MAE:**
+**/ Detailed describe of MAE parameters:**
 
-**Метрика Mean Absolute Error (MAE):**
-- **Что означает**: Средняя абсолютная ошибка между истинными и предсказанными значениями
-- **Формула**: `(1/n) * Σ|y_true - y_pred|`
-- **Диапазон значений**: `[0, +∞)` (0 - идеальное предсказание, +∞ - худшее)
-- **Когда использовать**:
-  - **Оценка точности**: Когда важна средняя ошибка предсказаний
-  - **Устойчивость к выбросам**: MAE менее чувствительна к выбросам чем MSE
-  - **Интерпретируемость**: Легко интерпретировать (средняя ошибка в единицах целевой переменной)
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-- **Когда НЕ использовать**:
-  - **Критичные большие ошибки**: Когда большие ошибки намного хуже маленьких
-  - **Оптимизация**: MAE не дифференцируема в нуле
-- **Практические примеры**:
-  - **Отличное качество**: `< 0.1 * std(y_true)` (очень низкая ошибка)
-  - **Хорошее качество**: `0.1-0.3 * std(y_true)` (низкая ошибка)
-  - **Приемлемое качество**: `0.3-0.5 * std(y_true)` (умеренная ошибка)
-  - **Плохое качество**: `> 0.5 * std(y_true)` (высокая ошибка)
-- **Параметр `sample_weight`**:
-  - **Назначение**: Веса для каждого примера
-  - **Использование**: Для важных примеров или несбалансированных данных
-- **Преимущества**:
-  - **Интерпретируемость**: Показывает среднюю ошибку в единицах целевой переменной
-  - **Устойчивость к выбросам**: Менее чувствительна к экстремальным значениям
-  - **Простота**: Легко понять и вычислить
-- **Недостатки**:
-  - **Не дифференцируема**: Не подходит для градиентной оптимизации
-  - **Не учитывает важность**: Все ошибки считаются одинаково важными
-- **Интерпретация значений**:
-  - **0.0**: Идеальное предсказание (все предсказания точные)
-  - **< 0.1 * std**: Очень хорошее качество
-  - **0.1-0.3 * std**: Хорошее качество
-  - **0.3-0.5 * std**: Приемлемое качество
-  - **> 0.5 * std**: Плохое качество
+**Mean Absolute Error (MAE):**
+- ** Meaning**: Average absolute error between true and predicted values
+- **Formoule**: `(1/n)' * ♪ y_pred ♪
+- ** Value range**: `[0, +] &apos; (0 = ideal Pradition, +\] - worst)
+- ** When to use**:
+- ** Assessment of accuracy**: When an average error of preferences is important
+- ** Emission stability**: MAE is less sensitive to emissions than MSE
+- ** Interpretation**: Easy to interpret (average error in target variable units)
+- **comparison models**: Good metrics for comparing different algorithms
+- ** When not used**:
+- ** Critical big mistakes**: When big mistakes are much worse than small ones
+- **Optimization**: MAE not differentiated in zero
+- ** Practical examples**:
+- ** Excellent quality**: `< 0.1* std(y_tree)' (very low error)
+- ** Good quality**: `0.1-0.3 * std(y_tree)' (low error)
+- ** Acceptable quality**: `0.3-0.5 * std(y_tree)' (moderate error)
+- ** Bad quality**: `> 0.5 * std(y_tree) ` (high error)
+- **parameter `sample_weight`**:
+- ** Designation**: Weights for each example
+- ** Use**: for important examples or unbalanced data
+- ** Benefits**:
+- ** Interpretation**: Shows average error in units of target variable
+- ** Emission stability**: Less sensitive to extremes
+- **Simple**: Easy to understand and figure out
+- ** Disadvantages**:
+**not differentiated**:not suitable for gradient optimization
+- **not takes into account the importance**: All errors are considered equally important
+- ** Interpretation**:
+- **0.0**: Perfect Predation (all predictions accurate)
+- **< 0.1 * std**: Very good quality
+- **0.1-0.3 * std**: Good quality
+**0.3-0.5 * std**: Acceptable quality
+- **> 0.5 * std**: Poor quality
 
 #### Mean Squared Error (MSE)
 ```python
@@ -757,76 +757,76 @@ mse = mean_squared_error(y_true, y_pred)
 print(f"MSE: {mse:.4f}")
 ```
 
-**🔧 Детальное описание параметров mean_squared_error:**
+** Detailed describe parameters mean_squared_error:**
 
-**Функция mean_squared_error:**
-- **Назначение**: Вычисление средней квадратичной ошибки (MSE)
-- **Параметры**:
-  - **`y_true`**: Истинные значения
-    - **Тип**: array-like
-    - **Описание**: Массив истинных значений целевой переменной
-    - **Примеры**: [1.5, 2.3, 3.1, 4.0], [100, 200, 150, 300]
-  - **`y_pred`**: Предсказанные значения
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных значений
-    - **Примеры**: [1.2, 2.5, 2.8, 4.2], [95, 210, 145, 320]
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении MSE
-    - **Примеры**: [1.0, 2.0, 1.5, 0.5]
-  - **`multioutput`**: Тип усреднения для многомерных выходов (по умолчанию 'uniform_average')
-    - **Тип**: str или array-like
-    - **Описание**: Способ усреднения для многомерных выходов
-    - **Варианты**: 'uniform_average', 'raw_values', array весов
-  - **`squared`**: Возвращать MSE или RMSE (по умолчанию True)
-    - **Тип**: bool
-    - **Описание**: True - возвращает MSE, False - возвращает RMSE
-- **Возвращаемое значение**: float или array - MSE для каждого выхода
-- **Типы усреднения для многомерных выходов**:
-  - **`'uniform_average'`**: Равномерное усреднение по всем выходам
-  - **`'raw_values'`**: Возвращает MSE для каждого выхода отдельно
-  - **array весов**: Взвешенное усреднение с заданными весами
-- **Использование**:
-  - **Оптимизация**: MSE дифференцируема и подходит для градиентной оптимизации
-  - **Критичные большие ошибки**: Когда большие ошибки намного хуже маленьких
-  - **Обучение нейронных сетей**: Стандартная функция потерь для регрессии
+**function mean_squared_error:**
+- ** Designation**: Calculation of average square error (MSE)
+- **parameters**:
+- **'y_tree'**: True values
+-** Type**: Array-lake
+- **describe**: Mass of true values of target variable
+ - **examples**: [1.5, 2.3, 3.1, 4.0], [100, 200, 150, 300]
+- **'y_pred'**: Projected values
+-** Type**: Array-lake
+- **describe**: Mass of predicted values
+ - **examples**: [1.2, 2.5, 2.8, 4.2], [95, 210, 145, 320]
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating MSE
+ - **examples**: [1.0, 2.0, 1.5, 0.5]
+**/ 'multioutput'**: Type of averaging for multidimensional exits (on default 'uniform_overage')
+- ** Type**: str or array-lake
+- **describe**: Mode of averaging for multidimensional exits
+- **Options**: 'uniform_overage', 'raw_valutes', array balance
+- ** `squared'**: Return MSE or RMSE (on default True)
+-**Teep**: bool
+-**describe**:True - returns MSE, False - returns RMSE
+- **Return value**: float or array - MSE for each output
+- ** Averagings for multidimensional exits**:
+- **'uniform_overage'**: Equivalent average on all exits
+- **'raw_valutes'**: Returns MSE for each exit separately
+- **array balance**: Weighted average with given balance
+- ** Use**:
+- **Optimization**: MSE is differentiated and suitable for gradient optimization
+- ** Critical big mistakes**: When big mistakes are much worse than small ones
+- ** Training in neural networks**: Standard function of losses for regression
 
-**🔧 Детальное описание параметров MSE:**
+**/ Detailed describe of MSE parameters:**
 
-**Метрика Mean Squared Error (MSE):**
-- **Что означает**: Средняя квадратичная ошибка между истинными и предсказанными значениями
-- **Формула**: `(1/n) * Σ(y_true - y_pred)²`
-- **Диапазон значений**: `[0, +∞)` (0 - идеальное предсказание, +∞ - худшее)
-- **Когда использовать**:
-  - **Оптимизация**: MSE дифференцируема и подходит для градиентной оптимизации
-  - **Критичные большие ошибки**: Когда большие ошибки намного хуже маленьких
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-  - **Обучение нейронных сетей**: Стандартная функция потерь для регрессии
-- **Когда НЕ использовать**:
-  - **Выбросы**: MSE очень чувствительна к экстремальным значениям
-  - **Интерпретируемость**: Сложно интерпретировать (квадрат единиц целевой переменной)
-- **Практические примеры**:
-  - **Отличное качество**: `< 0.01 * var(y_true)` (очень низкая ошибка)
-  - **Хорошее качество**: `0.01-0.1 * var(y_true)` (низкая ошибка)
-  - **Приемлемое качество**: `0.1-0.5 * var(y_true)` (умеренная ошибка)
-  - **Плохое качество**: `> 0.5 * var(y_true)` (высокая ошибка)
-- **Параметр `sample_weight`**:
-  - **Назначение**: Веса для каждого примера
-  - **Использование**: Для важных примеров или несбалансированных данных
-- **Преимущества**:
-  - **Дифференцируемость**: Подходит для градиентной оптимизации
-  - **Чувствительность к большим ошибкам**: Большие ошибки штрафуются сильнее
-  - **Математические свойства**: Имеет хорошие математические свойства
-- **Недостатки**:
-  - **Чувствительность к выбросам**: Очень чувствительна к экстремальным значениям
-  - **Сложность интерпретации**: Сложно интерпретировать (квадрат единиц)
-  - **Неравномерность штрафов**: Квадратичный штраф может быть слишком жестким
-- **Интерпретация значений**:
-  - **0.0**: Идеальное предсказание (все предсказания точные)
-  - **< 0.01 * var**: Очень хорошее качество
-  - **0.01-0.1 * var**: Хорошее качество
-  - **0.1-0.5 * var**: Приемлемое качество
-  - **> 0.5 * var**: Плохое качество
+**Mean Squared Error (MSE):**
+- ** Meaning**: Average square error between true and predicted values
+- **Formoula**: `(1/n)' * \(y_tree - y_pred)2'
+- ** Value range**: `[0, +] &apos; (0 = ideal Pradition, +\] - worst)
+- ** When to use**:
+- **Optimization**: MSE is differentiated and suitable for gradient optimization
+- ** Critical big mistakes**: When big mistakes are much worse than small ones
+- **comparison models**: Good metrics for comparing different algorithms
+- ** Training in neural networks**: Standard function of losses for regression
+- ** When not used**:
+- ** Emissions**: MSE is very sensitive to extreme values
+- ** Interpretability**: It is difficult to interpret (square of units of target variable)
+- ** Practical examples**:
+- ** Excellent quality**: `<0.01*var(y_tree)' (very low error)
+- ** Good quality**: `0.01-0.1 * var(y_tree)' (low error)
+- ** Acceptable quality**: `0.1-0.5 * var(y_tree)' (moderate error)
+- ** Bad quality**: `> 0.5 * var(y_tree) ` (high error)
+- **parameter `sample_weight`**:
+- ** Designation**: Weights for each example
+- ** Use**: for important examples or unbalanced data
+- ** Benefits**:
+- **Difference**: Suitable for gradient optimization
+- ♪ Feelings of big mistakes ♪ ♪ Big mistakes are more punitive ♪
+- ** Mathematical properties**: has good mathematical properties
+- ** Disadvantages**:
+- ** Emission sensitivity**: Very sensitive to extreme values
+- ** Complexity of interpretation**: It is difficult to interpret (square of units)
+- ** Inequitability of fines**: Quadratic fine may be too severe
+- ** Interpretation**:
+- **0.0**: Perfect Predation (all predictions accurate)
+- **< 0.01 * var**: Very good quality
+- **0.01-0.1 * var**: Good quality
+**0.1-0.5 * var**: Acceptable quality
+- **> 0.5 * var**: Poor quality
 
 #### Root Mean Squared Error (RMSE)
 ```python
@@ -836,39 +836,39 @@ rmse = np.sqrt(mean_squared_error(y_true, y_pred))
 print(f"RMSE: {rmse:.4f}")
 ```
 
-**🔧 Детальное описание параметров RMSE:**
+**/ Detailed describe of RMSE parameters: **/
 
-**Метрика Root Mean Squared Error (RMSE):**
-- **Что означает**: Корень из средней квадратичной ошибки между истинными и предсказанными значениями
-- **Формула**: `sqrt((1/n) * Σ(y_true - y_pred)²)`
-- **Диапазон значений**: `[0, +∞)` (0 - идеальное предсказание, +∞ - худшее)
-- **Когда использовать**:
-  - **Интерпретируемость**: RMSE в тех же единицах что и целевая переменная
-  - **Критичные большие ошибки**: Когда большие ошибки намного хуже маленьких
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-  - **Обучение нейронных сетей**: Стандартная метрика для регрессии
-- **Когда НЕ использовать**:
-  - **Выбросы**: RMSE очень чувствительна к экстремальным значениям
-  - **Неравномерные штрафы**: Квадратичный штраф может быть слишком жестким
-- **Практические примеры**:
-  - **Отличное качество**: `< 0.1 * std(y_true)` (очень низкая ошибка)
-  - **Хорошее качество**: `0.1-0.3 * std(y_true)` (низкая ошибка)
-  - **Приемлемое качество**: `0.3-0.5 * std(y_true)` (умеренная ошибка)
-  - **Плохое качество**: `> 0.5 * std(y_true)` (высокая ошибка)
-- **Преимущества**:
-  - **Интерпретируемость**: В тех же единицах что и целевая переменная
-  - **Чувствительность к большим ошибкам**: Большие ошибки штрафуются сильнее
-  - **Математические свойства**: Имеет хорошие математические свойства
-- **Недостатки**:
-  - **Чувствительность к выбросам**: Очень чувствительна к экстремальным значениям
-  - **Неравномерность штрафов**: Квадратичный штраф может быть слишком жестким
-  - **Сложность вычисления**: Требует вычисления квадратного корня
-- **Интерпретация значений**:
-  - **0.0**: Идеальное предсказание (все предсказания точные)
-  - **< 0.1 * std**: Очень хорошее качество
-  - **0.1-0.3 * std**: Хорошее качество
-  - **0.3-0.5 * std**: Приемлемое качество
-  - **> 0.5 * std**: Плохое качество
+**Root Mean Squared Error (RMSE):**
+- ** Meaning**: root of the average square error between true and predicted values
+- **Formoula**: `sqrt((1/n)* \\(y_tree - y_pred)2`
+- ** Value range**: `[0, +] &apos; (0 = ideal Pradition, +\] - worst)
+- ** When to use**:
+- ** Interpretation**: RMSE in the same units as the target variable
+- ** Critical big mistakes**: When big mistakes are much worse than small ones
+- **comparison models**: Good metrics for comparing different algorithms
+- ** Training in neural networks**: Standard metrics for regression
+- ** When not used**:
+- ** Emissions**: RMSE is very sensitive to extreme values
+- ** Unequal fines**: Quadratic fine may be too severe
+- ** Practical examples**:
+- ** Excellent quality**: `< 0.1* std(y_tree)' (very low error)
+- ** Good quality**: `0.1-0.3 * std(y_tree)' (low error)
+- ** Acceptable quality**: `0.3-0.5 * std(y_tree)' (moderate error)
+- ** Bad quality**: `> 0.5 * std(y_tree) ` (high error)
+- ** Benefits**:
+- ** Interpretation**: in the same units as the target variable
+- ♪ Feelings of big mistakes ♪ ♪ Big mistakes are more punitive ♪
+- ** Mathematical properties**: has good mathematical properties
+- ** Disadvantages**:
+- ** Emission sensitivity**: Very sensitive to extreme values
+- ** Inequitability of fines**: Quadratic fine may be too severe
+- ** Computation difficulty**: The quadratic root must be calculated
+- ** Interpretation**:
+- **0.0**: Perfect Predation (all predictions accurate)
+- **< 0.1 * std**: Very good quality
+- **0.1-0.3 * std**: Good quality
+**0.3-0.5 * std**: Acceptable quality
+- **> 0.5 * std**: Poor quality
 
 #### R² Score
 ```python
@@ -878,1003 +878,1003 @@ r2 = r2_score(y_true, y_pred)
 print(f"R² Score: {r2:.4f}")
 ```
 
-**🔧 Детальное описание параметров r2_score:**
+**/ Detailed descrie parameters r2_score:**
 
-**Функция r2_score:**
-- **Назначение**: Вычисление коэффициента детерминации (R²)
-- **Параметры**:
-  - **`y_true`**: Истинные значения
-    - **Тип**: array-like
-    - **Описание**: Массив истинных значений целевой переменной
-    - **Примеры**: [1.5, 2.3, 3.1, 4.0], [100, 200, 150, 300]
-  - **`y_pred`**: Предсказанные значения
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных значений
-    - **Примеры**: [1.2, 2.5, 2.8, 4.2], [95, 210, 145, 320]
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении R²
-    - **Примеры**: [1.0, 2.0, 1.5, 0.5]
-  - **`multioutput`**: Тип усреднения для многомерных выходов (по умолчанию 'uniform_average')
-    - **Тип**: str или array-like
-    - **Описание**: Способ усреднения для многомерных выходов
-    - **Варианты**: 'uniform_average', 'raw_values', array весов
-- **Возвращаемое значение**: float или array - R² для каждого выхода
-- **Типы усреднения для многомерных выходов**:
-  - **`'uniform_average'`**: Равномерное усреднение по всем выходам
-  - **`'raw_values'`**: Возвращает R² для каждого выхода отдельно
-  - **array весов**: Взвешенное усреднение с заданными весами
-- **Использование**:
-  - **Оценка качества**: Когда нужно понять, насколько хорошо модель объясняет данные
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-  - **Интерпретируемость**: Легко интерпретировать (процент объясненной дисперсии)
+**function r2_score:**
+- ** Designation**: Calculation of the determination coefficient (R2)
+- **parameters**:
+- **'y_tree'**: True values
+-** Type**: Array-lake
+- **describe**: Mass of true values of target variable
+ - **examples**: [1.5, 2.3, 3.1, 4.0], [100, 200, 150, 300]
+- **'y_pred'**: Projected values
+-** Type**: Array-lake
+- **describe**: Mass of predicted values
+ - **examples**: [1.2, 2.5, 2.8, 4.2], [95, 210, 145, 320]
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating R2
+ - **examples**: [1.0, 2.0, 1.5, 0.5]
+**/ 'multioutput'**: Type of averaging for multidimensional exits (on default 'uniform_overage')
+- ** Type**: str or array-lake
+- **describe**: Mode of averaging for multidimensional exits
+- **Options**: 'uniform_overage', 'raw_valutes', array balance
+- **Return value**: float or array - R2 for each exit
+- ** Averagings for multidimensional exits**:
+- **'uniform_overage'**: Equivalent average on all exits
+- **'raw_valutes'**: Returns R2 for each exit separately
+- **array balance**: Weighted average with given balance
+- ** Use**:
+- ** Quality assessment**: When you need to understand how well the model explains data
+- **comparison models**: Good metrics for comparing different algorithms
+- ** Interpretation**: Easy to interpret (percentage of explained variance)
 
-**🔧 Детальное описание параметров R² Score:**
+**/ Detailed descrie parameters R2 Score: **/
 
-**Метрика R² Score (Coefficient of Determination):**
-- **Что означает**: Доля дисперсии целевой переменной, объясненная моделью
-- **Формула**: `1 - (SS_res / SS_tot)` где SS_res = Σ(y_true - y_pred)², SS_tot = Σ(y_true - y_mean)²
-- **Диапазон значений**: `(-∞, 1]` (1 - идеальное предсказание, 0 - как среднее, отрицательные - хуже среднего)
-- **Когда использовать**:
-  - **Оценка качества**: Когда нужно понять, насколько хорошо модель объясняет данные
-  - **Сравнение моделей**: Хорошая метрика для сравнения разных алгоритмов
-  - **Интерпретируемость**: Легко интерпретировать (процент объясненной дисперсии)
-  - **Обучение нейронных сетей**: Стандартная метрика для регрессии
-- **Когда НЕ использовать**:
-  - **Выбросы**: R² может быть обманчивым при наличии выбросов
-  - **Неравномерные данные**: Может быть нестабильным для неравномерных данных
-- **Практические примеры**:
-  - **Отличное качество**: `> 0.9` (90%+ объясненной дисперсии)
-  - **Хорошее качество**: `0.7-0.9` (70-90% объясненной дисперсии)
-  - **Приемлемое качество**: `0.5-0.7` (50-70% объясненной дисперсии)
-  - **Плохое качество**: `< 0.5` (< 50% объясненной дисперсии)
-- **Параметр `sample_weight`**:
-  - **Назначение**: Веса для каждого примера
-  - **Использование**: Для важных примеров или несбалансированных данных
-- **Преимущества**:
-  - **Интерпретируемость**: Показывает процент объясненной дисперсии
-  - **Нормализация**: Значения от 0 до 1 легко сравнивать
-  - **Математические свойства**: Имеет хорошие математические свойства
-- **Недостатки**:
-  - **Чувствительность к выбросам**: Может быть обманчивым при наличии выбросов
-  - **Неравномерность**: Может быть нестабильным для неравномерных данных
-  - **Сложность вычисления**: Требует вычисления среднего значения
-- **Интерпретация значений**:
-  - **1.0**: Идеальное предсказание (модель объясняет всю дисперсию)
-  - **0.9-1.0**: Отличное качество
-  - **0.7-0.9**: Хорошее качество
-  - **0.5-0.7**: Приемлемое качество
-  - **0.0-0.5**: Плохое качество
-  - **0.0**: Модель не лучше среднего
-  - **< 0.0**: Модель хуже среднего
+**Methric R2 Score:**
+- ** Meaning**: Proportion of variance of target variable explained by model
+- **Formoule**: `1 - (SS_res / SS_tot) `where SS_res = \(y_tre - y_pred)2, SS_tot = \(y_tree - y_mean)2
+- ** A range of values**: `(-, 1]' (1 - ideal Pradition, 0 - as average, negative - worse than average)
+- ** When to use**:
+- ** Quality assessment**: When you need to understand how well the model explains data
+- **comparison models**: Good metrics for comparing different algorithms
+- ** Interpretation**: Easy to interpret (percentage of explained variance)
+- ** Training in neural networks**: Standard metrics for regression
+- ** When not used**:
+- ** Emissions**: R2 may be misleading if emissions are present
+- ** Uneven data**: May be unstable for uneven data
+- ** Practical examples**:
+- ** Excellent quality**: `> 0.9' (90 per cent+explained dispersion)
+- ** Good quality**: `0.7-0.9' (70-90 per cent of explained dispersion)
+- ** Acceptable quality**: `0.5-0.7' (50-70 per cent of explained dispersion)
+- ** Bad quality**: `< 0.5' (< 50% of explained dispersion)
+- **parameter `sample_weight`**:
+- ** Designation**: Weights for each example
+- ** Use**: for important examples or unbalanced data
+- ** Benefits**:
+- ** Interpretability**: Shows percentage of explained variance
+- **Normization**: Values from 0 to 1 are easy to compare
+- ** Mathematical properties**: has good mathematical properties
+- ** Disadvantages**:
+- ** Emission sensitivity**: May be misleading if emissions are present
+- ** Inequitability**: May be unstable for uneven data
+- ** Computation difficulty**: Average value to be calculated
+- ** Interpretation**:
+- **1.0**: Perfect Pradition.
+- **0.9-1.0**: Excellent quality
+- **0.7-0.9**: Good quality
+**0.5-0.7**: Acceptable quality
+- **0.0-0.5**: Poor quality
+- **0.0**: No better than average
+- **< 0.0**: Model is worse than average
 
-### Продвинутые метрики
+### Moved metrics
 
-<img src="images/optimized/advanced_topics_overview.png" alt="Продвинутые метрики" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: Продвинутые метрики для глубокого анализа качества моделей*
+<img src="images/optimized/advanced_topics_overView.png" alt="Proved metrics" style"="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 5: Advanced metrics for Deep Analysis Model Quality*
 
-**Почему нужны продвинутые метрики?** Потому что базовые метрики не всегда показывают полную картину качества модели:
+Why do you need advanced metrics? Because basic metrics not always show a complete picture of model quality:
 
-- **MAPE (Mean Absolute Percentage Error)**: Процентная ошибка для понимания относительной точности
-- **SMAPE (Symmetric Mean Absolute Percentage Error)**: Симметричная версия MAPE
-- **WAPE (Weighted Absolute Percentage Error)**: Взвешенная процентная ошибка
-- **Custom Metrics**: Кастомные метрики для специфических задач
-- **Business Metrics**: Бизнес-метрики, связанные с реальными KPI
-- **Statistical Tests**: Статистические тесты для сравнения моделей
+**MAPE (Mean Absolute Percentage Error)**: Percentage error for understanding relative accuracy
+**SMAPE (Symmetric Mean Absolute Percentage Error)**: Simmetric version of MAPE
+- **WAPE (Weighted Absolute Percentage Error)**: Weighted percentage error
+- **Custom Metrics**: Castle metrics for specific tasks
+- **BusinessMetrics**: Business-metrics linked with real KPI
+**Statistical tests**: Statistical tests for model comparison
 
 #### Mean Absolute Percentage Error (MAPE)
 ```python
 def mape(y_true, y_pred):
-    return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+ return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
 mape_score = mape(y_true, y_pred)
 print(f"MAPE: {mape_score:.4f}%")
 ```
 
-**🔧 Детальное описание параметров MAPE:**
+**/ Detailed describe parameters MAPE:**
 
-**Метрика Mean Absolute Percentage Error (MAPE):**
-- **Что означает**: Средняя абсолютная процентная ошибка между истинными и предсказанными значениями
-- **Формула**: `(1/n) * Σ|(y_true - y_pred) / y_true| * 100`
-- **Диапазон значений**: `[0, +∞)` (0% - идеальное предсказание, +∞ - худшее)
-- **Когда использовать**:
-  - **Процентная интерпретация**: Когда важна процентная ошибка
-  - **Сравнение разных масштабов**: MAPE нормализована и позволяет сравнивать разные данные
-  - **Бизнес-метрики**: Легко интерпретировать для бизнеса
-  - **Временные ряды**: Хорошая метрика для прогнозирования
-- **Когда НЕ использовать**:
-  - **Нулевые значения**: MAPE не определена при y_true = 0
-  - **Очень малые значения**: Может быть нестабильной при очень малых значениях
-  - **Выбросы**: Очень чувствительна к экстремальным значениям
-- **Практические примеры**:
-  - **Отличное качество**: `< 5%` (очень низкая ошибка)
-  - **Хорошее качество**: `5-15%` (низкая ошибка)
-  - **Приемлемое качество**: `15-30%` (умеренная ошибка)
-  - **Плохое качество**: `> 30%` (высокая ошибка)
-- **Преимущества**:
-  - **Интерпретируемость**: Легко понять (процент ошибки)
-  - **Нормализация**: Позволяет сравнивать разные данные
-  - **Бизнес-применимость**: Хорошо подходит для бизнес-отчетов
-- **Недостатки**:
-  - **Проблема с нулями**: Не определена при y_true = 0
-  - **Чувствительность к выбросам**: Очень чувствительна к экстремальным значениям
-  - **Асимметричность**: Штрафует занижение сильнее чем завышение
-- **Интерпретация значений**:
-  - **0%**: Идеальное предсказание (все предсказания точные)
-  - **< 5%**: Очень хорошее качество
-  - **5-15%**: Хорошее качество
-  - **15-30%**: Приемлемое качество
-  - **> 30%**: Плохое качество
+**Mean Absolute Percentage Error (MAPE):**
+- ** Meaning**: Average absolute percentage error between true and predicted values
+- **Formoule**: `(1/n)' * ♪ [Y_tree - y_pred] / y_tree ♪ 100'
+- ** Value range**: `[0, +] &apos; (0% - ideal Pradition, +\] - worst)
+- ** When to use**:
+- ** Percentage interpretation**: When percentage error is important
+- **comparison of different scales**: MAPE is normalized and allows comparison of different data
+- ** Business-metrics**: Easy to interpret for business
+- ** Time series**: Good meth for forecasting
+- ** When not used**:
+- ** No value**: MAPE no defined at y_tree = 0
+- ** Very small**: May be unstable at very small values
+- ** Emissions**: Very sensitive to extreme values
+- ** Practical examples**:
+- ** Excellent quality**: `< 5%' (very low error)
+- ** Good quality**: `5-15%' (low error)
+- ** Acceptable quality**: `15-30%' (moderate error)
+- ** Bad quality**: `> 30%' (high error)
+- ** Benefits**:
+- ** Interpretation**: Easy to understand (percentage error)
+- **Normization**: Allows comparison of different data
+- ** Business Applicability**: Good for BusinessReports
+- ** Disadvantages**:
+- ** The problem with zero**: not determined at y_tree = 0
+- ** Emission sensitivity**: Very sensitive to extreme values
+- **Asymmetric**:Pension is stronger than overestimation
+- ** Interpretation**:
+- **0%**: Perfect Predation (all predictions are accurate)
+- **< 5%**: Very good quality
+**5-15%**: Good quality
+**15-30%**: Acceptable quality
+- **> 30%**: Poor quality
 
 #### Symmetric Mean Absolute Percentage Error (SMAPE)
 ```python
 def smape(y_true, y_pred):
-    return np.mean(2 * np.abs(y_true - y_pred) / (np.abs(y_true) + np.abs(y_pred))) * 100
+ return np.mean(2 * np.abs(y_true - y_pred) / (np.abs(y_true) + np.abs(y_pred))) * 100
 
 smape_score = smape(y_true, y_pred)
 print(f"SMAPE: {smape_score:.4f}%")
 ```
 
-**🔧 Детальное описание параметров SMAPE:**
+**/ Detailed describe of SMAPE parameters:**
 
-**Метрика Symmetric Mean Absolute Percentage Error (SMAPE):**
-- **Что означает**: Симметричная средняя абсолютная процентная ошибка между истинными и предсказанными значениями
-- **Формула**: `(1/n) * Σ[2 * |y_true - y_pred| / (|y_true| + |y_pred|)] * 100`
-- **Диапазон значений**: `[0, 200%]` (0% - идеальное предсказание, 200% - худшее)
-- **Когда использовать**:
-  - **Симметричная оценка**: Когда важна симметричная оценка ошибок
-  - **Сравнение разных масштабов**: SMAPE нормализована и позволяет сравнивать разные данные
-  - **Бизнес-метрики**: Легко интерпретировать для бизнеса
-  - **Временные ряды**: Хорошая метрика для прогнозирования
-- **Когда НЕ использовать**:
-  - **Нулевые значения**: SMAPE может быть нестабильной при y_true = 0 или y_pred = 0
-  - **Очень малые значения**: Может быть нестабильной при очень малых значениях
-  - **Выбросы**: Очень чувствительна к экстремальным значениям
-- **Практические примеры**:
-  - **Отличное качество**: `< 10%` (очень низкая ошибка)
-  - **Хорошее качество**: `10-20%` (низкая ошибка)
-  - **Приемлемое качество**: `20-40%` (умеренная ошибка)
-  - **Плохое качество**: `> 40%` (высокая ошибка)
-- **Преимущества**:
-  - **Симметричность**: Одинаково штрафует за завышение и занижение
-  - **Интерпретируемость**: Легко понять (процент ошибки)
-  - **Нормализация**: Позволяет сравнивать разные данные
-  - **Бизнес-применимость**: Хорошо подходит для бизнес-отчетов
-- **Недостатки**:
-  - **Проблема с нулями**: Может быть нестабильной при y_true = 0 или y_pred = 0
-  - **Чувствительность к выбросам**: Очень чувствительна к экстремальным значениям
-  - **Сложность вычисления**: Требует больше вычислений чем MAPE
-- **Интерпретация значений**:
-  - **0%**: Идеальное предсказание (все предсказания точные)
-  - **< 10%**: Очень хорошее качество
-  - **10-20%**: Хорошее качество
-  - **20-40%**: Приемлемое качество
-  - **> 40%**: Плохое качество
-  - **200%**: Худшее возможное предсказание
+**Symmetric Mean Absolute Percentage Error (SMAPE):**
+- ** Meaning**: Symmetric average absolute percentage error between true and predicted values
+== sync, corrected by elderman == @elder_man
+- ** Value range**: `[0,200%] &apos; (0% ideal Pradition, 20% worst)
+- ** When to use**:
+- ** Symmetrical evaluation**: When a symmetrical error assessment is important
+- **comparison of different sizes**: SMAPE is normalized and allows comparison of different data
+- ** Business-metrics**: Easy to interpret for business
+- ** Time series**: Good meth for forecasting
+- ** When not used**:
+- ** No value**: SMAPE can be unstable at y_tree = 0 or y_pred = 0
+- ** Very small**: May be unstable at very small values
+- ** Emissions**: Very sensitive to extreme values
+- ** Practical examples**:
+- ** Excellent quality**: `< 10%' (very low error)
+- ** Good quality**: `10-20%' (low error)
+- ** Acceptable quality**: `20-40%' (moderate error)
+- ** Bad quality**: `> 40%' (high error)
+- ** Benefits**:
+- ** Symmetricity**: One penalty for overestimation and underestimation
+- ** Interpretation**: Easy to understand (percentage error)
+- **Normization**: Allows comparison of different data
+- ** Business Applicability**: Good for BusinessReports
+- ** Disadvantages**:
+- ** The problem with zero**: May be unstable at y_tree = 0 or y_pred = 0
+- ** Emission sensitivity**: Very sensitive to extreme values
+- ** Computation difficulty**: Requires more calculation than MAPE
+- ** Interpretation**:
+- **0%**: Perfect Predation (all predictions are accurate)
+- **< 10%**: Very good quality
+**10-20%**: Good quality
+**20-40%**: Acceptable quality
+- **> 40%**: Poor quality
+- **200%**: Worst possible implementation
 
 #### Mean Absolute Scaled Error (MASE)
 ```python
 def mase(y_true, y_pred, y_train):
-    # Наивный прогноз (следующее значение)
-    naive_forecast = np.roll(y_train, 1)
-    naive_mae = np.mean(np.abs(y_train - naive_forecast))
-    
-    # MAE модели
-    model_mae = np.mean(np.abs(y_true - y_pred))
-    
-    return model_mae / naive_mae
+# Naïve projection (later value)
+ naive_forecast = np.roll(y_train, 1)
+ naive_mae = np.mean(np.abs(y_train - naive_forecast))
+
+# Model MAE
+ model_mae = np.mean(np.abs(y_true - y_pred))
+
+ return model_mae / naive_mae
 
 mase_score = mase(y_true, y_pred, y_train)
 print(f"MASE: {mase_score:.4f}")
 ```
 
-**🔧 Детальное описание параметров MASE:**
+**/ Detailed describe of MASE parameters:**
 
-**Метрика Mean Absolute Scaled Error (MASE):**
-- **Что означает**: Средняя абсолютная масштабированная ошибка относительно наивного прогноза
-- **Формула**: `MAE_model / MAE_naive` где MAE_naive - MAE наивного прогноза
-- **Диапазон значений**: `[0, +∞)` (0 - идеальное предсказание, 1 - как наивный, >1 - хуже наивного)
-- **Когда использовать**:
-  - **Временные ряды**: MASE специально разработана для временных рядов
-  - **Сравнение с наивным прогнозом**: Когда важно понять, лучше ли модель наивного прогноза
-  - **Нормализация**: MASE нормализована и позволяет сравнивать разные временные ряды
-  - **Прогнозирование**: Хорошая метрика для оценки качества прогнозов
-- **Когда НЕ использовать**:
-  - **Не временные ряды**: MASE не подходит для обычной регрессии
-  - **Очень короткие ряды**: Может быть нестабильной для коротких временных рядов
-  - **Сезонные данные**: Может быть нестабильной для сильно сезонных данных
-- **Практические примеры**:
-  - **Отличное качество**: `< 0.5` (в 2 раза лучше наивного)
-  - **Хорошее качество**: `0.5-0.8` (лучше наивного)
-  - **Приемлемое качество**: `0.8-1.0` (примерно как наивный)
-  - **Плохое качество**: `> 1.0` (хуже наивного)
-- **Параметр `y_train`**:
-  - **Назначение**: Обучающие данные для вычисления наивного прогноза
-  - **Использование**: Должны быть те же данные, на которых обучалась модель
-- **Преимущества**:
-  - **Нормализация**: Позволяет сравнивать разные временные ряды
-  - **Интерпретируемость**: Легко понять (лучше/хуже наивного прогноза)
-  - **Устойчивость к масштабу**: Не зависит от масштаба данных
-  - **Специализация**: Специально разработана для временных рядов
-- **Недостатки**:
-  - **Ограниченность**: Подходит только для временных рядов
-  - **Зависимость от данных**: Требует обучающие данные
-  - **Сложность вычисления**: Требует вычисления наивного прогноза
-- **Интерпретация значений**:
-  - **0.0**: Идеальное предсказание (все предсказания точные)
-  - **< 0.5**: Очень хорошее качество (в 2+ раза лучше наивного)
-  - **0.5-0.8**: Хорошее качество (лучше наивного)
-  - **0.8-1.0**: Приемлемое качество (примерно как наивный)
-  - **1.0**: Как наивный прогноз
-  - **> 1.0**: Хуже наивного прогноза
+**Mean Absolute Scaled Error (MASE):**
+- ** Meaning**: Average absolute scale error relative to naive projection
+- **Formoula**: `MAE_model / MAE_naive' where MAE_naive - MAE naive projection
+- ** A range of values**: `[0, + ]' (0 is ideal Pradition, 1 is naive, >1 is worse than naive)
+- ** When to use**:
+- ** Time series**: MASE is a special time series
+- **comparison with naive prognosis**: When it's important to see if the naive projection model is better
+- **Normization**: MASE is normalized and allows comparisons of different time series
+- ** Projection**: Good metric for estimating the quality of projections
+- ** When not used**:
+**not time series**: MASE note is suitable for normal regression
+- **Very short rows**: May be unstable for short time series
+- ** Seasonal data**: May be unstable for heavy seasonal data
+- ** Practical examples**:
+- ** Excellent quality**: `< 0.5' (in 2 times better than naive)
+- ** Good quality**: `0.5-0.8' (better than naive)
+- ** Acceptable quality**: `0.8-1.0' (approximately as naive)
+- **Bad quality**: `> 1.0' (more than naive)
+- **parameter `y_train`**:
+- ** Designation**: Training data for calculating a naive projection
+- ** Use**: There must be the same data on which the model was trained.
+- ** Benefits**:
+- **Normization**: Allows comparison of different time series
+- ** Interpretation**: Easy to understand (better/better than naive)
+- **Sistence to scale**: not dependent on from size of data
+- **Special**: Special time for time series
+- ** Disadvantages**:
+- **Restriction**: Only suitable for time series
+- **dependency from data**: Requires training data
+- ** Computation difficulty**: Requires calculation of naive projection
+- ** Interpretation**:
+- **0.0**: Perfect Predation (all predictions accurate)
+- **< 0.5**: Very good quality (in 2+ times better than naive)
+- **0.5-0.8**: Good quality (better than naive)
+**0.8-1.0**: Acceptable quality (approximately as naive)
+- **1.0**: As a naïve projection
+- **> 1.0**: Worse than the naive forecast
 
-## Использование метрик в AutoGluon
+## Use of metrics in AutoGluon
 
-### Настройка метрик для обучения
+## configuration metric for learning
 
 ```python
 from autogluon.tabular import TabularPredictor
 
-# Для классификации
+# for classification
 predictor = TabularPredictor(
-    label='target',
-    problem_type='binary',
-    eval_metric='accuracy'  # или 'f1', 'roc_auc', 'log_loss'
+ label='target',
+ problem_type='binary',
+ eval_metric='accuracy' # or 'f1', 'roc_auc', 'log_loss'
 )
 
-# Для регрессии
+# for regression
 predictor = TabularPredictor(
-    label='target',
-    problem_type='regression',
-    eval_metric='rmse'  # или 'mae', 'r2'
+ label='target',
+ problem_type='regression',
+ eval_metric='rmse' # or 'mae', 'r2'
 )
 ```
 
-**🔧 Детальное описание параметров TabularPredictor:**
+** Detailed describe parameters TabularPredicator:**
 
-**Класс TabularPredictor:**
-- **Назначение**: Создание и обучение предиктора для табличных данных
-- **Параметры конструктора**:
-  - **`label`**: Название целевой переменной
-    - **Тип**: str
-    - **Описание**: Название столбца с целевой переменной в данных
-    - **Примеры**: 'target', 'price', 'category'
-  - **`problem_type`**: Тип задачи (по умолчанию 'auto')
-    - **Тип**: str
-    - **Описание**: Тип задачи машинного обучения
-    - **Варианты**: 'auto', 'binary', 'multiclass', 'regression', 'quantile'
-  - **`eval_metric`**: Метрика для оценки (по умолчанию 'auto')
-    - **Тип**: str или Scorer
-    - **Описание**: Метрика для оптимизации во время обучения
-    - **Варианты**: 'accuracy', 'f1', 'roc_auc', 'log_loss', 'rmse', 'mae', 'r2'
-  - **`path`**: Путь для сохранения модели (по умолчанию 'AutogluonModels')
-    - **Тип**: str
-    - **Описание**: Директория для сохранения обученных моделей
-  - **`verbosity`**: Уровень вывода (по умолчанию 2)
-    - **Тип**: int
-    - **Описание**: Уровень детализации вывода (0-4)
-    - **Варианты**: 0 (тихо), 1 (минимально), 2 (нормально), 3 (подробно), 4 (максимально)
-  - **`presets`**: Предустановки конфигурации (по умолчанию 'medium_quality_faster_train')
-    - **Тип**: str
-    - **Описание**: Предустановленные конфигурации для обучения
-    - **Варианты**: 'best_quality', 'high_quality', 'good_quality', 'medium_quality', 'optimize_for_deployment'
-- **Использование**:
-  - **Создание предиктора**: Инициализация предиктора с заданными параметрами
-  - **Обучение модели**: Вызов метода fit() для обучения
-  - **Предсказания**: Вызов методов predict() и predict_proba()
-  - **Оценка качества**: Вызов метода evaluate()
+**Class TabularPredictor:**
+- ** Designation**: pre-indicator &apos; s training for table data
+- **parameters of design**:
+- **'label'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable in data
+ - **examples**: 'target', 'price', 'category'
+- **'problem_type'**: Task type (on default 'auto')
+- **Typ**: str
+- **describe**: Type of task
+- **Options**: 'auto', 'binary', 'multiclass', 'regression', 'Quantile'
+- ** `eval_metric'**: Metrique for evaluation (on default 'auto')
+- ** Type**: str or Scorer
+- **describe**: Meterics for optimization during training
+- **Options**: 'accuracy', 'f1', 'roc_auc', 'log_loss', 'rmse', 'mae', 'r2'
+- **'path'**: Path for model preservation (on default 'AutogluonModels')
+- **Typ**: str
+- **describe**: Directorate for the preservation of trained models
+- ** `verbosity'**: Output level (on default 2)
+- **Typ**:int
+- **describe**: Detailsation level (0-4)
+**Options**: 0 (silent), 1 (minimum), 2 (normal), 3 (detailed), 4 (maximum)
+- **'presets'**: Pre-installation configuration (on default 'media_quality_faster_training')
+- **Typ**: str
+- **describe**: Pre-established learning configurations
+- **Options**: 'best_quality', 'high_quality', 'good_quality', 'media_quality', 'optimise_for_development'
+- ** Use**:
+- **create pre-indicator**: Initiating a pre-injector with specified parameters
+- ** Model training**: The challenge of the Fit() method for learning
+- **Treathing**: Challenge of predict() and predict_proba()
+- ** Quality assessment**: Challenge of the evalute method()
 
-**🔧 Детальное описание параметров eval_metric:**
+**/ Detailed describe parameters eval_metric:**
 
-**Параметр eval_metric:**
-- **Назначение**: Метрика для оптимизации во время обучения модели
-- **Типы значений**: Строка с названием метрики или объект Scorer
-- **Влияние на обучение**: AutoGluon использует эту метрику для выбора лучших моделей
-- **Доступные метрики для классификации**:
-  - **`'accuracy'`**: Точность (по умолчанию для multiclass)
-  - **`'f1'`**: F1-score (по умолчанию для binary)
-  - **`'roc_auc'`**: ROC AUC (хорошо для несбалансированных данных)
-  - **`'log_loss'`**: Log Loss (хорошо для вероятностей)
-  - **`'balanced_accuracy'`**: Сбалансированная точность
-  - **`'precision'`**: Precision
-  - **`'recall'`**: Recall
-  - **`'mcc'`**: Matthews Correlation Coefficient
-- **Доступные метрики для регрессии**:
-  - **`'rmse'`**: Root Mean Squared Error (по умолчанию)
-  - **`'mae'`**: Mean Absolute Error
-  - **`'r2'`**: R² Score
-  - **`'mse'`**: Mean Squared Error
-  - **`'mape'`**: Mean Absolute Percentage Error
-  - **`'smape'`**: Symmetric Mean Absolute Percentage Error
-- **Рекомендации по выбору**:
-  - **Сбалансированные данные**: `'accuracy'` для классификации, `'rmse'` для регрессии
-  - **Несбалансированные данные**: `'f1'` или `'roc_auc'` для классификации
-  - **Вероятности важны**: `'log_loss'` для классификации
-  - **Процентные ошибки**: `'mape'` или `'smape'` для регрессии
-  - **Временные ряды**: `'mae'` или `'rmse'` для регрессии
+**parameter eval_metric:**
+- ** Designation**: Meterics for optimization during model learning
+- **Tips of values**: Line with the name metrics or object Scorer
+- **Effects on learning**: AutoGluon uses this metric to select the best models
+- ** Available metrics for classification**:
+- **'accuracy'**: Accuracy (on default for multiclass)
+- **'f1'**: F1-score (on default for beinary)
+- **'roc_auc'**: ROC AUC (good for unbalanced data)
+- **'log_loss'**: Log Loss (good for probabilities)
+- **'balanced_accuracy'**: Balanced accuracy
+ - **`'precision'`**: Precision
+ - **`'recall'`**: Recall
+ - **`'mcc'`**: Matthews Correlation Coefficient
+- ** Accessible metrics for regression**:
+- **'romse'**: Root Mean Squared Error (on default)
+ - **`'mae'`**: Mean Absolute Error
+ - **`'r2'`**: R² Score
+ - **`'mse'`**: Mean Squared Error
+ - **`'mape'`**: Mean Absolute Percentage Error
+ - **`'smape'`**: Symmetric Mean Absolute Percentage Error
+- ** Recommendations on selection**:
+- ** Balanced data**: ``accuracy' for classification, `'rmse' for regression
+- ** Unbalanced data**: `'f1' or `'roc_auc' for classification
+- **Probably important**: `'log_loss' for classification
+- ** Percentage errors**: `'mape' or `'smape' for regression
+- **Temporary series**: `'mae'' or `'rmse' for regression
 
-### Множественные метрики
+### Multiple metrics
 
 ```python
-# Обучение с несколькими метриками
+# Learning with several metrics
 predictor.fit(
-    train_data,
-    eval_metric=['accuracy', 'f1', 'roc_auc']
+ train_data,
+ eval_metric=['accuracy', 'f1', 'roc_auc']
 )
 
-# Получение всех метрик
+# Getting an all-metric
 performance = predictor.evaluate(test_data)
 print(performance)
 ```
 
-**🔧 Детальное описание параметров метода evaluate:**
+**/ Detailed descrie parameters of the evalute method: **/
 
-**Метод evaluate:**
-- **Назначение**: Оценка качества обученной модели на тестовых данных
-- **Параметры**:
-  - **`data`**: Тестовые данные
-    - **Тип**: DataFrame
-    - **Описание**: Таблица с тестовыми данными
-    - **Структура**: Столбцы с признаками + столбец с целевой переменной
-  - **`metrics`**: Метрики для вычисления (по умолчанию None)
-    - **Тип**: list или None
-    - **Описание**: Список метрик для вычисления
-    - **Варианты**: ['accuracy', 'f1', 'roc_auc'], None (все доступные)
-  - **`silent`**: Подавлять вывод (по умолчанию False)
-    - **Тип**: bool
-    - **Описание**: Показывать ли прогресс вычисления метрик
-- **Возвращаемое значение**: dict - словарь с метриками и их значениями
-- **Примеры возвращаемых значений**:
-  - **Классификация**: {'accuracy': 0.85, 'f1': 0.82, 'roc_auc': 0.88}
-  - **Регрессия**: {'rmse': 0.15, 'mae': 0.12, 'r2': 0.78}
-- **Использование**:
-  - **Оценка качества**: Получение метрик качества на тестовых данных
-  - **Сравнение моделей**: Сравнение разных алгоритмов
-  - **Валидация**: Проверка качества модели перед развертыванием
-  - **Отчетность**: Создание отчетов о качестве модели
+** Evalute method:**
+- ** Designation**: Quality assessment of the trained model on test data
+- **parameters**:
+- **'data'**: test data
+-** Type**: DataFrame
+- **describe**: Table with test data
+- **Structure**: Columns with signature + column with target variable
+- **'metrics'**: metrics for computation (on default None)
+- ** Type**: List or None
+- **describe**: List metric for computation
+- **Options**: ['accuracy', 'f1', 'roc_auc'], None (all available)
+- ** `silent'**: Repress output (on default False)
+-**Teep**: bool
+- **describe**: Show progress in metric computation
+**Return value**: dict - dictionary with metrics and their values
+- **examples of returned values**:
+- ** Classification**: {'accuracy': 0.85, 'f1': 0.82, 'roc_auc': 0.88}
+- **Regression**: {'rmse': 0.15, 'mae': 0.12, 'r2':0.78}
+- ** Use**:
+- ** Quality assessment**: Collection of quality metric on test data
+- **comparison models**: comparison different algorithms
+- **validation**: heck of model quality before release
+- **Reportability**: quality review reports
 ```
 
-**🔧 Детальное описание параметров метода fit:**
+**/ Detailed descrie parameters of Fit method: **/
 
-**Метод fit:**
-- **Назначение**: Обучение предиктора на предоставленных данных
-- **Параметры**:
-  - **`train_data`**: Обучающие данные
-    - **Тип**: DataFrame
-    - **Описание**: Таблица с обучающими данными
-    - **Структура**: Столбцы с признаками + столбец с целевой переменной
-  - **`eval_metric`**: Метрика для оценки (по умолчанию None)
-    - **Тип**: str, list или Scorer
-    - **Описание**: Метрика или список метрик для оптимизации
-    - **Варианты**: 'accuracy', 'f1', 'roc_auc', ['accuracy', 'f1'], custom_scorer
-  - **`time_limit`**: Ограничение времени обучения (по умолчанию None)
-    - **Тип**: int или None
-    - **Описание**: Максимальное время обучения в секундах
-    - **Примеры**: 300 (5 минут), 3600 (1 час)
-  - **`presets`**: Предустановки конфигурации (по умолчанию None)
-    - **Тип**: str или None
-    - **Описание**: Предустановленные конфигурации для обучения
-    - **Варианты**: 'best_quality', 'high_quality', 'good_quality', 'medium_quality'
-  - **`hyperparameters`**: Гиперпараметры моделей (по умолчанию None)
-    - **Тип**: dict или None
-    - **Описание**: Словарь с гиперпараметрами для разных алгоритмов
-    - **Примеры**: {'GBM': {'num_boost_round': 100}, 'NN': {'epochs': 50}}
-  - **`feature_metadata`**: Метаданные признаков (по умолчанию None)
-    - **Тип**: FeatureMetadata или None
-    - **Описание**: Метаданные о типах и свойствах признаков
-  - **`holdout_frac`**: Доля данных для валидации (по умолчанию 0.1)
-    - **Тип**: float
-    - **Описание**: Доля данных для внутренней валидации (0.0 - 1.0)
-    - **Рекомендации**: 0.1-0.2 для больших датасетов, 0.2-0.3 для малых
-- **Возвращаемое значение**: None (модель сохраняется внутри предиктора)
-- **Использование**:
-  - **Обучение модели**: Основной метод для обучения предиктора
-  - **Настройка метрик**: Указание метрик для оптимизации
-  - **Контроль времени**: Ограничение времени обучения
-  - **Настройка параметров**: Указание гиперпараметров для алгоритмов
+** Method Fit:**
+- ** Designation**: Training the precursor on the data provided
+- **parameters**:
+- **'training_data'**: Training data
+-** Type**: DataFrame
+- **describe**: Table with learning data
+- **Structure**: Columns with signature + column with target variable
+** `eval_metric'**: Metrique for evaluation (on default None)
+- ** Type**: str, List or Scorer
+- **describe**: Metrique or List metric for optimization
+- **Options**: 'accuracy', 'f1', 'roc_auc', ['accuracy', 'f1'], customary_scorer
+** `time_limit'**: Limiting the time of learning (on default None)
+- **Typ**:int or None
+- **describe**: Maximum learning time in seconds
+- **examples**: 300 (5 minutes), 3,600 (1 hour)
+- **'presets'**: Pre-installation configuration (on default Non)
+- **Typ**: str or None
+- **describe**: Pre-established learning configurations
+- **Options**: 'best_quality', 'high_quality', 'good_quality', 'mediam_quality'
+- **'hyperparameters'**: Model Hyperparameters (on default None)
+- ** Type**: dict or None
+- **describe**: Vocabulary with hyperparameters for different algorithms
+ - **examples**: {'GBM': {'num_boost_round': 100}, 'NN': {'epochs': 50}}
+- **'feature_metadata'**: Metadata signs (on default None)
+-** Type**: FeatureMetadata or None
+- **describe**: Metadata on the types and properties of the topics
+** `holdout_frac'**: Percentage of data for validation (on default 0.1)
+- **Typ**: float
+**describe**: Percentage of data for internal validation (0.0 - 1.0)
+- ** Recommendations**: 0.1-0.2 for large datasets, 0.2-0.3 for small
+- **Return value**: None (model retained inside pre-indicator)
+- ** Use**:
+- ** Model training**: Basic method for pre-rector education
+- **configuring metric**: specific metric for optimization
+** Time control**: limitation of time of study
+**configuring parameters**: specific hyperparameters for algorithms
 
-**🔧 Детальное описание параметров множественных метрик:**
+**/ Detailed descrie parameters of multiple metrics: **/
 
-**Параметр eval_metric (список метрик):**
-- **Назначение**: Список метрик для оценки качества модели
-- **Типы значений**: Список строк с названиями метрик
-- **Влияние на обучение**: AutoGluon использует первую метрику для оптимизации, остальные для мониторинга
-- **Преимущества**:
-  - **Комплексная оценка**: Позволяет оценить модель по нескольким критериям
-  - **Мониторинг**: Помогает отслеживать качество во время обучения
-  - **Сравнение**: Упрощает сравнение разных моделей
-- **Рекомендации по выбору**:
-  - **Основная метрика**: Первая в списке - для оптимизации
-  - **Дополнительные метрики**: Остальные - для мониторинга
-  - **Разнообразие**: Выбирайте метрики, которые измеряют разные аспекты качества
-- **Примеры комбинаций**:
-  - **Классификация**: `['accuracy', 'f1', 'roc_auc']`
-  - **Регрессия**: `['rmse', 'mae', 'r2']`
-  - **Несбалансированные данные**: `['f1', 'roc_auc', 'balanced_accuracy']`
-  - **Вероятности**: `['log_loss', 'roc_auc', 'accuracy']`
+**parameter eval_metric (List metric):**
+** Designation**: List metric for model quality evaluation
+- **Tips of values**: List line with names of metrics
+- **Effect on learning**: AutoGluon uses the first metric for optimization, the rest for Monitoring
+- ** Benefits**:
+- ** Integrated assessment**: Allows assessment of the model on multiple criteria
+- **Monitoring**: Helps track quality during training
+- **comparison**: Simplifies comparison of different models
+- ** Recommendations on selection**:
+- ** Main metric**: First in list - for optimization
+- ** Additional metrics**: Others for Monitoring
+- ** Diversity**: Choose metrics that measure different aspects of quality
+- **examples of combinations**:
+- ** Classification**: `['accuracy', `f1', 'roc_auc'] `
+== sync, corrected by elderman == @elder_man
+- ** Unbalanced data**: `['f1', 'roc_auc', 'balanced_accuracy'] `
+- **Probability**: `['log_loss', 'roc_auc', 'accuracy'] `
 
-### Кастомные метрики
+### Castle metrics
 
 ```python
 from autogluon.core import Scorer
 
-# Создание кастомной метрики
+# Create caste metrics
 def custom_metric(y_true, y_pred):
-    """Кастомная метрика для оценки качества"""
-    # Ваша логика расчета
-    return score
+"Castom metric for quality assessment"
+# Your Logsk calculation
+ return score
 
 custom_scorer = Scorer(
-    name='custom_metric',
-    score_func=custom_metric,
-    greater_is_better=True
+ name='custom_metric',
+ score_func=custom_metric,
+ greater_is_better=True
 )
 
 predictor.fit(
-    train_data,
-    eval_metric=custom_scorer
+ train_data,
+ eval_metric=custom_scorer
 )
 ```
 
-**🔧 Детальное описание параметров кастомных метрик:**
+**/ Detailed descrie parameters of caste-based metrics:**
 
-**Класс Scorer:**
-- **Назначение**: Создание пользовательских метрик для AutoGluon
-- **Параметры**:
-  - **`name`**: Название метрики (строка)
-  - **`score_func`**: Функция для вычисления метрики
-  - **`greater_is_better`**: True если большее значение лучше, False если меньшее
-- **Функция score_func**:
-  - **Входные параметры**: `y_true`, `y_pred` (numpy arrays)
-  - **Возвращаемое значение**: Число (float)
-  - **Требования**: Должна быть векторизованной и работать с numpy arrays
-- **Параметр greater_is_better**:
-  - **True**: Большее значение метрики означает лучшее качество (accuracy, f1, r2)
-  - **False**: Меньшее значение метрики означает лучшее качество (mae, mse, log_loss)
-- **Примеры кастомных метрик**:
-  - **Бизнес-метрики**: Прибыль, убытки, конверсия
-  - **Специфичные метрики**: Для конкретных доменов
-  - **Комбинированные метрики**: Объединение нескольких метрик
-  - **Взвешенные метрики**: С учетом важности примеров
-- **Рекомендации**:
-  - **Простота**: Функция должна быть простой и быстрой
-  - **Векторизация**: Используйте numpy операции для производительности
-  - **Обработка ошибок**: Добавьте проверки на корректность входных данных
-  - **Документация**: Хорошо документируйте назначение метрики
+** Class Scorer:**
+- ** Designation**: cut user metrics for AutoGluon
+- **parameters**:
+- **'name'**: Name of metrics (line)
+- **'score_fund'**: finance for computation of metrics
+- **'green_is_better'**: True if more value is better, False if less
+- **function score_func**:
+- **Inductions**: `y_tree', `y_pred' (numpy arrays)
+**Return value**: Number (float)
+- ** Demands**: Should be vectorized and Working with numpy arrays
+- **parameter greater_is_better**:
+- **True**: More metrics means better quality (accuracy, f1, r2)
+- **False**: Lower value metrics means better quality (mae, mse, log_loss)
+- **examples caste-based metrics**:
+- ** Business-metrics**: Revenue, loss, conversion
+- ** Specialized metrics**: for specific domains
+- ** Combination metrics**: Mixing several metrics
+- ** Weighted metrics**: with regard to the importance of examples
+- ** Recommendations**:
+- **Simple**: function should be simple and quick
+- **Vocation**: Use numpy operation for performance
+- ** Error processing**: Add checks on input accuracy
+- **documentation**: Document the appointment of metrics well
 
-## Анализ производительности
+## Performance analysis
 
-### Лидерборд моделей
+♪# ♪ Model leader
 
 ```python
-# Получение лидерборда
+# Getting a leaderboard
 leaderboard = predictor.leaderboard(test_data)
 print(leaderboard)
 
-# Детальный лидерборд
-leaderboard_detailed = predictor.leaderboard(
-    test_data,
-    extra_info=True,
-    silent=False
+# A detailed leaderboard
+leaderboard_Detailed = predictor.leaderboard(
+ test_data,
+ extra_info=True,
+ silent=False
 )
 ```
 
-**🔧 Детальное описание параметров метода leaderboard:**
+** Detailed describe parameters of the leaderboard method:**
 
-**Метод leaderboard:**
-- **Назначение**: Получение рейтинга моделей по качеству
-- **Параметры**:
-  - **`data`**: Тестовые данные (по умолчанию None)
-    - **Тип**: DataFrame или None
-    - **Описание**: Таблица с тестовыми данными для оценки
-    - **Структура**: Столбцы с признаками + столбец с целевой переменной
-  - **`extra_info`**: Дополнительная информация (по умолчанию False)
-    - **Тип**: bool
-    - **Описание**: Показывать ли дополнительную информацию о моделях
-    - **Дополнительная информация**: Размер модели, количество признаков, гиперпараметры
-  - **`silent`**: Подавлять вывод (по умолчанию True)
-    - **Тип**: bool
-    - **Описание**: Показывать ли прогресс вычисления метрик
-- **Возвращаемое значение**: DataFrame - таблица с метриками для каждой модели
-- **Столбцы лидерборда**:
-  - **`model`**: Название модели
-  - **`score_val`**: Значение основной метрики на валидации
-  - **`score_test`**: Значение основной метрики на тесте (если передан data)
-  - **`fit_time`**: Время обучения модели
-  - **`pred_time`**: Время предсказания
-  - **`stack_level`**: Уровень стекинга (для ансамблевых моделей)
-- **Дополнительные столбцы (extra_info=True)**:
-  - **`num_features`**: Количество признаков
-  - **`memory_size`**: Размер модели в памяти
-  - **`num_models`**: Количество моделей в ансамбле
-  - **`hyperparameters`**: Гиперпараметры модели
-- **Использование**:
-  - **Сравнение моделей**: Выбор лучшей модели
-  - **Анализ производительности**: Понимание сильных и слабых сторон
-  - **Оптимизация**: Выбор параметров для дальнейшей настройки
+**Leaderboard method:**
+- ** Designation**: Collection of model rating on quality
+- **parameters**:
+- **'data'**: test data (on default None)
+- ** Type**: DataFrame or None
+- **describe**: Table with test data for evaluation
+- **Structure**: Columns with signature + column with target variable
+- **'extra_info'**: Additional information (on default False)
+-**Teep**: bool
+- **describe**: Do you want to show additional information on models
+- ** Additional information**: Model size, number of topics, hyperparameters
+- ** `silent'**: Repress output (on default True)
+-**Teep**: bool
+- **describe**: Show progress in metric computation
+- **Return value**: dataFrame - table with metrics for each model
+- **Wheelboards**:
+- **'model'**: Model name
+- **'score_val'**: Value of basic instruments on validation
+- **'score_test'**: Value of basic metrics on the test (if given data)
+- **'fit_time'**: Model learning time
+- **'pred_time'**: The prediction time
+- **'stack_level'**: Glass level (for ensemble models)
+- ** Additional columns (extra_info=True)**:
+- **'num_features'**: Number of topics
+- **/memory_size'**: The size of the model in memory
+- **'num_models'**: Number of models in ensemble
+- **'hyperparameters'**: Model Hyperparameters
+- ** Use**:
+- **comparison of models**: Choice of a better model
+- ** Performance Analysis**: Understanding strengths and weaknesses
+- **Optification**: Selection of parameters for further Settings
 
-**🔧 Детальное описание параметров лидерборда:**
+** Detailed describe of the leaderboard parameters:**
 
-**Метод leaderboard:**
-- **Назначение**: Получение рейтинга моделей по качеству
-- **Параметры**:
-  - **`test_data`**: Тестовые данные для оценки (опционально)
-  - **`extra_info`**: Показывать дополнительную информацию (по умолчанию False)
-  - **`silent`**: Подавлять вывод (по умолчанию True)
-- **Возвращаемое значение**: DataFrame с метриками для каждой модели
-- **Столбцы лидерборда**:
-  - **`model`**: Название модели
-  - **`score_val`**: Значение основной метрики на валидации
-  - **`score_test`**: Значение основной метрики на тесте (если передан test_data)
-  - **`fit_time`**: Время обучения модели
-  - **`pred_time`**: Время предсказания
-  - **`stack_level`**: Уровень стекинга (для ансамблевых моделей)
-- **Дополнительная информация (extra_info=True)**:
-  - **`num_features`**: Количество признаков
-  - **`memory_size`**: Размер модели в памяти
-  - **`num_models`**: Количество моделей в ансамбле
-  - **`hyperparameters`**: Гиперпараметры модели
-- **Использование**:
-  - **Сравнение моделей**: Выбор лучшей модели
-  - **Анализ производительности**: Понимание сильных и слабых сторон
-  - **Оптимизация**: Выбор параметров для дальнейшей настройки
+**Leaderboard method:**
+- ** Designation**: Collection of model rating on quality
+- **parameters**:
+- ** `test_data'**: test data for evaluation (almost)
+- ** `extra_info'**: Show additional information (on default False)
+- ** `silent'**: Repress output (on default True)
+- **Return value**: dataFrame with metrics for each model
+- **Wheelboards**:
+- **'model'**: Model name
+- **'score_val'**: Value of basic instruments on validation
+- **'score_test'**: Value of basic metrics on the test (if given test_data)
+- **'fit_time'**: Model learning time
+- **'pred_time'**: The prediction time
+- **'stack_level'**: Glass level (for ensemble models)
+- ** Additional information (extra_info=True)**:
+- **'num_features'**: Number of topics
+- **/memory_size'**: The size of the model in memory
+- **'num_models'**: Number of models in ensemble
+- **'hyperparameters'**: Model Hyperparameters
+- ** Use**:
+- **comparison of models**: Choice of a better model
+- ** Performance Analysis**: Understanding strengths and weaknesses
+- **Optification**: Selection of parameters for further Settings
 
-### Анализ важности признаков
+### Signal importance analysis
 
 ```python
-# Важность признаков
+# The importance of signs
 feature_importance = predictor.feature_importance()
 print(feature_importance)
 
-# Визуализация важности признаков
+# Visualizing the importance of signs
 import matplotlib.pyplot as plt
 
 feature_importance.plot(kind='barh', figsize=(10, 8))
-plt.title('Feature Importance')
-plt.xlabel('Importance')
+plt.title('Feature importance')
+plt.xlabel('importance')
 plt.show()
 ```
 
-**🔧 Детальное описание параметров метода feature_importance:**
+**/ Detailed describe parameters of the mode_importance method: **/
 
-**Метод feature_importance:**
-- **Назначение**: Получение важности признаков для лучшей модели
-- **Параметры**:
-  - **`data`**: Данные для вычисления важности (по умолчанию None)
-    - **Тип**: DataFrame или None
-    - **Описание**: Данные для вычисления важности признаков
-    - **Структура**: Столбцы с признаками + столбец с целевой переменной
-  - **`model`**: Модель для анализа (по умолчанию None)
-    - **Тип**: str или None
-    - **Описание**: Название модели для анализа важности
-    - **Варианты**: Название модели из лидерборда, None (лучшая модель)
-  - **`subsample`**: Размер подвыборки (по умолчанию 10000)
-    - **Тип**: int или None
-    - **Описание**: Количество примеров для вычисления важности
-    - **Рекомендации**: 10000 для быстрого вычисления, None для всех данных
-  - **`num_shuffle_sets`**: Количество перестановок (по умолчанию 1)
-    - **Тип**: int
-    - **Описание**: Количество наборов перестановок для стабильности
-    - **Рекомендации**: 1 для быстрого вычисления, 3-5 для стабильности
-- **Возвращаемое значение**: Series - важность каждого признака
-- **Методы вычисления важности**:
-  - **Permutation Importance**: Перестановка значений признака и измерение падения качества
-  - **SHAP Values**: Shapley Additive Explanations для объяснения предсказаний
-  - **Tree-based Importance**: Для деревьев решений (Gini, Information Gain)
-- **Интерпретация значений**:
-  - **Высокая важность**: Признак сильно влияет на предсказания
-  - **Низкая важность**: Признак слабо влияет на предсказания
-  - **Отрицательная важность**: Признак может вредить качеству модели
-- **Использование**:
-  - **Отбор признаков**: Выбор наиболее важных признаков
-  - **Интерпретация модели**: Понимание логики работы модели
-  - **Анализ данных**: Выявление наиболее информативных признаков
-  - **Оптимизация**: Улучшение качества данных
+**Feature_importance method:**
+- ** Designation**: Recognition of the importance of signs for a better model
+- **parameters**:
+- **'data'**: data for calculating importance (on default None)
+- ** Type**: DataFrame or None
+- **describe**: data for calculating the importance of topics
+- **Structure**: Columns with signature + column with target variable
+- **'model'**: Model for Analysis (on default Non)
+- **Typ**: str or None
+- **describe**: Name of model for Analysis of importance
+- **Options**: Headboard model name, Noe (best model)
+** `subsample'**: Subsample size (on default 10,000)
+- **Typ**:int or None
+- **describe**: Number of examples for calculating importance
+- ** Recommendations**: 10,000 for rapid computation, None for all data
+- **'num_shuffle_sets'**: Number of resets (on default 1)
+- **Typ**:int
+- **describe**: Number of resets for stability
+- ** Recommendations**: 1 for rapid calculation, 3-5 for stability
+- **Return value**: Series - the importance of each sign
+- **methods calculation of importance**:
+- **Permutation import**: Reset and measure quality drop
+- **SHAP Values**: Shapley Additive Applications for Explanations
+- **Tree-based import**: for decision trees (Gini, Information Gain)
+- ** Interpretation**:
+- ** High importance**: A sign strongly influences predictions
+- ** Low importance**: A sign has little influence on predictions
+- ** Negative importance**: A sign may affect model quality
+- ** Use**:
+- ** Selection of topics**: Selection of the most important topics
+- ** Model interpretation**: Understanding Logs of model operation
+- ** Data Analysis**: Identification of the most informative indicators
+** Optimization**: improvised data quality
 
-**🔧 Детальное описание параметров анализа важности признаков:**
+** Detailed describe parameters Analysis of the importance of signs:**
 
-**Метод feature_importance:**
-- **Назначение**: Получение важности признаков для лучшей модели
-- **Возвращаемое значение**: Series с важностью каждого признака
-- **Методы вычисления важности**:
-  - **Permutation Importance**: Перестановка значений признака и измерение падения качества
-  - **SHAP Values**: Shapley Additive Explanations для объяснения предсказаний
-  - **Tree-based Importance**: Для деревьев решений (Gini, Information Gain)
-- **Интерпретация значений**:
-  - **Высокая важность**: Признак сильно влияет на предсказания
-  - **Низкая важность**: Признак слабо влияет на предсказания
-  - **Отрицательная важность**: Признак может вредить качеству модели
-- **Использование**:
-  - **Отбор признаков**: Выбор наиболее важных признаков
-  - **Интерпретация модели**: Понимание логики работы модели
-  - **Анализ данных**: Выявление наиболее информативных признаков
-  - **Оптимизация**: Улучшение качества данных
+**Feature_importance method:**
+- ** Designation**: Recognition of the importance of signs for a better model
+- **Return value**: Series with the importance of each sign
+- **methods calculation of importance**:
+- **Permutation import**: Reset and measure quality drop
+- **SHAP Values**: Shapley Additive Applications for Explanations
+- **Tree-based import**: for decision trees (Gini, Information Gain)
+- ** Interpretation**:
+- ** High importance**: A sign strongly influences predictions
+- ** Low importance**: A sign has little influence on predictions
+- ** Negative importance**: A sign may affect model quality
+- ** Use**:
+- ** Selection of topics**: Selection of the most important topics
+- ** Model interpretation**: Understanding Logs of model operation
+- ** Data Analysis**: Identification of the most informative indicators
+** Optimization**: improvised data quality
 
-### Анализ ошибок
+### Error analysis
 
 ```python
-# Анализ ошибок для классификации
-from sklearn.metrics import classification_report, confusion_matrix
+# Analysis of errors for classification
+from sklearn.metrics import classification_Report, confusion_matrix
 
-# Отчет по классификации
-print(classification_report(y_true, y_pred))
+# Report on classification
+print(classification_Report(y_true, y_pred))
 
-# Матрица ошибок
+# A matrix of errors
 cm = confusion_matrix(y_true, y_pred)
 print("Confusion Matrix:")
 print(cm)
 
-# Визуализация матрицы ошибок
+# Visualization of the error matrix
 import seaborn as sns
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
 plt.title('Confusion Matrix')
 plt.show()
 ```
 
-**🔧 Детальное описание параметров classification_report:**
+**/ Detailed descrie parameters classification_Report:**
 
-**Функция classification_report:**
-- **Назначение**: Детальный отчет по качеству классификации
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив истинных меток классов
-    - **Примеры**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
-  - **`y_pred`**: Предсказанные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных меток классов
-    - **Примеры**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
-  - **`target_names`**: Названия классов (по умолчанию None)
-    - **Тип**: list или None
-    - **Описание**: Список названий классов для отчета
-    - **Примеры**: ['negative', 'positive'], ['cat', 'dog', 'bird']
-  - **`labels`**: Список классов для отчета (по умолчанию None)
-    - **Тип**: list или None
-    - **Описание**: Список классов для включения в отчет
-    - **Примеры**: [0, 1], ['cat', 'dog']
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении метрик
-  - **`digits`**: Количество знаков после запятой (по умолчанию 2)
-    - **Тип**: int
-    - **Описание**: Количество знаков после запятой в выводе
-    - **Рекомендации**: 2-4 для читаемости
-  - **`zero_division`**: Значение при делении на ноль (по умолчанию 'warn')
-    - **Тип**: str или float
-    - **Описание**: Что возвращать когда метрика не определена
-    - **Варианты**: 'warn', 0, 1
-- **Возвращаемое значение**: str - текстовый отчет с метриками
-- **Возвращаемые метрики**:
-  - **Precision**: Точность для каждого класса
-  - **Recall**: Полнота для каждого класса
-  - **F1-score**: F1-мера для каждого класса
-  - **Support**: Количество примеров в каждом классе
-  - **Macro avg**: Среднее арифметическое по классам
-  - **Weighted avg**: Среднее взвешенное по количеству примеров
-- **Использование**:
-  - **Детальный анализ**: Понимание качества по каждому классу
-  - **Выявление проблем**: Поиск классов с плохим качеством
-  - **Сравнение моделей**: Детальное сравнение разных алгоритмов
+**function classification_Report:**
+- ** Designation**: Detailed Report on Quality of Classification
+- **parameters**:
+- **'y_tree'**: True class labels
+-** Type**: Array-lake
+- **describe**: Massive of true class tags
+ - **examples**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
+- **'y_pred'**: Presumed class labels
+-** Type**: Array-lake
+- **describe**: Mass of predicted class tags
+ - **examples**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
+- **'target_names'**: Classnames (on default Non)
+- ** Type**: List or None
+- **describe**: List of class names for Reporta
+ - **examples**: ['negative', 'positive'], ['cat', 'dog', 'bird']
+- **'labels'**: List of classes for Reporta (on default None)
+- ** Type**: List or None
+- **describe**: List of classes for inclusion in Report
+ - **examples**: [0, 1], ['cat', 'dog']
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating metrics
+- **'digits'**: Number of digits after decimal place (on default 2)
+- **Typ**:int
+- **describe**: Number of digits after decimal point in conclusion
+- ** Recommendations**: 2-4 for reading
+- ** `Zero_diviction'**: Value when dividing on zero (on default 'warn')
+- ** Type**: str or float
+- **describe**: What to return when the not metric is defined
+- **Options**: 'warn', 0, 1
+- **Return value**: str - text Report with metrics
+- **Returnable metrics**:
+**Precision**: Accuracy for each class
+- **Recall**: Completeness for each class
+**F1-score**: F1-measures for each class
+- **Support**: Number of examples in each class
+- **Macro avg**: Average arithmetic on classes
+- **Weighted avg**: Average weighted on number of examples
+- ** Use**:
+- ** Detailed analysis**: Understanding quality on each class
+- ** Identification of problems**: Searching classes with poor quality
+- **comparison models**: Detailed comparison of different algorithms
 
-**🔧 Детальное описание параметров confusion_matrix:**
+** Detailed describe parameters confusion_matrix:**
 
-**Функция confusion_matrix:**
-- **Назначение**: Матрица ошибок для анализа типов ошибок
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив истинных меток классов
-    - **Примеры**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
-  - **`y_pred`**: Предсказанные метки классов
-    - **Тип**: array-like
-    - **Описание**: Массив предсказанных меток классов
-    - **Примеры**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
-  - **`labels`**: Список классов для матрицы (по умолчанию None)
-    - **Тип**: list или None
-    - **Описание**: Список классов для включения в матрицу
-    - **Примеры**: [0, 1], ['cat', 'dog']
-  - **`sample_weight`**: Веса для примеров (по умолчанию None)
-    - **Тип**: array-like или None
-    - **Описание**: Веса для каждого примера при вычислении матрицы
-  - **`normalize`**: Нормализация матрицы (по умолчанию None)
-    - **Тип**: str или None
-    - **Описание**: Способ нормализации матрицы
-    - **Варианты**: None, 'true', 'pred', 'all'
-- **Возвращаемое значение**: ndarray - матрица ошибок
-- **Элементы матрицы**:
-  - **TP (True Positive)**: Правильно предсказанные положительные классы
-  - **TN (True Negative)**: Правильно предсказанные отрицательные классы
-  - **FP (False Positive)**: Неправильно предсказанные положительные классы
-  - **FN (False Negative)**: Неправильно предсказанные отрицательные классы
-- **Использование**:
-  - **Анализ ошибок**: Понимание типов ошибок модели
-  - **Калибровка**: Настройка порога классификации
-  - **Интерпретация**: Объяснение работы модели
+**function confusion_matrix:**
+- ** Designation**: Error matrix for Analysis types of errors
+- **parameters**:
+- **'y_tree'**: True class labels
+-** Type**: Array-lake
+- **describe**: Massive of true class tags
+ - **examples**: [0, 1, 1, 0, 1], ['cat', 'dog', 'cat']
+- **'y_pred'**: Presumed class labels
+-** Type**: Array-lake
+- **describe**: Mass of predicted class tags
+ - **examples**: [0, 1, 0, 0, 1], ['cat', 'dog', 'dog']
+- **'labels'**: List classes for matrices (on default None)
+- ** Type**: List or None
+- **describe**: List of classes for inclusion in the matrix
+ - **examples**: [0, 1], ['cat', 'dog']
+** `sample_white'**: Weights for examples (on default None)
+-** Type**: Array-lake or None
+- **describe**: Weights for each example when calculating the matrix
+- **'normalyze'**: Normalization of the matrix (on default None)
+- **Typ**: str or None
+- **describe**: Method of normalization of the matrix
+- **Options**: None, 'tree', 'pred', 'all'
+- **Return value**: narray - error matrix
+- **Elements of the matrix**:
+- **TP (True Positive)**: Correctly predicted positive classes
+- **TN (True Negative)**: Correctly predicted negative classes
+- **FP (False Positive)**: Incorrectly predicted positive classes
+- **FN (False Negative)**: Wrongly predicted negative classes
+- ** Use**:
+- **Analysis of errors**: Understanding the types of model errors
+- ** Calibrication**: configurization of the classification threshold
+** Interpretation**: Explanation of the model
 
-**🔧 Детальное описание параметров анализа ошибок:**
+** Detailed describe parameters Analysis errors:**
 
-**Функция classification_report:**
-- **Назначение**: Детальный отчет по качеству классификации
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-  - **`y_pred`**: Предсказанные метки классов
-  - **`target_names`**: Названия классов (опционально)
-  - **`labels`**: Список классов для отчета (опционально)
-  - **`sample_weight`**: Веса для примеров (опционально)
-  - **`digits`**: Количество знаков после запятой (по умолчанию 2)
-- **Возвращаемые метрики**:
-  - **Precision**: Точность для каждого класса
-  - **Recall**: Полнота для каждого класса
-  - **F1-score**: F1-мера для каждого класса
-  - **Support**: Количество примеров в каждом классе
-  - **Macro avg**: Среднее арифметическое по классам
-  - **Weighted avg**: Среднее взвешенное по количеству примеров
-- **Использование**:
-  - **Детальный анализ**: Понимание качества по каждому классу
-  - **Выявление проблем**: Поиск классов с плохим качеством
-  - **Сравнение моделей**: Детальное сравнение разных алгоритмов
+**function classification_Report:**
+- ** Designation**: Detailed Report on Quality of Classification
+- **parameters**:
+- **'y_tree'**: True class labels
+- **'y_pred'**: Presumed class labels
+- **'target_names'**: Class names (traditional)
+- **'labels'**: List of classes for Reporta (traditional)
+- **/sample_weight'**: Weights for examples (traditional)
+- **'digits'**: Number of digits after decimal place (on default 2)
+- **Returnable metrics**:
+**Precision**: Accuracy for each class
+- **Recall**: Completeness for each class
+**F1-score**: F1-measures for each class
+- **Support**: Number of examples in each class
+- **Macro avg**: Average arithmetic on classes
+- **Weighted avg**: Average weighted on number of examples
+- ** Use**:
+- ** Detailed analysis**: Understanding quality on each class
+- ** Identification of problems**: Searching classes with poor quality
+- **comparison models**: Detailed comparison of different algorithms
 
-**Функция confusion_matrix:**
-- **Назначение**: Матрица ошибок для анализа типов ошибок
-- **Параметры**:
-  - **`y_true`**: Истинные метки классов
-  - **`y_pred`**: Предсказанные метки классов
-  - **`labels`**: Список классов для матрицы (опционально)
-  - **`sample_weight`**: Веса для примеров (опционально)
-  - **`normalize`**: Нормализация матрицы (опционально)
-- **Элементы матрицы**:
-  - **TP (True Positive)**: Правильно предсказанные положительные классы
-  - **TN (True Negative)**: Правильно предсказанные отрицательные классы
-  - **FP (False Positive)**: Неправильно предсказанные положительные классы
-  - **FN (False Negative)**: Неправильно предсказанные отрицательные классы
-- **Использование**:
-  - **Анализ ошибок**: Понимание типов ошибок модели
-  - **Калибровка**: Настройка порога классификации
-  - **Интерпретация**: Объяснение работы модели
+**function confusion_matrix:**
+- ** Designation**: Error matrix for Analysis types of errors
+- **parameters**:
+- **'y_tree'**: True class labels
+- **'y_pred'**: Presumed class labels
+- **'labels'**: List classes for matrices (optimal)
+- **/sample_weight'**: Weights for examples (traditional)
+- **/normalize'**: Normalization of matrix (optimal)
+- **Elements of the matrix**:
+- **TP (True Positive)**: Correctly predicted positive classes
+- **TN (True Negative)**: Correctly predicted negative classes
+- **FP (False Positive)**: Incorrectly predicted positive classes
+- **FN (False Negative)**: Wrongly predicted negative classes
+- ** Use**:
+- **Analysis of errors**: Understanding the types of model errors
+- ** Calibrication**: configurization of the classification threshold
+** Interpretation**: Explanation of the model
 
-## Метрики для временных рядов
+## metrics for time series
 
-### Метрики для прогнозирования
+### metrics for forecasting
 
 ```python
 # Mean Absolute Scaled Error (MASE)
 def mase_time_series(y_true, y_pred, y_train, seasonal_period=1):
-    """MASE для временных рядов"""
-    # Наивный прогноз
-    naive_forecast = np.roll(y_train, seasonal_period)
-    naive_mae = np.mean(np.abs(y_train - naive_forecast))
-    
-    # MAE модели
-    model_mae = np.mean(np.abs(y_true - y_pred))
-    
-    return model_mae / naive_mae
+"MASE for Time Series"
+# Naïve projection
+ naive_forecast = np.roll(y_train, seasonal_period)
+ naive_mae = np.mean(np.abs(y_train - naive_forecast))
+
+# Model MAE
+ model_mae = np.mean(np.abs(y_true - y_pred))
+
+ return model_mae / naive_mae
 
 # Symmetric Mean Absolute Percentage Error (SMAPE)
 def smape_time_series(y_true, y_pred):
-    """SMAPE для временных рядов"""
-    return np.mean(2 * np.abs(y_true - y_pred) / (np.abs(y_true) + np.abs(y_pred))) * 100
+"SMAPE for Time Series"
+ return np.mean(2 * np.abs(y_true - y_pred) / (np.abs(y_true) + np.abs(y_pred))) * 100
 ```
 
-**🔧 Детальное описание параметров метрик временных рядов:**
+**/ Detailed descrie parameters time series metric: **/
 
-**Функция mase_time_series:**
-- **Назначение**: MASE для временных рядов с учетом сезонности
-- **Параметры**:
-  - **`y_true`**: Истинные значения временного ряда
-  - **`y_pred`**: Предсказанные значения
-  - **`y_train`**: Обучающие данные для вычисления наивного прогноза
-  - **`seasonal_period`**: Период сезонности (по умолчанию 1)
-- **Особенности**:
-  - **Сезонность**: Учитывает сезонные паттерны в данных
-  - **Наивный прогноз**: Использует значение с предыдущего периода
-  - **Нормализация**: Позволяет сравнивать разные временные ряды
-- **Интерпретация**:
-  - **< 0.5**: Модель в 2+ раза лучше наивного прогноза
-  - **0.5-0.8**: Модель лучше наивного прогноза
-  - **0.8-1.0**: Модель примерно как наивный прогноз
-  - **> 1.0**: Модель хуже наивного прогноза
+**function mase_time_series:**
+- ** Designation**: MASE for time series with seasonality
+- **parameters**:
+- **'y_tree'**: True time series values
+- **'y_pred'**: Projected values
+- **'y_training'**: Training data for calculating a naive projection
+- ** `seasonal_period'**: Seasonal period (on default 1)
+- ** Specialities**:
+- ** Seasonality**: Considers seasonal variables in data
+- **Naïve projection**: Uses the value with previous period
+- **Normization**: Allows comparison of different time series
+- ** Interpretation**:
+- **< 0.5**: Model in 2+ times better than naive projection
+- **0.5-0.8**: Model is better than naïve projection
+- **0.8-1.0**: Model about as naive as forecast
+- **> 1.0**: Model worse than naive projection
 
-**Функция smape_time_series:**
-- **Назначение**: SMAPE для временных рядов
-- **Параметры**:
-  - **`y_true`**: Истинные значения временного ряда
-  - **`y_pred`**: Предсказанные значения
-- **Особенности**:
-  - **Симметричность**: Одинаково штрафует за завышение и занижение
-  - **Процентная интерпретация**: Легко понять (процент ошибки)
-  - **Нормализация**: Позволяет сравнивать разные временные ряды
-- **Интерпретация**:
-  - **< 10%**: Очень хорошее качество
-  - **10-20%**: Хорошее качество
-  - **20-40%**: Приемлемое качество
-  - **> 40%**: Плохое качество
+**function smape_time_series:**
+- ** Designation**: SMAPE for time series
+- **parameters**:
+- **'y_tree'**: True time series values
+- **'y_pred'**: Projected values
+- ** Specialities**:
+- ** Symmetricity**: One penalty for overestimation and underestimation
+- ** Percentage interpretation**: Easy to understand (percentage error)
+- **Normization**: Allows comparison of different time series
+- ** Interpretation**:
+- **< 10%**: Very good quality
+**10-20%**: Good quality
+**20-40%**: Acceptable quality
+- **> 40%**: Poor quality
 
-### Метрики для финансовых данных
+### metrics for financial data
 
 ```python
 # Sharpe Ratio
 def sharpe_ratio(returns, risk_free_rate=0.02):
-    """Коэффициент Шарпа"""
-    excess_returns = returns - risk_free_rate
-    return np.mean(excess_returns) / np.std(excess_returns)
+""Sharp Coefficient."
+ excess_returns = returns - risk_free_rate
+ return np.mean(excess_returns) / np.std(excess_returns)
 
 # Maximum Drawdown
 def max_drawdown(cumulative_returns):
-    """Максимальная просадка"""
-    peak = np.maximum.accumulate(cumulative_returns)
-    drawdown = (cumulative_returns - peak) / peak
-    return np.min(drawdown)
+"Maximal prosperity."
+ peak = np.maximum.accumulate(cumulative_returns)
+ drawdown = (cumulative_returns - peak) / peak
+ return np.min(drawdown)
 
 # Calmar Ratio
 def calmar_ratio(returns, max_dd):
-    """Коэффициент Калмара"""
-    annual_return = np.mean(returns) * 252
-    return annual_return / abs(max_dd)
+"Calmar's Coefficient."
+ annual_return = np.mean(returns) * 252
+ return annual_return / abs(max_dd)
 ```
 
-**🔧 Детальное описание параметров метрик финансовых данных:**
+**/ Detailed descrie parameters financial data metric:**
 
-**Функция sharpe_ratio:**
-- **Назначение**: Измерение доходности с учетом риска
-- **Параметры**:
-  - **`returns`**: Массив доходностей (например, дневные доходности)
-  - **`risk_free_rate`**: Безрисковая ставка (по умолчанию 0.02 = 2%)
-- **Формула**: `(mean(returns) - risk_free_rate) / std(returns)`
-- **Интерпретация**:
-  - **> 1.0**: Отличная доходность с учетом риска
-  - **0.5-1.0**: Хорошая доходность с учетом риска
-  - **0.0-0.5**: Приемлемая доходность с учетом риска
-  - **< 0.0**: Плохая доходность с учетом риска
-- **Использование**:
-  - **Сравнение стратегий**: Выбор лучшей торговой стратегии
-  - **Оценка риска**: Понимание соотношения доходность/риск
-  - **Оптимизация портфолио**: Балансировка риска и доходности
+**function sharpe_ratio:**
+- ** Designation**: Measurement of return with risk
+- **parameters**:
+- **'returns'**: Income massity (e.g. daily returns)
+- **'risk_free_rate'**: Risk-free rate (on default 0.02 = 2%)
+- **Formoula**: `(mean(returns) - risk_free_rate) / std(returns)'
+- ** Interpretation**:
+- **> 1.0**: Excellent return with risk
+- **0.5-1.0**: Good return with risk
+- **0.0-0.5**: Acceptable return with risk
+- **< 0.0**: Poor return with risk
+- ** Use**:
+- **comparison of strategies**: Choice of a better trade strategy
+- ** Risk assessment**: Understanding the return/risk ratio
+- **Optification of Portfolio**: Risk balance and return
 
-**Функция max_drawdown:**
-- **Назначение**: Измерение максимальной просадки портфолио
-- **Параметры**:
-  - **`cumulative_returns`**: Кумулятивные доходности (накопленные)
-- **Формула**: `min((cumulative_returns - peak) / peak)`
-- **Интерпретация**:
-  - **> -0.1**: Очень низкая просадка (< 10%)
-  - **-0.1 до -0.2**: Низкая просадка (10-20%)
-  - **-0.2 до -0.3**: Умеренная просадка (20-30%)
-  - **< -0.3**: Высокая просадка (> 30%)
-- **Использование**:
-  - **Управление рисками**: Контроль максимальных потерь
-  - **Сравнение стратегий**: Выбор менее рискованных стратегий
-  - **Оптимизация**: Настройка параметров для снижения просадки
+**function max_drawdown:**
+- ** Designation**: Measurement of the maximum draught of the Portfolio
+- **parameters**:
+**/ `cumulative_returns'**: Cumulative returns (cumulative)
+- **Formoula**: `min((cumulative_returns-peak) / peak)'
+- ** Interpretation**:
+- **> -0.1**: Very low draught (< 10%)
+- **-0.1 to -0.2**: Low draught (10-20%)
+**-0.2 to -0.3**: Moderate draught (20-30 per cent)
+- **< -0.3**: High draught (> 30%)
+- ** Use**:
+- **Manage risk**: Control of maximum loss
+- **comparison of strategies**: Choice of less risky strategies
+- ** Optimization**: configurization of parameters for the reduction of precipitation
 
-**Функция calmar_ratio:**
-- **Назначение**: Измерение доходности относительно максимальной просадки
-- **Параметры**:
-  - **`returns`**: Массив доходностей
-  - **`max_dd`**: Максимальная просадка (отрицательное число)
-- **Формула**: `annual_return / abs(max_dd)`
-- **Интерпретация**:
-  - **> 2.0**: Отличная доходность относительно просадки
-  - **1.0-2.0**: Хорошая доходность относительно просадки
-  - **0.5-1.0**: Приемлемая доходность относительно просадки
-  - **< 0.5**: Плохая доходность относительно просадки
-- **Использование**:
-  - **Сравнение стратегий**: Выбор стратегий с лучшим соотношением доходность/просадка
-  - **Оценка качества**: Понимание эффективности управления рисками
-  - **Оптимизация**: Настройка параметров для улучшения соотношения
+**function calmar_ratio:**
+- ** Designation**: Measurement of yield relative to maximum draught
+- **parameters**:
+- **'returns'**: Income Massive
+- ** `max_d'**: Maximum draught (negative number)
+- **Formoula**: `annual_return / abs(max_ddd)'
+- ** Interpretation**:
+- **> 2.0**: Excellent rate of return on draught
+- **1.0-2.0**: Good rate of return on tarmac
+**0.5-1.0**: Acceptable rate of return on draught
+- **< 0.5**: Poor rate of return on landing
+- ** Use**:
+- **comparison of strategies**: Choice of strategies with better return/gap ratio
+- ** Quality assessment**: Understanding the effectiveness of risk management
+- ** Optimization**: configurization of parameters for improving the ratio
 
-## Мониторинг метрик
+♪ Monitoring metric
 
-### Отслеживание метрик в реальном времени
+*## Real-time metric tracking
 
 ```python
 import logging
 from datetime import datetime
 
 class MetricsLogger:
-    def __init__(self, log_file='metrics.log'):
-        self.log_file = log_file
-        self.metrics_history = []
-    
-    def log_metrics(self, metrics_dict):
-        """Логирование метрик"""
-        timestamp = datetime.now()
-        metrics_dict['timestamp'] = timestamp
-        self.metrics_history.append(metrics_dict)
-        
-        # Запись в файл
-        with open(self.log_file, 'a') as f:
-            f.write(f"{timestamp}: {metrics_dict}\n")
-    
-    def get_metrics_trend(self, metric_name):
-        """Получение тренда метрики"""
-        return [m[metric_name] for m in self.metrics_history if metric_name in m]
+ def __init__(self, log_file='metrics.log'):
+ self.log_file = log_file
+ self.metrics_history = []
 
-# Использование
+ def log_metrics(self, metrics_dict):
+""Logstrance Meterick."
+ timestamp = datetime.now()
+ metrics_dict['timestamp'] = timestamp
+ self.metrics_history.append(metrics_dict)
+
+# Recording in file
+ with open(self.log_file, 'a') as f:
+ f.write(f"{timestamp}: {metrics_dict}\n")
+
+ def get_metrics_trend(self, metric_name):
+"Getting a trend of metrics""
+ return [m[metric_name] for m in self.metrics_history if metric_name in m]
+
+# Use
 metrics_logger = MetricsLogger()
 
-# Логирование метрик
+# Logslation of metric
 metrics = {
-    'accuracy': 0.85,
-    'f1_score': 0.82,
-    'roc_auc': 0.88
+ 'accuracy': 0.85,
+ 'f1_score': 0.82,
+ 'roc_auc': 0.88
 }
 metrics_logger.log_metrics(metrics)
 ```
 
-**🔧 Детальное описание параметров мониторинга метрик:**
+** Detailed describe parameters Monitoringa metric:**
 
-**Класс MetricsLogger:**
-- **Назначение**: Логирование и отслеживание метрик в реальном времени
-- **Параметры конструктора**:
-  - **`log_file`**: Путь к файлу лога (по умолчанию 'metrics.log')
-- **Методы**:
-  - **`log_metrics(metrics_dict)`**: Логирование метрик
-  - **`get_metrics_trend(metric_name)`**: Получение тренда метрики
-- **Параметры log_metrics**:
-  - **`metrics_dict`**: Словарь с метриками и их значениями
-- **Параметры get_metrics_trend**:
-  - **`metric_name`**: Название метрики для получения тренда
-- **Возвращаемое значение**: Список значений метрики по времени
-- **Использование**:
-  - **Мониторинг качества**: Отслеживание изменения качества модели
-  - **Выявление проблем**: Обнаружение деградации производительности
-  - **Анализ трендов**: Понимание динамики метрик
-  - **Отчетность**: Создание отчетов по качеству
+**Class MetricsLogger:**
+- ** Designation**: Logs and tracking of real-time metrics
+- **parameters of design**:
+- **'log_file'**: Path to log file (on default 'metrics.log')
+- **methods**:
+- **'log_metrics(metrics_dict)'**: Metric Logs
+- **'get_metrics_trind(metric_name)'**: Obtaining trend metrics
+- **parameters log_metrics**:
+**'metrics_dict'**: dictionary with metrics and their values
+- **parameters get_metrics_trend**:
+- **'metric_name'**: Name of metrics for trend
+- **Return value**: List values of metrics in time
+- ** Use**:
+- **Monitorizing quality**: Monitoring model quality change
+- ** Identification of problems**: Detection of degradation performance
+- ** Trends Analysis**: Understanding the dynamics of metrics
+- **Reportability**: quality review reports
 
-### Алерты по метрикам
+♪ ♪ Alerates on metrics
 
 ```python
 class MetricsAlert:
-    def __init__(self, threshold=0.8, metric_name='accuracy'):
-        self.threshold = threshold
-        self.metric_name = metric_name
-    
-    def check_alert(self, current_metric):
-        """Проверка алерта"""
-        if current_metric < self.threshold:
-            print(f"ALERT: {self.metric_name} = {current_metric} < {self.threshold}")
-            return True
-        return False
+ def __init__(self, threshold=0.8, metric_name='accuracy'):
+ self.threshold = threshold
+ self.metric_name = metric_name
 
-# Использование
+ def check_alert(self, current_metric):
+"Check Alert."
+ if current_metric < self.threshold:
+ print(f"ALERT: {self.metric_name} = {current_metric} < {self.threshold}")
+ return True
+ return False
+
+# Use
 alert = MetricsAlert(threshold=0.8, metric_name='accuracy')
 if alert.check_alert(0.75):
-    # Отправка уведомления
-    pass
+# Sending notes
+ pass
 ```
 
-**🔧 Детальное описание параметров алертов по метрикам:**
+**/ Detailed descrie parameters of allerates on metrics: **/
 
-**Класс MetricsAlert:**
-- **Назначение**: Создание алертов при падении качества метрик
-- **Параметры конструктора**:
-  - **`threshold`**: Пороговое значение метрики (по умолчанию 0.8)
-  - **`metric_name`**: Название метрики для мониторинга (по умолчанию 'accuracy')
-- **Методы**:
-  - **`check_alert(current_metric)`**: Проверка алерта
-- **Параметры check_alert**:
-  - **`current_metric`**: Текущее значение метрики
-- **Возвращаемое значение**: True если алерт сработал, False если нет
-- **Использование**:
-  - **Мониторинг качества**: Автоматическое обнаружение проблем
-  - **Уведомления**: Отправка алертов при падении качества
-  - **Контроль**: Поддержание качества модели на заданном уровне
-  - **Автоматизация**: Автоматическое реагирование на проблемы
+**Class MetricsAlert:**
+- ** Designation**: cut allerates when the quality of the metric falls
+- **parameters of design**:
+** `threshold'**: threshold value metrics (on default 0.8)
+** `metric_name'**: Name of metrics for Monitoring (on default 'accuracy')
+- **methods**:
+- **'chesk_alert(current_metric)'**: kheck allert
+- **parameters check_alert**:
+- **'urrent_metric'**: Current value of metrics
+- **Return value**: True if allergic to Workingle, False if not
+- ** Use**:
+- **Monitorizing quality**: Automatic problem detection
+- **notification**: Sending allerates when quality falls
+** Control**: Maintenance of the quality of the model on a given level
+- ** Automation**: Automatic Response on Problem
 
-## Примеры использования метрик
+## examples using metrics
 
-<img src="images/optimized/production_architecture.png" alt="Примеры использования метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Практические примеры использования метрик в реальных проектах*
+<img src="images/optimized/production_architecture.png" alt="examples using metrics" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Figure 6: Practical uses of metrics in real projects*
 
-**Почему важны практические примеры?** Потому что они показывают, как применять метрики в реальных задачах:
+* Why are practical examples important? ** Because they show how to apply metrics in real tasks:
 
-- **Выбор метрик по типу задачи**: Классификация vs регрессия vs ранжирование
-- **Интерпретация результатов**: Как понимать значения метрик
-- **Сравнение моделей**: Как правильно сравнивать разные алгоритмы
-- **Мониторинг в продакшене**: Как отслеживать качество в реальном времени
-- **Бизнес-метрики**: Связь технических метрик с бизнес-результатами
-- **A/B тестирование**: Как использовать метрики для тестирования
+- ** Selection of metric on task type**: Classification vs regression vs ranking
+- ** Interpretation of results**: How to understand metric values
+- **comparison models**: How to compare different algorithms
+- **Monitoring in sales**: How to track quality in real time
+- ** Business-metrics**: Technical metrics with business outcomes
+- **A/B testing**: How to use devices for testing
 
-### Полный пример оценки модели
+### Full example model evaluation
 
 ```python
 from autogluon.tabular import TabularPredictor
@@ -1885,55 +1885,55 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Создание данных
+# data quality
 X, y = make_classification(
-    n_samples=10000,
-    n_features=20,
-    n_informative=15,
-    n_redundant=5,
-    n_classes=2,
-    random_state=42
+ n_samples=10000,
+ n_features=20,
+ n_informative=15,
+ n_redundant=5,
+ n_classes=2,
+ random_state=42
 )
 
-data = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(20)])
+data = pd.dataFrame(X, columns=[f'feature_{i}' for i in range(20)])
 data['target'] = y
 
-# Разделение данных
+# Data sharing
 train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
-# Создание и обучение модели
+# creative and model learning
 predictor = TabularPredictor(
-    label='target',
-    problem_type='binary',
-    eval_metric='accuracy'
+ label='target',
+ problem_type='binary',
+ eval_metric='accuracy'
 )
 
 predictor.fit(train_data, time_limit=300)
 
-# Предсказания
+# Premonition
 predictions = predictor.predict(test_data)
 probabilities = predictor.predict_proba(test_data)
 
-# Оценка качества
+# Quality assessment
 performance = predictor.evaluate(test_data)
 print("Performance Metrics:")
 for metric, value in performance.items():
-    print(f"{metric}: {value:.4f}")
+ print(f"{metric}: {value:.4f}")
 
-# Лидерборд
+# Leaderboard
 leaderboard = predictor.leaderboard(test_data)
 print("\nLeaderboard:")
 print(leaderboard)
 
-# Важность признаков
+# The importance of signs
 feature_importance = predictor.feature_importance()
-print("\nFeature Importance:")
+print("\nFeature importance:")
 print(feature_importance.head(10))
 
-# Визуализация
+# Visualization
 fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 
-# ROC кривая
+# ROC curve
 from sklearn.metrics import roc_curve, auc
 fpr, tpr, _ = roc_curve(test_data['target'], probabilities[1])
 roc_auc = auc(fpr, tpr)
@@ -1944,7 +1944,7 @@ axes[0, 0].set_ylabel('True Positive Rate')
 axes[0, 0].set_title('ROC Curve')
 axes[0, 0].legend()
 
-# Precision-Recall кривая
+# Precion-Recall curve
 from sklearn.metrics import precision_recall_curve
 precision, recall, _ = precision_recall_curve(test_data['target'], probabilities[1])
 axes[0, 1].plot(recall, precision)
@@ -1952,23 +1952,23 @@ axes[0, 1].set_xlabel('Recall')
 axes[0, 1].set_ylabel('Precision')
 axes[0, 1].set_title('Precision-Recall Curve')
 
-# Матрица ошибок
+# A matrix of errors
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(test_data['target'], predictions)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=axes[1, 0])
 axes[1, 0].set_title('Confusion Matrix')
 
-# Важность признаков
+# The importance of signs
 feature_importance.head(10).plot(kind='barh', ax=axes[1, 1])
-axes[1, 1].set_title('Top 10 Feature Importance')
+axes[1, 1].set_title('Top 10 Feature importance')
 
 plt.tight_layout()
 plt.show()
 ```
 
-## Следующие шаги
+## Next steps
 
-После освоения работы с метриками переходите к:
-- [Методам валидации](./05_validation.md)
-- [Продакшен деплою](./06_production.md)
-- [Переобучению моделей](./07_retraining.md)
+After learning with metrics, go to:
+- [Methods of validation](./05_validation.md)
+- [Selled by default](./06_production.md)
+- [model re-training](./07_retraining.md)

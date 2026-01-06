@@ -4,6 +4,9 @@
 """
 Tests for enhanced terminal chunked plotting functionality.
 Tests all rule types: OHLCV, AUTO, PV, SR, PHLD, and RSI variants (rsi, rsi_mom, rsi_div).
+
+Note: After refactoring, all functions are imported from the main term_chunked_plot module
+which re-exports functions from the split modules for backward compatibility.
 """
 
 import pytest

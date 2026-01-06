@@ -1,808 +1,808 @@
-# Теория и основы AutoML
+# AutoML theory and framework
 
-**Автор:** Shcherbyna Rostyslav  
-**Дата:** 2024  
+**Author:** Shcherbyna Rostyslav
+**Date:** 2024
 
-## Почему теория AutoML критически важна
+## Whoy the AutoML theory is critical
 
-**Почему 80% пользователей AutoML не понимают, что происходит под капотом?** Потому что они используют AutoML как "черный ящик", не понимая принципов его работы. Это как вождение автомобиля без понимания, как работает двигатель.
+**Why 80 percent of AutoML users don't understand what's going on under the bonnet?** Because they use AutoML as a black box, not understanding how it works. It's like driving a car without understanding how Working the engine.
 
-### Проблемы без понимания теории
-- **Слепое использование**: Не понимают, почему модель работает или не работает
-- **Неправильная настройка**: Не могут оптимизировать параметры
-- **Плохие результаты**: Не знают, как улучшить производительность
-- **Зависимость от инструмента**: Не могут решить проблемы самостоятельно
+### Problems without understanding the theory
+- ** Blind use**:not understand why the Workinget or not Workinget model
+- ** Wrong configuration**:not can optimize parameters
+- ** Bad results**:not know how to improve performance
+- **dependency from tool**:not can solve problems on its own
 
-### Преимущества понимания теории
-- **Осознанное использование**: Понимают, что и почему делает система
-- **Эффективная настройка**: Могут оптимизировать параметры под задачу
-- **Лучшие результаты**: Знают, как улучшить производительность
-- **Независимость**: Могут решать проблемы и адаптировать систему
+### The benefits of understanding theory
+- ** Conscious use**: Understanding what the system is doing and why
+- ** Effective configuring**: May optimize parameters to the task
+- ** Best results**: Know how to improve performance
+- ** Independence**: Can solve problems and adapt system
 
-## Введение в теорию AutoML
+## Introduction to AutoML theory
 
-<img src="images/optimized/automl_theory_overview.png" alt="Теория AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.1: Теоретические основы автоматизированного машинного обучения - основные компоненты и принципы работы*
+<img src="images/optimized/automl_theory_overView.png" alt="AutoML theory" style="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 15.1: Theoretical framework of automated machine lightning - basic components and working principles*
 
-**Почему AutoML - это не просто "нажать кнопку"?** Потому что это сложная система алгоритмов, которая автоматизирует процесс создания ML-моделей, но требует понимания принципов для эффективного использования.
+Because it's a complex algorithm system that automates process Creating ML models, but requires an understanding of principles for effective use.
 
-**Ключевые компоненты AutoML:**
-- **Neural Architecture Search (NAS)**: Автоматический поиск оптимальной архитектуры нейронных сетей
-- **Hyperparameter Optimization**: Оптимизация гиперпараметров с помощью различных методов
-- **Feature Engineering Automation**: Автоматическое создание и отбор признаков
-- **Ensemble Methods**: Комбинирование множественных моделей для повышения точности
-- **Performance Optimization**: Оптимизация производительности и ресурсов
+**key components AutoML:**
+- **Neural Architectural Search (NAS)**: Automatic search for optimum architecture of neural networks
+- **Hyperparameter Optimization**: Optimizing hyperparameters with various methods
+- **Feature Engineering Automation**: Automatic creation and identification of features
+- **Ensemble Methods**: Combining Multiple Models for Improvising Accuracy
+- **Performance Optimization**: Optimizing performance and resources
 
-AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс создания ML-моделей. Понимание теоретических основ критически важно для эффективного использования AutoML Gluon.
+AutoML (Automated Machine Learning) is an area that automates the process Creating ML models. Understanding the theoretical framework is critical for the effective use of AutoML Gloon.
 
-## Основные концепции AutoML
+## Basic concepts of AutoML
 
 ### 1. Neural Architecture Search (NAS)
 
 <img src="images/optimized/neural_architecture_search.png" alt="Neural Architecture Search" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.2: Neural Architecture Search - автоматический поиск оптимальной архитектуры нейронных сетей*
+*Picture 15.2: Neural Architecture Search - Automatic Search for the Optimal Architecture of Neuronetworks*
 
-**Почему NAS - это революция в дизайне нейросетей?** Потому что он автоматически находит архитектуры, которые превосходят созданные человеком, экономя месяцы работы экспертов.
+Why is NAS a revolution in the design of neuronetworks?
 
-Neural Architecture Search - это процесс автоматического поиска оптимальной архитектуры нейронной сети.
+The Neural Architecture Search is a process of automatic search for the optimal architecture of the neural network.
 
-**Как работает NAS:**
-- **Поисковое пространство**: Тысячи возможных архитектур
-- **Оценка производительности**: Тестирование каждой архитектуры
-- **Оптимизация**: Выбор лучшей архитектуры
-- **Методы поиска**: Random Search, Grid Search, Reinforcement Learning, Evolutionary Algorithms
+# Like Workinget NAS:**
+- **Search space**: Thousands of possible architectures
+- ** Evaluation of performance**: Testing each architecture
+- **Optimization**: Choice of a better architecture
+- **methods search**: Random Search, Grid Search, Reinformation Learning, Evolutional Algorithms
 
-**Почему NAS работает лучше человека?**
-- **Объективность**: Не ограничен предрассудками и опытом
-- **Эксплуатация**: Может тестировать тысячи архитектур
-- **Оптимизация**: Находит архитектуры, оптимизированные под конкретную задачу
-- **Инновации**: Может найти неожиданные решения
+♪ Why is NASA Working better than a man? ♪
+- **Activity**: not limited to prejudice and experience
+- ** Explosion**: Can test thousands of architectures
+- **Optimization**: Architectures optimized for a specific task
+- **Innovations**: May find a solution
 
 ```python
-# Пример NAS в AutoGluon - автоматический поиск архитектуры
+# example NAS in AutoGluon - An automatic search for architecture
 from autogluon.vision import ImagePredictor
 
-# NAS для поиска архитектуры - автоматический дизайн нейросети
+# NASA for the search for architecture - automatic design of neuronet
 predictor = ImagePredictor()
 predictor.fit(
-    train_data,
-    hyperparameters={
-        'model': 'resnet50',  # Базовая архитектура для начала поиска
-        'nas': True,          # Включить NAS - автоматический поиск
-        'nas_lr': 0.01,       # Learning rate для NAS - скорость обучения
-        'nas_epochs': 50     # Количество эпох для NAS - время на поиск
-    }
+ train_data,
+ hyperparameters={
+'Model': 'resnet50', #Base Architecture for Starting Search
+'Nas': True, #Show NAS - Automatic Search
+'Nas_lr': 0.01, #Learning rent for NASA - speed of learning
+'Nas_peochs': 50 #Number of Ages for NASA - Time on Search
+ }
 )
 ```
 
-**Детальные описания NAS параметров:**
+** Detailed description of NAS parameters:**
 
-- **`model`**: Базовая архитектура для начала поиска
-  - `'resnet50'`: ResNet-50 (стандартная архитектура)
-  - `'resnet101'`: ResNet-101 (более глубокая)
-  - `'efficientnet'`: EfficientNet (эффективная архитектура)
-  - `'mobilenet'`: MobileNet (мобильная архитектура)
+- **'model'**: Basic architecture for starting a search
+- `'resnet50'': ResNet-50 (standard architecture)
+- ``resnet101'': ResNet-101 (more profound)
+- `'officientnet': EffectiveNet (effective architecture)
+- `'mobilenet': mobileNet
 
-- **`nas`**: Включение Neural Architecture Search
-  - `True`: Включить автоматический поиск архитектуры
-  - `False`: Использовать фиксированную архитектуру
+- **'nas'**: Inclusion of Neural architecture Search
+- `True': Enable an automatic search for architecture
+- `False': Use fixed architecture
 
-- **`nas_lr`**: Learning rate для NAS (0.001-0.1)
-  - `0.001`: Медленное обучение, стабильность
-  - `0.01`: Стандартная скорость (рекомендуется)
-  - `0.1`: Быстрое обучение, риск нестабильности
+- **`nas_lr`**: Learning rate for NAS (0.001-0.1)
+`0.001': Slow learning, stability
+- `0.01': Standard speed (recommended)
+`0.1': Rapid learning, risk of instability
 
-- **`nas_epochs`**: Количество эпох для NAS (10-200)
-  - `10-30`: Быстрый поиск, базовое качество
-  - `50-100`: Стандартный поиск (рекомендуется)
-  - `150-200`: Глубокий поиск, высокое качество
+- **'nas_peochs'**: Number of Ages for NASA (10-200)
+`10-30': Quick search, basic quality
+- `50-100': Standard search (recommended)
+- `150-200': Deep search, high quality
 
 ### 2. Hyperparameter Optimization
 
-<img src="images/optimized/hyperparameter_optimization.png" alt="Оптимизация гиперпараметров" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.3: Методы оптимизации гиперпараметров - Grid Search, Random Search, Bayesian Optimization*
+<img src="images/optimized/hyperparameter_optimization.png" alt="Optimization of hyperparameters" style="max-width: 100%; height: auto; display: block; marguin: 20px auto;">
+*Picture 15.3: methods optimization of hyperparameters - Grid Search, Random Search, Bayesian Optimization*
 
-Автоматическая оптимизация гиперпараметров - ключевая функция AutoML.
+Automatic optimization of hyperparameters is the key function AutoML.
 
-**Сравнение методов оптимизации:**
-- **Grid Search**: Систематический поиск по сетке параметров
-- **Random Search**: Случайный поиск в пространстве параметров
-- **Bayesian Optimization**: Использование предыдущих результатов для выбора следующих параметров
+**comparison of optimization techniques:**
+- **Grid Search**: Systematic search on the grid of parameters
+- **Random Search**: Random Search**: Random search in the parameter space
+**Bayesian Optimization**: Use of previous results for selection of the following parameters
 
-#### Методы оптимизации:
+#### methhods optimization:
 
 **Grid Search:**
 ```python
-# Систематический поиск по сетке
+# A systematic search on the grid
 hyperparameters = {
-    'GBM': [
-        {'num_boost_round': 100, 'learning_rate': 0.1},
-        {'num_boost_round': 200, 'learning_rate': 0.05},
-        {'num_boost_round': 300, 'learning_rate': 0.01}
-    ]
+ 'GBM': [
+ {'num_boost_round': 100, 'learning_rate': 0.1},
+ {'num_boost_round': 200, 'learning_rate': 0.05},
+ {'num_boost_round': 300, 'learning_rate': 0.01}
+ ]
 }
 ```
 
-**Детальные описания Grid Search параметров:**
-- **`num_boost_round`**: Количество итераций бустинга (50-1000)
-  - `100`: Быстрое обучение, базовое качество
-  - `200`: Стандартное обучение (рекомендуется)
-  - `300`: Глубокое обучение, высокое качество
-- **`learning_rate`**: Скорость обучения (0.001-0.3)
-  - `0.1`: Стандартная скорость (рекомендуется)
-  - `0.05`: Медленное обучение, стабильность
-  - `0.01`: Очень медленное, высокое качество
+** Detailed description of Grid Search parameters:**
+- **'num_boost_round'**: Number of iterations of buzting (50-1000)
+`100': Rapid learning, basic quality
+- `200': Standard training (recommended)
+- `300': Deep learning, high quality
+- ** `learning_rate'**: Learning speed (0.001-0.3)
+`0.1': Standard speed (recommended)
+`0.05': Slow learning, stability
+- `0.01': Very slow, high quality
 
 **Random Search:**
 ```python
-# Случайный поиск
+# Random Search
 hyperparameters = {
-    'GBM': {
-        'num_boost_round': randint(50, 500),
-        'learning_rate': uniform(0.01, 0.3),
-        'max_depth': randint(3, 10)
-    }
+ 'GBM': {
+ 'num_boost_round': randint(50, 500),
+ 'learning_rate': uniform(0.01, 0.3),
+ 'max_depth': randint(3, 10)
+ }
 }
 ```
 
-**Детальные описания Random Search параметров:**
-- **`num_boost_round`**: Случайное количество итераций (50-500)
-  - `randint(50, 500)`: Случайное целое число в диапазоне
-- **`learning_rate`**: Случайная скорость обучения (0.01-0.3)
-  - `uniform(0.01, 0.3)`: Случайное вещественное число
-- **`max_depth`**: Случайная глубина дерева (3-10)
-  - `randint(3, 10)`: Случайная глубина для предотвращения переобучения
+** Detailed description of Random Search parameters:**
+- **'num_boost_round'**: Accidental number of iterations (50-500)
+- `randint(50, 500)': Accidental whole number in range
+- ** `learning_rate'**: Random learning speed (0.01-0.3)
+- `uniform(0.01, 0.3)': Random real number
+- **'max_dept'**: Random tree depth (3-10)
+- `randint(3, 10)': Accidental depth for prevention of retraining
 
 **Bayesian Optimization:**
 ```python
-# Байесовская оптимизация
+# Bayesian optimization
 from autogluon.core import space
 
 hyperparameters = {
-    'GBM': {
-        'num_boost_round': space.Int(50, 500),
-        'learning_rate': space.Real(0.01, 0.3),
-        'max_depth': space.Int(3, 10)
-    }
+ 'GBM': {
+ 'num_boost_round': space.Int(50, 500),
+ 'learning_rate': space.Real(0.01, 0.3),
+ 'max_depth': space.Int(3, 10)
+ }
 }
 ```
 
-**Детальные описания Bayesian Optimization параметров:**
-- **`space.Int(50, 500)`**: Целочисленное пространство поиска
-  - Использует предыдущие результаты для выбора следующих параметров
-  - Более эффективен чем Random Search
-- **`space.Real(0.01, 0.3)`**: Вещественное пространство поиска
-  - Гауссовский процесс для моделирования функции
-  - Acquisition function для выбора следующей точки
-- **`space.Int(3, 10)`**: Ограниченное пространство для предотвращения переобучения
+** Detailed description of Bayesian Optimization parameters:**
+- **'space.Int(50, 500)'**: Objective search space
+- Use previous results for selecting the following parameters
+- More effective than Random Search.
+- **/space.Real(0.01, 0.3)'**: Material search space
+- Gaussian process for modelling functions
+- Acquision function for selecting the next point
+- **'space.Int(3,10)'**: Limited space for prevention retraining
 
 ### 3. Feature Engineering Automation
 
-<img src="images/optimized/feature_engineering_automation.png" alt="Автоматическое создание признаков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.4: Автоматическое создание признаков - преобразование исходных данных в эффективные признаки*
+<img src="images/optimized/feature_energy_automation.png" alt="Automatic criteria" style="max-width: 100 per cent; height: auto; display: lock; marguin: 20px auto;">
+*Picture 15.4: Automatic criteria - conversion of baseline data into effective indicators*
 
-Автоматическое создание признаков - важная часть AutoML.
+Automatic signature is an important part of AutoML.
 
-**Типы автоматического создания признаков:**
+** Automatic signs:**
 - **Text Features**: TF-IDF, N-grams, Word embeddings
-- **DateTime Features**: Извлечение временных компонентов
+- **DateTime Features**: Extraction of Time Components
 - **Categorical Features**: One-hot encoding, Target encoding
-- **Numerical Features**: Полиномиальные преобразования, логарифмирование
+- **Numerical Features**: Polynomial transformation, logarithmization
 
 ```python
-# Автоматическое создание признаков
+# Automatic signature
 from autogluon.tabular import TabularPredictor
 
 predictor = TabularPredictor(
-    label='target',
-    feature_generator_type='auto',  # Автоматическое создание признаков
-    feature_generator_kwargs={
-        'enable_text_special_features': True,
-        'enable_text_ngram_features': True,
-        'enable_datetime_features': True,
-        'enable_categorical_features': True
-    }
+ label='target',
+Feature_generator_type='auto', #Automatic criteria
+ feature_generator_kwargs={
+ 'enable_text_special_features': True,
+ 'enable_text_ngram_features': True,
+ 'enable_datetime_features': True,
+ 'enable_categorical_features': True
+ }
 )
 ```
 
-**Детальные описания параметров автоматического создания признаков:**
+** Detailed descriptions of automatic characterization:**
 
-- **`feature_generator_type`**: Тип генератора признаков
-  - `'auto'`: Автоматический выбор лучшего генератора
-  - `'default'`: Стандартный генератор
-  - `'fast'`: Быстрый генератор (меньше признаков)
-  - `'best'`: Лучший генератор (больше признаков)
+- **'feature_generator_type'**: Identification generator type
+- `'auto'': Automatic choice of the best generator
+- `'Default': Standard generator
+- `'fast': Rapid generator (less)
+- `best': Best generator (more features)
 
-- **`enable_text_special_features`**: Специальные текстовые признаки
-  - `True`: Включить извлечение специальных признаков из текста
-  - `False`: Отключить специальные текстовые признаки
-  - Включает: длина текста, количество слов, специальные символы
+- **'enable_text_special_features'**: Special textual features
+- `True': Insert the removal of special features from the text
+- `False': Disable special textual features
+- Includes: length of text, number of words, special symbols
 
-- **`enable_text_ngram_features`**: N-gram признаки для текста
-  - `True`: Включить N-gram анализ (1-gram, 2-gram, 3-gram)
-  - `False`: Отключить N-gram анализ
-  - Полезно для: анализ тональности, классификация текста
+- **/enable_text_ngram_features'**: N-gram signs for text
+- `True': Insert N-gram analysis (1-gram, 2-gram, 3-gram)
+- `False': Disable N-gram analysis
+- Useful for: tone analysis, text classification
 
-- **`enable_datetime_features`**: Временные признаки
-  - `True`: Извлечение компонентов времени (год, месяц, день, час)
-  - `False`: Отключить временные признаки
-  - Включает: день недели, сезон, праздники, рабочие дни
+- **/enable_data_features'**: Time indicators
+- `True': Extraction of time components (year, month, day, hour)
+- `False': Disable temporary features
+- Including: day of the week, season, holidays, working days
 
-- **`enable_categorical_features`**: Категориальные признаки
-  - `True`: Обработка категориальных переменных
-  - `False`: Отключить обработку категориальных переменных
-  - Включает: one-hot encoding, target encoding, frequency encoding
+- **/enable_categorical_features'**: Categorical characteristics
+- `True': Treatment of categorical variables
+- `False': Disable processing of categorical variables
+- Including: one-hot encoding, Target encoding, frequancy encoding
 
-## Математические основы
+## Mathematical framework
 
 ### 1. Loss Functions
 
-<img src="images/optimized/loss_functions_comparison.png" alt="Сравнение функций потерь" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.5: Сравнение функций потерь - MSE, Cross Entropy, Focal Loss, Huber Loss*
+<img src="images/optimized/loss_functions_comparison.png" alt="comparson of loss functions" style="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+*Picture 15.5: Comparson of loss functions - MSE, Cross Enterprise, Focal Loss, Huber Loss*
 
-Понимание функций потерь критически важно:
+Understanding the functions of loss is critical:
 
-**Типы функций потерь:**
-- **MSE (Mean Squared Error)**: Для задач регрессии
-- **Cross Entropy**: Для задач классификации
-- **Focal Loss**: Для решения проблемы дисбаланса классов
-- **Huber Loss**: Робастная функция для выбросов
+** The number of loss functions:**
+- **MSE (Mean Squared Error)**: For regression tasks
+- **Cross Enterprise**: for classification purposes
+- **Focal Loss**: to address class imbalance
+- **Huber Loss**: Robin function for emissions
 
 ```python
-# Кастомная функция потерь
+# Castle function losses
 import torch
 import torch.nn as nn
 
-class FocalLoss(nn.Module):
-    """Focal Loss для решения проблемы дисбаланса классов"""
-    
-    def __init__(self, alpha=1, gamma=2):
-        super(FocalLoss, self).__init__()
-        self.alpha = alpha
-        self.gamma = gamma
-    
-    def forward(self, inputs, targets):
-        ce_loss = nn.CrossEntropyLoss()(inputs, targets)
-        pt = torch.exp(-ce_loss)
-        focal_loss = self.alpha * (1-pt)**self.gamma * ce_loss
-        return focal_loss
+class Focalloss(nn.Module):
+"Focal Loss for dealing with class imbalance""
+
+ def __init__(self, alpha=1, gamma=2):
+ super(Focalloss, self).__init__()
+ self.alpha = alpha
+ self.gamma = gamma
+
+ def forward(self, inputs, targets):
+ ce_loss = nn.CrossEntropyLoss()(inputs, targets)
+ pt = torch.exp(-ce_loss)
+ focal_loss = self.alpha * (1-pt)**self.gamma * ce_loss
+ return focal_loss
 ```
 
-**Детальные описания параметров Focal Loss:**
+** Detailed description of the parameters of the Focal Loss:**
 
-- **`alpha`**: Весовой коэффициент для балансировки классов (0.1-2.0)
-  - `1.0`: Равные веса для всех классов (стандарт)
-  - `0.5`: Уменьшить вес для частых классов
-  - `2.0`: Увеличить вес для редких классов
-  - Применение: дисбаланс классов, редкие события
+- **'alpha'**: Weight factor for the balancing of classes (0.1-2.0)
+`1.0': Equal weights for all classes (standard)
+- `0.5': Reduce the weight for frequent classes
+- `2.0': Increase the weight for rare classes
+- Application: class imbalance, rare events
 
-- **`gamma`**: Фокусирующий параметр (0.5-5.0)
-  - `1.0`: Слабая фокусировка (близко к Cross Entropy)
-  - `2.0`: Стандартная фокусировка (рекомендуется)
-  - `3.0`: Сильная фокусировка на сложных примерах
-  - `5.0`: Очень сильная фокусировка (экстремальные случаи)
+**'gamma'**: Focuser (0.5-5.0)
+- `1.0': Weak focus (near Cross Enterprise)
+- `2.0': Standard focus (recommended)
+`3.0': Strong focus on complex examples
+- `5.0': Very strong focus (extraordinary cases)
 
-**Другие функции потерь:**
+**Other losses:**
 
-- **MSE (Mean Squared Error)**: Для регрессии
-  - Формула: `MSE = (1/n) * Σ(y_true - y_pred)²`
-  - Применение: непрерывные целевые переменные
-  - Чувствительность: высокая к выбросам
+- **MSE (Mean Squared Error)**: for regression
+- Formula: `MSE = (1/n)*
+- Application: continuous target variables
+- Sensitivity: High to emissions
 
-- **Cross Entropy**: Для классификации
-  - Формула: `CE = -Σ y_true * log(y_pred)`
-  - Применение: бинарная и многоклассовая классификация
-  - Чувствительность: низкая к выбросам
+- **Cross Enterprise**: for classification
+- Formula: `CE = - ♪ y_tree * log(y_pred)'
+- Application: Binary and multiclass classification
+- Sensitivity: low to emissions
 
-- **Huber Loss**: Робастная функция для выбросов
-  - Формула: `Huber = 0.5 * (y_true - y_pred)² if |y_true - y_pred| ≤ δ else δ * |y_true - y_pred| - 0.5 * δ²`
-  - Параметр `δ`: порог переключения (1.0-5.0)
-  - Применение: данные с выбросами
+- **Huber Loss**: Robin function for emissions
+- Formula: `Huber = 0.5 * (y_tree - y_pred)2 if ♪ y_tree - y_pred ♪ ♪ y_tree - y_pred
+- parameter ``': switch threshold (1.0-5.0)
+- Application: data with emissions
 
 ### 2. Optimization Algorithms
 
-<img src="images/optimized/optimization_algorithms.png" alt="Алгоритмы оптимизации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.6: Алгоритмы оптимизации - SGD, Adam, RMSprop, AdaGrad*
+<img src="images/optimized/optimization_algorithms.png" alt="Aligorite optimization" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 15.6: Optimization algorithms - SGD, Adam, Ramsprop, AdaGrad*
 
-**Характеристики алгоритмов оптимизации:**
-- **SGD**: Простой, медленный, базовый алгоритм
-- **Adam**: Быстрый, адаптивный, популярен в глубоком обучении
-- **RMSprop**: Хорош для рекуррентных сетей
-- **AdaGrad**: Адаптивный learning rate для разреженных данных
+** Optimization algorithms:**
+- **SGD**: Simple, slow, basic algorithm
+- **Adam**: Rapid, adaptive, popular in deep learning
+- **RMSprop**: Good for recording networks
+- **AdaGrad**: Adaptive lightning rate for diluted data
 
 ```python
-# Различные оптимизаторы
+# Various optimizers
 optimizers = {
-    'adam': {
-        'lr': 0.001,
-        'betas': (0.9, 0.999),
-        'eps': 1e-8
-    },
-    'sgd': {
-        'lr': 0.01,
-        'momentum': 0.9,
-        'weight_decay': 1e-4
-    },
-    'rmsprop': {
-        'lr': 0.01,
-        'alpha': 0.99,
-        'eps': 1e-8
-    }
+ 'adam': {
+ 'lr': 0.001,
+ 'betas': (0.9, 0.999),
+ 'eps': 1e-8
+ },
+ 'sgd': {
+ 'lr': 0.01,
+ 'momentum': 0.9,
+ 'weight_decay': 1e-4
+ },
+ 'rmsprop': {
+ 'lr': 0.01,
+ 'alpha': 0.99,
+ 'eps': 1e-8
+ }
 }
 ```
 
-**Детальные описания параметров оптимизаторов:**
+** Detailed description of optimization parameters:**
 
 **Adam Optimizer:**
 - **`lr`**: Learning rate (0.0001-0.01)
-  - `0.001`: Стандартная скорость (рекомендуется)
-  - `0.0001`: Медленное обучение, стабильность
-  - `0.01`: Быстрое обучение, риск нестабильности
-- **`betas`**: Коэффициенты для моментов (0.9, 0.999)
-  - `(0.9, 0.999)`: Стандартные значения
-  - `(0.95, 0.999)`: Более стабильное обучение
-  - `(0.9, 0.99)`: Более быстрое обучение
-- **`eps`**: Малое значение для численной стабильности (1e-8)
-  - `1e-8`: Стандартное значение
-  - `1e-6`: Менее точное, но более стабильное
-  - `1e-10`: Более точное, но может быть нестабильным
+- `0.001': Standard speed (recommended)
+`0.001': Slow learning, stability
+`0.01': Rapid learning, risk of instability
+- **/betas'**: Coefficients for moments (0.9, 0.999)
+`(0.9, 0.999)': Standard values
+- `(0.95, 0.999)': More stable education
+- `(0.9, 0.99)': Faster learning
+- **/eps'**: Small value for numerical stability (1e-8)
+`1e-8': Standard value
+- `1e-6': Less accurate but more stable
+- `1e-10': More accurate but may be unstable
 
 **SGD Optimizer:**
 - **`lr`**: Learning rate (0.001-0.1)
-  - `0.01`: Стандартная скорость
-  - `0.001`: Медленное обучение
-  - `0.1`: Быстрое обучение
-- **`momentum`**: Коэффициент момента (0.0-0.99)
-  - `0.9`: Стандартное значение (рекомендуется)
-  - `0.0`: Без момента (чистый SGD)
-  - `0.99`: Высокий момент для стабильности
-- **`weight_decay`**: L2 регуляризация (0.0-0.01)
-  - `1e-4`: Слабая регуляризация
-  - `1e-3`: Средняя регуляризация
-  - `1e-2`: Сильная регуляризация
+- `0.01': Standard speed
+`0.001': Slow learning
+`0.1': Rapid learning
+- **/momentum'**: torque factor (0.0-0.99)
+- `0.9': Standard value (recommended)
+- `0.0': Without time (pure SGD)
+`0.99': High point for stability
+- **/weight_decay'**: L2 regularization (0.0-0.01)
+- `1e-4': Weak regularization
+`1e-3': Average regularization
+`1e-2': Strong regularization
 
 **RMSprop Optimizer:**
 - **`lr`**: Learning rate (0.001-0.01)
-  - `0.01`: Стандартная скорость
-  - `0.001`: Медленное обучение
-- **`alpha`**: Коэффициент затухания (0.9-0.999)
-  - `0.99`: Стандартное значение
-  - `0.9`: Быстрое затухание
-  - `0.999`: Медленное затухание
-- **`eps`**: Малое значение для стабильности (1e-8)
+- `0.01': Standard speed
+`0.001': Slow learning
+- **'alpha'**: Extinction coefficient (0.9-0.999)
+`0.99': Standard value
+- `0.9': Rapid blackout
+- `0.999': Slow blackout
+- **/eps'**: Small value for stability (1e-8)
 
 ### 3. Regularization Techniques
 
 ```python
-# Методы регуляризации
+# Methods regularization
 regularization = {
-    'l1': 0.01,      # L1 regularization
-    'l2': 0.01,      # L2 regularization
-    'dropout': 0.5,  # Dropout
-    'batch_norm': True,  # Batch normalization
-    'early_stopping': {
-        'patience': 10,
-        'min_delta': 0.001
-    }
+ 'l1': 0.01, # L1 regularization
+ 'l2': 0.01, # L2 regularization
+ 'dropout': 0.5, # Dropout
+ 'batch_norm': True, # Batch normalization
+ 'early_stopping': {
+ 'patience': 10,
+ 'min_delta': 0.001
+ }
 }
 ```
 
-**Детальные описания параметров регуляризации:**
+** Detailed description of the regularization parameters:**
 
 **L1 Regularization (Lasso):**
-- **`l1`**: Коэффициент L1 регуляризации (0.001-0.1)
-  - `0.01`: Стандартное значение (рекомендуется)
-  - `0.001`: Слабая регуляризация
-  - `0.1`: Сильная регуляризация, отбор признаков
-  - Эффект: обнуление неважных весов, отбор признаков
+** `l1'**: Regularization coefficient L1 (0.001-0.1)
+- `0.01': Standard value (recommended)
+- `0.001': Weak regularization
+`0.1': Strong regularization, selection of topics
+Impact: unimportant weight zeroing, selection of topics
 
 **L2 Regularization (Ridge):**
-- **`l2`**: Коэффициент L2 регуляризации (0.001-0.1)
-  - `0.01`: Стандартное значение (рекомендуется)
-  - `0.001`: Слабая регуляризация
-  - `0.1`: Сильная регуляризация, сглаживание
-  - Эффект: уменьшение весов, предотвращение переобучения
+- ** `l2'**: Regularization coefficient L2 (0.001-0.1)
+- `0.01': Standard value (recommended)
+- `0.001': Weak regularization
+`0.1': Strong regularization, smoothing
+- Impact: reduced weights, prevention of retraining
 
 **Dropout:**
-- **`dropout`**: Вероятность отключения нейронов (0.1-0.8)
-  - `0.5`: Стандартное значение (рекомендуется)
-  - `0.1`: Слабая регуляризация
-  - `0.8`: Сильная регуляризация
-  - Эффект: предотвращение коадаптации нейронов
+- **'dropout'**: Probability of shutting off neurons (0.1-0.8)
+- `0.5': Standard value (recommended)
+`0.1': Weak regularization
+`0.8': Strong regularization
+- Effect: preventing co-adaptation of neurons
 
 **Batch Normalization:**
-- **`batch_norm`**: Включение batch normalization
-  - `True`: Включить batch normalization
-  - `False`: Отключить batch normalization
-  - Эффект: стабилизация обучения, ускорение сходимости
+- **/batch_norm'**: Inclusion of batch noormalization
+- `True': Insert batch normalitation
+- `False': Disable batch normalitation
+Impact: Stabilization of learning, acceleration of convergence
 
 **Early Stopping:**
-- **`patience`**: Количество эпох без улучшения (5-50)
-  - `10`: Стандартное значение (рекомендуется)
-  - `5`: Быстрая остановка
-  - `20`: Терпеливая остановка
-- **`min_delta`**: Минимальное улучшение для продолжения (0.0001-0.01)
-  - `0.001`: Стандартное значение
-  - `0.0001`: Чувствительная остановка
-  - `0.01`: Менее чувствительная остановка
+- ** `patitience'**: Number of eras without improvement (5-50)
+`10': Standard value (recommended)
+- `5': Rapid stop
+- `20': Patience stop
+- **'min_delta'**: Minimum improve for continuation (0.001-0.01)
+`0.001': Standard value
+- `0.0001': Sensible stop
+- `0.01': Less sensitive stop
 
 ## Ensemble Methods
 
-<img src="images/optimized/ensemble_methods.png" alt="Методы ансамблирования" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.7: Методы ансамблирования - Bagging, Boosting, Stacking*
+<img src="images/optimized/ensemble_methods.png" alt="methods ensemble" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 15.7: Methods ensemble - Bagging, Boosting, Stacking*
 
-**Типы методов ансамблирования:**
-- **Bagging**: Параллельное обучение на bootstrap выборках
-- **Boosting**: Последовательное обучение с весами ошибок
-- **Stacking**: Мета-обучение для комбинирования предсказаний
+**Tips of ensemble techniques:**
+- **Bagging**: paralle training on bootstrap samples
+- **Boosting**: sequential transfer with error weights
+- **Stacking**: Meta-learning for combining preferences
 
 ### 1. Bagging
 
 ```python
-# Bagging в AutoGluon
+# Bagging in AutoGluon
 predictor = TabularPredictor(
-    label='target',
-    num_bag_folds=5,    # Количество фолдов для bagging
-    num_bag_sets=2,     # Количество наборов
-    num_stack_levels=1  # Уровни стекинга
+ label='target',
+num_bag_folds=5, #Number of Folds for Bagging
+number_bag_sets=2, #Number of sets
+num_stack_levels=1 # Glassing levels
 )
 ```
 
-**Детальные описания параметров Bagging:**
+** Detailed description of Bagging parameters:**
 
-- **`num_bag_folds`**: Количество фолдов для bagging (3-10)
-  - `3`: Быстрое обучение, базовое качество
-  - `5`: Стандартное значение (рекомендуется)
-  - `10`: Высокое качество, медленное обучение
-  - Эффект: больше разнообразия = лучшая обобщающая способность
+- **'num_bag_folds'**: Number of folds for Bagging (3-10)
+`3': Rapid learning, basic quality
+- `5': Standard value (recommended)
+`10': High quality, slow learning
+Impact: More diversity = best synthesis capacity
 
-- **`num_bag_sets`**: Количество наборов моделей (1-5)
-  - `1`: Один набор моделей
-  - `2`: Стандартное значение (рекомендуется)
-  - `3-5`: Множественные наборы для стабильности
-  - Эффект: дополнительная стабильность и робастность
+- **'num_bag_sets'**: Number of model sets (1-5)
+- `1': One set of models
+- `2': Standard value (recommended)
+- `3-5': Multiple sets for stability
+- Impact: additional stability and efficiency
 
-- **`num_stack_levels`**: Уровни стекинга (0-3)
-  - `0`: Без стекинга (только bagging)
-  - `1`: Один уровень стекинга (рекомендуется)
-  - `2-3`: Многоуровневый стекинг
-  - Эффект: мета-обучение для комбинирования предсказаний
+- **'num_stack_levels'**: Steaking levels (0-3)
+- `0': No glassing (Bagging only)
+- `1': One level of glassing (recommended)
+- `2-3': Multilevel glassing
+- Effect: meta-training for combining preferences
 
 ### 2. Boosting
 
 ```python
-# Boosting алгоритмы
+# Boosting algorithms
 hyperparameters = {
-    'GBM': {
-        'num_boost_round': 1000,
-        'learning_rate': 0.1,
-        'max_depth': 6
-    },
-    'XGB': {
-        'n_estimators': 1000,
-        'learning_rate': 0.1,
-        'max_depth': 6
-    },
-    'LGB': {
-        'n_estimators': 1000,
-        'learning_rate': 0.1,
-        'max_depth': 6
-    }
+ 'GBM': {
+ 'num_boost_round': 1000,
+ 'learning_rate': 0.1,
+ 'max_depth': 6
+ },
+ 'XGB': {
+ 'n_estimators': 1000,
+ 'learning_rate': 0.1,
+ 'max_depth': 6
+ },
+ 'LGB': {
+ 'n_estimators': 1000,
+ 'learning_rate': 0.1,
+ 'max_depth': 6
+ }
 }
 ```
 
-**Детальные описания параметров Boosting:**
+** Detailed description of Boosting parameters:**
 
 **GBM (Gradient Boosting Machine):**
-- **`num_boost_round`**: Количество итераций бустинга (100-2000)
-  - `1000`: Стандартное значение (рекомендуется)
-  - `500`: Быстрое обучение, базовое качество
-  - `2000`: Глубокое обучение, высокое качество
-- **`learning_rate`**: Скорость обучения (0.01-0.3)
-  - `0.1`: Стандартная скорость (рекомендуется)
-  - `0.05`: Медленное обучение, стабильность
-  - `0.2`: Быстрое обучение, риск переобучения
-- **`max_depth`**: Максимальная глубина дерева (3-10)
-  - `6`: Стандартная глубина (рекомендуется)
-  - `3`: Неглубокие деревья, предотвращение переобучения
-  - `10`: Глубокие деревья, риск переобучения
+- **'num_boost_round'**: Number of iterations of buzting (100-2000)
+- `1000': Standard value (recommended)
+- `500': Rapid learning, basic quality
+- `2000': Deep learning, high quality
+- ** `learning_rate'**: Learning speed (0.01-0.3)
+`0.1': Standard speed (recommended)
+`0.05': Slow learning, stability
+`0.2': Rapid learning, risk of retraining
+- **'max_dept'**: Maximum tree depth (3-10)
+- `6': Standard depth (recommended)
+- `3': Lower Trees, Prevention of Retraining
+- `10': Deep Trees, Risk Retraining
 
 **XGBoost:**
-- **`n_estimators`**: Количество деревьев (100-2000)
-  - `1000`: Стандартное значение (рекомендуется)
-  - `500`: Быстрое обучение
-  - `2000`: Глубокое обучение
-- **`learning_rate`**: Скорость обучения (0.01-0.3)
-  - `0.1`: Стандартная скорость (рекомендуется)
-  - `0.05`: Медленное обучение
-  - `0.2`: Быстрое обучение
-- **`max_depth`**: Максимальная глубина дерева (3-10)
-  - `6`: Стандартная глубина (рекомендуется)
-  - `3`: Неглубокие деревья
-  - `10`: Глубокие деревья
+- ** `n_estimators'**: Number of trees (100-2000)
+- `1000': Standard value (recommended)
+- `500': Rapid learning
+- `2000': In-depth education
+- ** `learning_rate'**: Learning speed (0.01-0.3)
+`0.1': Standard speed (recommended)
+`0.05': Slow learning
+`0.2': Rapid learning
+- **'max_dept'**: Maximum tree depth (3-10)
+- `6': Standard depth (recommended)
+- `3': Small trees
+- `10': Deep trees
 
 **LightGBM:**
-- **`n_estimators`**: Количество деревьев (100-2000)
-  - `1000`: Стандартное значение (рекомендуется)
-  - `500`: Быстрое обучение
-  - `2000`: Глубокое обучение
-- **`learning_rate`**: Скорость обучения (0.01-0.3)
-  - `0.1`: Стандартная скорость (рекомендуется)
-  - `0.05`: Медленное обучение
-  - `0.2`: Быстрое обучение
-- **`max_depth`**: Максимальная глубина дерева (3-10)
-  - `6`: Стандартная глубина (рекомендуется)
-  - `3`: Неглубокие деревья
-  - `10`: Глубокие деревья
+- ** `n_estimators'**: Number of trees (100-2000)
+- `1000': Standard value (recommended)
+- `500': Rapid learning
+- `2000': In-depth education
+- ** `learning_rate'**: Learning speed (0.01-0.3)
+`0.1': Standard speed (recommended)
+`0.05': Slow learning
+`0.2': Rapid learning
+- **'max_dept'**: Maximum tree depth (3-10)
+- `6': Standard depth (recommended)
+- `3': Small trees
+- `10': Deep trees
 
 ### 3. Stacking
 
 ```python
-# Стекинг моделей
+# Shaping models
 stacking_config = {
-    'num_bag_folds': 5,
-    'num_bag_sets': 2,
-    'num_stack_levels': 2,
-    'stacker_models': ['GBM', 'XGB', 'LGB'],
-    'stacker_hyperparameters': {
-        'GBM': {'num_boost_round': 100}
-    }
+ 'num_bag_folds': 5,
+ 'num_bag_sets': 2,
+ 'num_stack_levels': 2,
+ 'stacker_models': ['GBM', 'XGB', 'LGB'],
+ 'stacker_hyperparameters': {
+ 'GBM': {'num_boost_round': 100}
+ }
 }
 ```
 
-**Детальные описания параметров Stacking:**
+** Detailed description of Stacking parameters:**
 
-- **`num_bag_folds`**: Количество фолдов для базовых моделей (3-10)
-  - `5`: Стандартное значение (рекомендуется)
-  - `3`: Быстрое обучение, базовое качество
-  - `10`: Высокое качество, медленное обучение
+**'num_bag_folds'**: Number of folds for base models (3-10)
+- `5': Standard value (recommended)
+`3': Rapid learning, basic quality
+`10': High quality, slow learning
 
-- **`num_bag_sets`**: Количество наборов базовых моделей (1-5)
-  - `2`: Стандартное значение (рекомендуется)
-  - `1`: Один набор моделей
-  - `3-5`: Множественные наборы для стабильности
+- **'num_bag_sets'**: Number of core model sets (1-5)
+- `2': Standard value (recommended)
+- `1': One set of models
+- `3-5': Multiple sets for stability
 
-- **`num_stack_levels`**: Уровни стекинга (1-3)
-  - `1`: Один уровень стекинга (рекомендуется)
-  - `2`: Двухуровневый стекинг
-  - `3`: Трехуровневый стекинг (риск переобучения)
+- **'num_stack_levels'**: Glassing levels (1-3)
+- `1': One level of glassing (recommended)
+- `2': Two-level glassing
+- `3': Three-level glassing (risk retraining)
 
-- **`stacker_models`**: Модели для стекинга
-  - `['GBM', 'XGB', 'LGB']`: Стандартный набор (рекомендуется)
-  - `['GBM', 'XGB']`: Минимальный набор
-  - `['GBM', 'XGB', 'LGB', 'CAT']`: Расширенный набор
+- **'Stacker_models'**: Models for glassing
+- ``GBM', `XGB', 'LGB'] `: Standard set (recommended)
+- ``GBM', 'XGB'] `: Minimum set
+- ``GBM', 'XGB', 'LGB', 'CAT'] `: Extended set
 
-- **`stacker_hyperparameters`**: Гиперпараметры для стекинга
-  - `{'GBM': {'num_boost_round': 100}}`: Быстрое обучение стекинга
-  - `{'GBM': {'num_boost_round': 500}}`: Стандартное обучение
-  - `{'GBM': {'num_boost_round': 1000}}`: Глубокое обучение
+- **'Stacker_hyperparameters'**: Hyperparameters for glassing
+- `{'GBM': {'num_boost_round':100}}: Rapid learning of glass
+- `{'GBM': {'num_boost_round':500}}: Standard learning
+- `{'GBM': {'num_boost_round': 1000}}: Deep learning
 
 ## Advanced Concepts
 
 ### 1. Multi-Task Learning
 
 ```python
-# Мультизадачное обучение
+# Multi-tasking learning
 class MultiTaskPredictor:
-    def __init__(self, tasks):
-        self.tasks = tasks
-        self.predictors = {}
-        
-        for task in tasks:
-            self.predictors[task] = TabularPredictor(
-                label=task['label'],
-                problem_type=task['type']
-            )
-    
-    def fit(self, data):
-        for task_name, predictor in self.predictors.items():
-            task_data = data[task['features'] + [task['label']]]
-            predictor.fit(task_data)
+ def __init__(self, tasks):
+ self.tasks = tasks
+ self.predictors = {}
+
+ for task in tasks:
+ self.predictors[task] = TabularPredictor(
+ label=task['label'],
+ problem_type=task['type']
+ )
+
+ def fit(self, data):
+ for task_name, predictor in self.predictors.items():
+ task_data = data[task['features'] + [task['label']]]
+ predictor.fit(task_data)
 ```
 
 ### 2. Transfer Learning
 
 ```python
-# Трансферное обучение
+# Transfer training
 def transfer_learning(source_data, target_data, source_label, target_label):
-    # Обучение на исходных данных
-    source_predictor = TabularPredictor(label=source_label)
-    source_predictor.fit(source_data)
-    
-    # Извлечение признаков
-    source_features = source_predictor.extract_features(target_data)
-    
-    # Обучение на целевых данных с извлеченными признаками
-    target_predictor = TabularPredictor(label=target_label)
-    target_predictor.fit(source_features)
-    
-    return target_predictor
+# Training on source data
+ source_predictor = TabularPredictor(label=source_label)
+ source_predictor.fit(source_data)
+
+# The extraction of signs
+ source_features = source_predictor.extract_features(target_data)
+
+# Training on target data with recovered signature
+ target_predictor = TabularPredictor(label=target_label)
+ target_predictor.fit(source_features)
+
+ return target_predictor
 ```
 
 ### 3. Meta-Learning
 
 ```python
-# Мета-обучение для выбора алгоритмов
+# Meta-learning for algorithm selection
 class MetaLearner:
-    def __init__(self):
-        self.meta_features = {}
-        self.algorithm_performance = {}
-    
-    def extract_meta_features(self, dataset):
-        """Извлечение мета-признаков датасета"""
-        features = {
-            'n_samples': len(dataset),
-            'n_features': len(dataset.columns) - 1,
-            'n_classes': len(dataset['target'].unique()),
-            'missing_ratio': dataset.isnull().sum().sum() / (len(dataset) * len(dataset.columns)),
-            'categorical_ratio': len(dataset.select_dtypes(include=['object']).columns) / len(dataset.columns)
-        }
-        return features
-    
-    def recommend_algorithm(self, dataset):
-        """Рекомендация алгоритма на основе мета-признаков"""
-        meta_features = self.extract_meta_features(dataset)
-        
-        # Простая эвристика
-        if meta_features['n_samples'] < 1000:
-            return 'GBM'
-        elif meta_features['categorical_ratio'] > 0.5:
-            return 'CAT'
-        else:
-            return 'XGB'
+ def __init__(self):
+ self.meta_features = {}
+ self.algorithm_performance = {}
+
+ def extract_meta_features(self, dataset):
+""" "Retrieving the meta-signs of the dataset."
+ features = {
+ 'n_samples': len(dataset),
+ 'n_features': len(dataset.columns) - 1,
+ 'n_classes': len(dataset['target'].unique()),
+ 'Missing_ratio': dataset.isnull().sum().sum() / (len(dataset) * len(dataset.columns)),
+ 'categorical_ratio': len(dataset.select_dtypes(include=['object']).columns) / len(dataset.columns)
+ }
+ return features
+
+ def recommend_algorithm(self, dataset):
+"Recommendation of the algorithm on base meta-signs."
+ meta_features = self.extract_meta_features(dataset)
+
+# Simple heuristics
+ if meta_features['n_samples'] < 1000:
+ return 'GBM'
+ elif meta_features['categorical_ratio'] > 0.5:
+ return 'CAT'
+ else:
+ return 'XGB'
 ```
 
 ## Performance Optimization
 
-<img src="images/optimized/performance_optimization.png" alt="Оптимизация производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.8: Оптимизация производительности - память, вычисления, данные и модели*
+<img src="images/optimized/performance_optimization.png" alt="Optimization of performance" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 15.8: Optimizing performance - memory, computation, data and models*
 
-**Компоненты оптимизации производительности:**
-- **Memory Optimization**: Оптимизация использования памяти
-- **Computational Optimization**: Параллелизация и GPU ускорение
-- **Data Optimization**: Очистка и предобработка данных
-- **Model Optimization**: Обрезка и квантование моделей
+**components optimize performance:**
+- **Memorial Optimization**: Optimizing the use of memory
+- **Computation Optimization**: Parallelization and GPU acceleration
+- **data Optimization**: Clean and pre-processing
+- **Model Optimization**: Model cutting and quantization
 
 ### 1. Memory Optimization
 
 ```python
-# Оптимизация памяти
+# Memory Optimization
 def optimize_memory(data):
-    """Оптимизация использования памяти"""
-    
-    # Изменение типов данных
-    for col in data.select_dtypes(include=['int64']).columns:
-        if data[col].min() >= 0 and data[col].max() < 255:
-            data[col] = data[col].astype('uint8')
-        elif data[col].min() >= -128 and data[col].max() < 127:
-            data[col] = data[col].astype('int8')
-        elif data[col].min() >= 0 and data[col].max() < 65535:
-            data[col] = data[col].astype('uint16')
-        elif data[col].min() >= -32768 and data[col].max() < 32767:
-            data[col] = data[col].astype('int16')
-        else:
-            data[col] = data[col].astype('int32')
-    
-    # Оптимизация float типов
-    for col in data.select_dtypes(include=['float64']).columns:
-        data[col] = data[col].astype('float32')
-    
-    return data
+"Optimization of memory use""
+
+# Change in data types
+ for col in data.select_dtypes(include=['int64']).columns:
+ if data[col].min() >= 0 and data[col].max() < 255:
+ data[col] = data[col].astype('uint8')
+ elif data[col].min() >= -128 and data[col].max() < 127:
+ data[col] = data[col].astype('int8')
+ elif data[col].min() >= 0 and data[col].max() < 65535:
+ data[col] = data[col].astype('uint16')
+ elif data[col].min() >= -32768 and data[col].max() < 32767:
+ data[col] = data[col].astype('int16')
+ else:
+ data[col] = data[col].astype('int32')
+
+# Optimizing float types
+ for col in data.select_dtypes(include=['float64']).columns:
+ data[col] = data[col].astype('float32')
+
+ return data
 ```
 
-**Детальные описания оптимизации памяти:**
+** Detailed descriptions of memory optimization:**
 
-**Целочисленные типы:**
-- **`uint8`**: Беззнаковые 8-битные (0-255)
-  - Экономия: 8x по сравнению с int64
-  - Применение: категориальные переменные, флаги
-- **`int8`**: Знаковые 8-битные (-128 до 127)
-  - Экономия: 8x по сравнению с int64
-  - Применение: небольшие числовые значения
-- **`uint16`**: Беззнаковые 16-битные (0-65535)
-  - Экономия: 4x по сравнению с int64
-  - Применение: средние числовые значения
-- **`int16`**: Знаковые 16-битные (-32768 до 32767)
-  - Экономия: 4x по сравнению с int64
-  - Применение: средние числовые значения
-- **`int32`**: Знаковые 32-битные (стандарт)
-  - Экономия: 2x по сравнению с int64
-  - Применение: большие числовые значения
+** Quantified types:**
+** `uint8'**: 8-bit anonymous (0-255)
+- Savings: 8x compressed to in64
+- Application: categorical variables, flags
+** `int8'**: Mark 8-bit (128 to 127)
+- Savings: 8x compressed to in64
+- Application: Small numerical values
+- ** `uint16'**: 16-bit, no-marked (0-65535)
+- Savings: 4x compressed to in64
+- Application: average numerical values
+** `int16'**: Signal 16-bit (32768 to 32767)
+- Savings: 4x compressed to in64
+- Application: average numerical values
+** `int32'**: Signal 32-bit (standard)
+- Savings: 2x compressed to in64
+- Application: high numerical values
 
-**Вещественные типы:**
-- **`float32`**: 32-битные с плавающей точкой
-  - Экономия: 2x по сравнению с float64
-  - Точность: достаточная для большинства задач
-  - Применение: все вещественные значения
+** Material types:**
+- **'float32'**: 32-bit floating point
+- Savings: 2x commingled to flat64
+- Accuracy: sufficient for most tasks
+- Application: all physical values
 
-**Экономия памяти:**
-- **int64 → int32**: 50% экономия
-- **int64 → int16**: 75% экономия
-- **int64 → int8**: 87.5% экономия
-- **float64 → float32**: 50% экономия
+** Memory savings:**
+- **int64 \int32**: 50% savings
+- **int64 \int16**: 75% savings
+- **int64 \int8**: 87.5% savings
+- **float64 \float32**: 50% savings
 
 ### 2. Computational Optimization
 
 ```python
-# Оптимизация вычислений
+# Optimization of calculation
 import multiprocessing as mp
 
 def parallel_processing(data, n_jobs=-1):
-    """Параллельная обработка данных"""
-    
-    if n_jobs == -1:
-        n_jobs = mp.cpu_count()
-    
-    # Разделение данных на части
-    chunk_size = len(data) // n_jobs
-    chunks = [data[i:i+chunk_size] for i in range(0, len(data), chunk_size)]
-    
-    # Параллельная обработка
-    with mp.Pool(n_jobs) as pool:
-        results = pool.map(process_chunk, chunks)
-    
-    return pd.concat(results)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+ if n_jobs == -1:
+ n_jobs = mp.cpu_count()
+
+# Disaggregation of data on part
+ chunk_size = len(data) // n_jobs
+ chunks = [data[i:i+chunk_size] for i in range(0, len(data), chunk_size)]
+
+# Parallel processing
+ with mp.Pool(n_jobs) as pool:
+ results = pool.map(process_chunk, chunks)
+
+ return pd.concat(results)
 ```
 
-**Детальные описания параметров параллельной обработки:**
+** Detailed descriptions of parallel processing parameters:**
 
-- **`n_jobs`**: Количество параллельных процессов
-  - `-1`: Использовать все доступные CPU ядра (рекомендуется)
-  - `1`: Последовательная обработка (без параллелизма)
-  - `2-8`: Фиксированное количество процессов
-  - `mp.cpu_count()`: Количество CPU ядер в системе
+- ** `n_jobs'**: Number of parallel processes
+- `1': Use all available CPU kernels (recommended)
+`1': Consequent treatment (without parallelism)
+- `2-8': Fixed number of processes
+- `mp.cpu_account()': Number of CPU kernels in the system
 
-- **`chunk_size`**: Размер части данных для обработки
-  - `len(data) // n_jobs`: Равномерное разделение (рекомендуется)
-  - `1000`: Фиксированный размер для небольших данных
-  - `10000`: Фиксированный размер для больших данных
+- **/chunk_size'**: Size of part of data for processing
+- `len(data) / / n_jobs': Equitable separation (recommended)
+`1000': Fixed size for small data
+- `10000': Fixed size for big data
 
-**Оптимизация производительности:**
-- **CPU-bound задачи**: Используйте `n_jobs = mp.cpu_count()`
-- **I/O-bound задачи**: Используйте `n_jobs = mp.cpu_count() * 2`
-- **Memory-bound задачи**: Используйте `n_jobs = mp.cpu_count() // 2`
+**Optification performance:**
+- **CPU-bound task**: Use `n_jobs = mp.cpu_account() `
+- **I/O-bund tasks**: Use `n_jobs = mp.cpu_account() * 2'
+- **Memory-bound tasks**: Use `n_jobs = mp.cpu_account() / / 2'
 
-**Рекомендации по выбору n_jobs:**
-- **Малые данные (< 10K строк)**: `n_jobs = 2-4`
-- **Средние данные (10K-100K строк)**: `n_jobs = 4-8`
-- **Большие данные (> 100K строк)**: `n_jobs = 8-16`
-- **Очень большие данные (> 1M строк)**: `n_jobs = 16+`
+** Recommendations on selection of n_jobs:**
+- **Lowered data (< 10K lines)**: `n_jobs = 2-4'
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+- **Very large data (> 1M string)**: `n_jobs = 16+'
 
 ## Theoretical Guarantees
 
 ### 1. Convergence Guarantees
 
 ```python
-# Гарантии сходимости для различных алгоритмов
+# Guarantees of convergence for different algorithms
 convergence_guarantees = {
-    'GBM': {
-        'convergence_rate': 'O(1/sqrt(T))',
-        'conditions': ['convex_loss', 'bounded_gradients'],
-        'theorem': 'GBM converges to global optimum for convex loss'
-    },
-    'XGB': {
-        'convergence_rate': 'O(log(T)/T)',
-        'conditions': ['strongly_convex_loss', 'bounded_hessian'],
-        'theorem': 'XGB converges with rate O(log(T)/T)'
-    }
+ 'GBM': {
+ 'convergence_rate': 'O(1/sqrt(T))',
+ 'conditions': ['convex_loss', 'bounded_gradients'],
+ 'theorem': 'GBM converges to global optimum for convex loss'
+ },
+ 'XGB': {
+ 'convergence_rate': 'O(log(T)/T)',
+ 'conditions': ['strongly_convex_loss', 'bounded_hessian'],
+ 'theorem': 'XGB converges with rate O(log(T)/T)'
+ }
 }
 ```
 
 ### 2. Generalization Bounds
 
 ```python
-# Границы обобщения
+# Boundaries of generalization
 def generalization_bound(n, d, delta):
-    """Граница обобщения для алгоритма"""
-    import math
-    
-    # VC dimension bound
-    vc_bound = math.sqrt((d * math.log(n) + math.log(1/delta)) / n)
-    
-    # Rademacher complexity bound
-    rademacher_bound = math.sqrt(math.log(n) / n)
-    
-    return min(vc_bound, rademacher_bound)
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+ import math
+
+ # VC dimension bound
+ vc_bound = math.sqrt((d * math.log(n) + math.log(1/delta)) / n)
+
+ # Rademacher complexity bound
+ rademacher_bound = math.sqrt(math.log(n) / n)
+
+ return min(vc_bound, rademacher_bound)
 ```
 
 ## Research Frontiers
@@ -810,55 +810,55 @@ def generalization_bound(n, d, delta):
 ### 1. Neural Architecture Search
 
 ```python
-# Современные методы NAS
+# Modern Methods NAS
 class DARTS:
-    """Differentiable Architecture Search"""
-    
-    def __init__(self, search_space):
-        self.search_space = search_space
-        self.architecture_weights = {}
-    
-    def search(self, data, epochs=50):
-        """Поиск архитектуры"""
-        for epoch in range(epochs):
-            # Обновление весов архитектуры
-            self.update_architecture_weights(data)
-            
-            # Обновление весов модели
-            self.update_model_weights(data)
-    
-    def update_architecture_weights(self, data):
-        """Обновление весов архитектуры"""
-        # Реализация DARTS
-        pass
+ """Differentiable Architecture Search"""
+
+ def __init__(self, search_space):
+ self.search_space = search_space
+ self.architecture_weights = {}
+
+ def search(self, data, epochs=50):
+"A search for architecture."
+ for epoch in range(epochs):
+# Update the weights of architecture
+ self.update_architecture_weights(data)
+
+# Update model weights
+ self.update_model_weights(data)
+
+ def update_architecture_weights(self, data):
+"update the weights of architecture."
+# Implementation of DARTS
+ pass
 ```
 
 ### 2. AutoML for Time Series
 
 ```python
-# AutoML для временных рядов
+# AutoML for time series
 from autogluon.timeseries import TimeSeriesPredictor
 
-def time_series_automl(data, prediction_length):
-    """AutoML для временных рядов"""
-    
-    predictor = TimeSeriesPredictor(
-        prediction_length=prediction_length,
-        target="target",
-        time_limit=3600  # 1 час
-    )
-    
-    predictor.fit(data)
-    return predictor
+def time_series_automl(data, Prediction_length):
+"AutoML for Time Series"
+
+ predictor = TimeSeriesPredictor(
+ Prediction_length=Prediction_length,
+ target="target",
+Time_limit=3600 #1 hour
+ )
+
+ predictor.fit(data)
+ return predictor
 ```
 
-## Заключение
+## Conclusion
 
-Понимание теоретических основ AutoML критически важно для:
+Understanding the theoretical foundations of AutoML is critical for:
 
-1. **Правильного выбора алгоритмов** - знание сильных и слабых сторон
-2. **Оптимизации производительности** - понимание вычислительной сложности
-3. **Интерпретации результатов** - понимание статистических свойств
-4. **Разработки новых методов** - основа для инноваций
+1. ** The right choice of algorithms** - knowledge of strengths and weaknesses
+2. **Optimizations performance** - Understanding computing complexity
+3. ** Interpretations of results** - understanding of statistical characteristics
+4. ** Development of new techniques** - framework for innovation
 
-Эти знания позволяют использовать AutoML Gluon не как "черный ящик", а как мощный инструмент с пониманием его внутренних механизмов.
+This knowledge allows us to use AutoML Gluon not as a "black box" and as a powerful tool with understanding its internal mechanisms.

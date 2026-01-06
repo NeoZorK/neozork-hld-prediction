@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from io import StringIO
 import sys
+from unittest.mock import patch, MagicMock
 
 from src.eda import basic_stats
 
@@ -226,8 +227,25 @@ def test_time_series_analysis_no_datetime():
     assert 'synthetic' in result['warning']
 
 # Tests for print functions (checking they don't error)
-def test_print_basic_stats_summary():
+@patch('src.eda.basic_stats.open_last_plot_in_browser')
+@patch('src.eda.basic_stats.save_plot_with_description')
+@patch('src.eda.basic_stats.sns')
+@patch('src.eda.basic_stats.plt')
+def test_print_basic_stats_summary(mock_plt, mock_sns, mock_save_plot, mock_open_browser):
     """Test print_basic_stats_summary doesn't raise exceptions."""
+    # Mock matplotlib and seaborn to prevent actual plot creation
+    mock_fig = MagicMock()
+    mock_ax = MagicMock()
+    mock_plt.figure.return_value = mock_fig
+    mock_plt.subplots.return_value = (mock_fig, mock_ax)
+    mock_plt.savefig.return_value = None
+    mock_plt.close.return_value = None
+    mock_plt.xticks.return_value = None
+    mock_plt.ylabel.return_value = None
+    mock_plt.title.return_value = None
+    mock_plt.tight_layout.return_value = None
+    mock_sns.barplot.return_value = mock_ax
+    
     stats = {
         'open': {'mean': 10.5, 'median': 10.0, 'std': 1.0, 'min': 9.0, 'max': 11.0,
                 '25%': 9.5, '50%': 10.0, '75%': 10.8, 'missing': 1, 'unique': 4},

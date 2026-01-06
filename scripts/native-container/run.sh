@@ -77,9 +77,54 @@ show_all_containers() {
     fi
 }
 
+# Function to ensure container system service is running
+ensure_container_service() {
+    # Check if container system service is running
+    if ! container system status >/dev/null 2>&1; then
+        print_warning "Container system service is not running"
+        print_status "Starting container system service..."
+        if container system start >/dev/null 2>&1; then
+            print_success "Container system service started"
+            sleep 2  # Wait for service to fully initialize
+        else
+            print_error "Failed to start container system service"
+            print_status "Please start the container service manually:"
+            print_status "  container system start"
+            return 1
+        fi
+    fi
+    
+    # Verify we can access container service
+    if ! container list --all >/dev/null 2>&1; then
+        print_warning "Cannot access container service, trying to restart..."
+        if container system start >/dev/null 2>&1; then
+            print_success "Container system service restarted"
+            sleep 2  # Wait for service to fully initialize
+            if ! container list --all >/dev/null 2>&1; then
+                print_error "Still cannot access container service after restart"
+                return 1
+            fi
+        else
+            print_error "Failed to restart container system service"
+            return 1
+        fi
+    fi
+    return 0
+}
+
 # Function to start container
 start_container() {
     print_status "Starting NeoZork HLD Prediction container..."
+    
+    # Ensure container system service is running
+    if ! ensure_container_service; then
+        print_error "Cannot start container - container service not available"
+        exit 1
+    fi
+    
+    # Additional wait to ensure service is fully ready
+    print_status "Waiting for container service to be fully ready..."
+    sleep 3
     
     # Check if container exists (including stopped containers)
     if ! check_container_exists; then
@@ -99,26 +144,96 @@ start_container() {
     print_status "Container status before starting:"
     show_all_containers
     
-    # Start the container
+    # Start the container with retry logic (XPC connection errors can be transient)
     print_status "Starting container..."
-    if container start neozork-hld-prediction; then
-        print_success "Container start command completed"
-        
-        # Wait a moment for container to fully start
-        sleep 2
-        
-        # Check if container is now running
-        if check_container_running; then
-            print_success "Container started successfully and is running"
-            return 0
-        else
-            print_warning "Container start command succeeded but container is not running"
-            print_status "Checking all containers:"
-            show_all_containers
-            return 1
+    local max_retries=3
+    local retry_count=0
+    local start_success=false
+    
+    while [ $retry_count -lt $max_retries ]; do
+        if [ $retry_count -gt 0 ]; then
+            print_warning "Retrying container start (attempt $((retry_count + 1))/$max_retries)..."
+            # Ensure container service is running before retry
+            print_status "Ensuring container service is running..."
+            ensure_container_service
+            sleep 2
         fi
+        
+        # Start container and immediately launch keep-alive process
+        # The entrypoint runs interactive bash which exits in non-interactive mode
+        # We need to start a keep-alive process very quickly after container starts
+        if container start neozork-hld-prediction 2>&1; then
+            print_success "Container start command completed"
+            
+            # Immediately execute a command that starts keep-alive and waits for it
+            # This command runs synchronously and keeps container alive during execution
+            print_status "Starting keep-alive process immediately..."
+            if container exec neozork-hld-prediction bash -c "
+                # Start keep-alive process
+                nohup sleep infinity >/dev/null 2>&1 &
+                local pid=\$!
+                # Wait a moment to ensure process started
+                sleep 1
+                # Verify process is running
+                if ps -p \$pid >/dev/null 2>&1; then
+                    echo 'KEEP_ALIVE_STARTED'
+                else
+                    echo 'KEEP_ALIVE_FAILED'
+                fi
+            " 2>&1 | grep -q "KEEP_ALIVE_STARTED"; then
+                print_status "Keep-alive process started successfully"
+            else
+                print_warning "Keep-alive process may not have started, trying again..."
+                # Try again with simpler command
+                container exec neozork-hld-prediction bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
+                sleep 1
+            fi
+            
+            # Wait a moment for container to stabilize
+            sleep 2
+            
+            # Verify keep-alive process is still running
+            if container exec neozork-hld-prediction bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
+                print_status "Keep-alive process verified and running"
+            else
+                print_warning "Keep-alive process not found, trying one more time..."
+                container exec neozork-hld-prediction bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
+                sleep 1
+            fi
+            
+            # Check if container is now running
+            if check_container_running; then
+                print_success "Container started successfully and is running"
+                start_success=true
+                break
+            else
+                if [ $retry_count -lt $((max_retries - 1)) ]; then
+                    print_warning "Container start command succeeded but container is not running, will retry..."
+                else
+                    print_warning "Container start command succeeded but container is not running after $max_retries attempts"
+                    print_status "Checking all containers:"
+                    show_all_containers
+                fi
+            fi
+        else
+            local exit_code=$?
+            retry_count=$((retry_count + 1))
+            if [ $retry_count -lt $max_retries ]; then
+                print_warning "Container start failed (exit code: $exit_code), will retry..."
+            else
+                print_error "Failed to start container after $max_retries attempts"
+                print_error "Last error: exit code $exit_code"
+                print_status "This may be due to XPC connection issues"
+                print_status "Try running: container system start"
+            fi
+        fi
+        
+        retry_count=$((retry_count + 1))
+    done
+    
+    if [ "$start_success" = true ]; then
+        return 0
     else
-        print_error "Failed to start container"
         return 1
     fi
 }

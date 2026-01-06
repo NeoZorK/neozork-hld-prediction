@@ -1,57 +1,57 @@
-# Базовое использование AutoML Gluon
+# Basic Usage of AutoML Gluon
 
-**Автор:** Shcherbyna Rostyslav  
-**Дата:** 2024  
+**Author:** Shcherbyna Rostyslav
+**Date:** 2024
 
-## Почему начинаем с базового использования
+## Why Start with Basic Usage
 
-**Почему 80% пользователей начинают с базового использования?** Потому что это самый простой способ понять, как работает AutoML Gluon. Это как обучение вождению - сначала изучаете основы, потом переходите к сложным маневрам.
+**Why do 80% of users start with basic usage?** Because it's the simplest way to understand how AutoML Gluon works. It's like learning to drive - first you learn the basics, then you move on to complex maneuvers.
 
-### Что дает базовое понимание?
-- **Быстрый старт**: От данных до модели за несколько строк кода
-- **Понимание принципов**: Как AutoML Gluon принимает решения
-- **Уверенность**: Знание того, что все работает правильно
-- **Фундамент**: Основа для изучения продвинутых техник
+### What does basic understanding provide?
+- **Quick start**: From data to model in a few lines of code
+- **Understanding principles**: How AutoML Gluon makes decisions
+- **Confidence**: Knowing that everything works correctly
+- **Foundation**: Basis for learning advanced techniques
 
-### Что происходит без базового понимания?
-- **Фрустрация**: Не понимаете, почему модель работает не так
-- **Ошибки**: Неправильное использование параметров
-- **Неэффективность**: Тратите время на то, что можно сделать проще
-- **Разочарование**: Сложность отпугивает от изучения
+### What happens without basic understanding?
+- **Frustration**: You don't understand why the model doesn't work as expected
+- **Errors**: Incorrect use of parameters
+- **Inefficiency**: Wasting time on things that can be done simpler
+- **Disappointment**: Complexity discourages learning
 
-## Введение в TabularPredictor
+## Introduction to TabularPredictor
 
-<img src="images/optimized/architecture_diagram.png" alt="Архитектура AutoML Gluon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 1: Архитектура AutoML Gluon с основными компонентами*
+<img src="images/optimized/architecture_diagram.png" alt="Architecture AutoML Gluon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 1: AutoML Gluon architecture with main components*
 
-**Почему TabularPredictor - это сердце AutoML Gluon?** Потому что он объединяет все возможности в одном простом интерфейсе. Это как универсальный пульт управления - одна кнопка запускает сложные процессы.
+**Why is TabularPredictor the heart of AutoML Gluon?** Because it combines all capabilities in one simple interface. It's like a universal remote control - one button launches complex processes.
 
-### 🎯 Компоненты TabularPredictor
+### 🎯 TabularPredictor Components
 
-<img src="images/optimized/simple_production_flow.png" alt="Компоненты TabularPredictor" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 2: Детальная схема компонентов TabularPredictor*
+<img src="images/optimized/simple_production_flow.png" alt="TabularPredictor components" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 2: Detailed diagram of TabularPredictor components*
 
-**Почему важно понимать компоненты?** Потому что это помогает понять, как TabularPredictor автоматизирует весь процесс машинного обучения:
+**Why is it important to understand components?** Because it helps understand how TabularPredictor automates the entire machine learning process:
 
-- **Data Preprocessing**: Автоматическая очистка и предобработка данных
-- **Feature Engineering**: Создание новых признаков из существующих
-- **Model Selection**: Автоматический выбор лучших алгоритмов
-- **Hyperparameter Tuning**: Оптимизация параметров моделей
-- **Ensemble Creation**: Создание ансамблей для повышения точности
-- **Model Evaluation**: Оценка качества и выбор лучшей модели
-- **Prediction**: Генерация предсказаний для новых данных
+- **Data Preprocessing**: Automatic cleaning and preprocessing of data
+- **Feature Engineering**: Creating new features from existing ones
+- **Model Selection**: Automatic selection of best algorithms
+- **Hyperparameter Tuning**: Optimization of model parameters
+- **Ensemble Creation**: Creating ensembles for improving accuracy
+- **Model Evaluation**: Quality assessment and selection of best model
+- **Prediction**: Generating predictions for new data
 
-`TabularPredictor` - это основной класс для работы с табличными данными в AutoGluon. Он автоматически определяет тип задачи (классификация, регрессия) и выбирает лучшие алгоритмы.
+`TabularPredictor` is the main class for working with tabular data in AutoGluon. It automatically determines the task type (classification, regression) and selects the best algorithms.
 
-### Почему TabularPredictor так важен?
-- **Автоматизация**: Не нужно выбирать алгоритмы вручную
-- **Умность**: Сам определяет тип задачи и метрики
-- **Гибкость**: Работает с любыми табличными данными
-- **Простота**: Один класс решает все задачи
+### Why is TabularPredictor so important?
+- **Automation**: No need to manually select algorithms
+- **Intelligence**: Automatically determines task type and metrics
+- **Flexibility**: Works with any tabular data
+- **Simplicity**: One class solves all tasks
 
-### Импорт и создание базового предиктора
+### Import and Create Basic Predictor
 
-**Почему начинаем с импорта?** Потому что это основа любого Python проекта. Правильный импорт - это как правильная настройка инструмента.
+**Why start with import?** Because it's the foundation of any Python project. Proper import is like proper tool configuration.
 
 ```python
 from autogluon.tabular import TabularPredictor
@@ -59,1762 +59,1762 @@ import pandas as pd
 import numpy as np
 ```
 
-**Почему именно эти импорты?**
-- `TabularPredictor` - основной класс для работы с табличными данными
-- `pandas` - для работы с данными в табличном формате
-- `numpy` - для численных вычислений
+**Why these specific imports?**
+- `TabularPredictor` - main class for working with tabular data
+- `pandas` - for working with data in tabular format
+- `numpy` - for numerical computations
 
-**Почему не импортируем все сразу?** Потому что это замедляет загрузку и может вызвать конфликты.
+**Why not import everything at once?** Because it slows down loading and can cause conflicts.
 
 ```python
-# Создание предиктора
+# Create predictor
 predictor = TabularPredictor(
-    label='target_column',  # Название целевой переменной
-    problem_type='auto',    # Автоматическое определение типа задачи
-    eval_metric='auto'      # Автоматический выбор метрики
+label='target_column', # Name of target variable
+problem_type='auto', # Automatic task type detection
+eval_metric='auto' # Automatic metric selection
 )
 ```
 
-**Объяснение параметров:**
-- `label='target_column'` - название столбца с целевой переменной (что мы предсказываем)
-- `problem_type='auto'` - AutoML Gluon сам определит, классификация это или регрессия
-- `eval_metric='auto'` - автоматический выбор лучшей метрики для оценки
+**Parameter explanation:**
+- `label='target_column'` - name of column with target variable (what we predict)
+- `problem_type='auto'` - AutoML Gluon will automatically determine if it's classification or regression
+- `eval_metric='auto'` - automatic selection of best metric for evaluation
 
-**Почему используем 'auto'?** Потому что AutoML Gluon умнее нас в выборе оптимальных параметров.
+**Why use 'auto'?** Because AutoML Gluon is smarter than us in choosing optimal parameters.
 
-#### 🔧 Детальное описание параметров TabularPredictor
+#### 🔧 Detailed Description of TabularPredictor Parameters
 
-**Параметр `label`:**
+**Parameter `label`:**
 
-- **Что означает**: Название столбца с целевой переменной (что мы предсказываем)
-- **Зачем нужен**: Указывает AutoML Gluon, какую переменную предсказывать
-- **Обязательный параметр**: Да, без него AutoML Gluon не знает, что предсказывать
-- **Правила именования**:
-  - **Латинские буквы**: `target`, `label`, `y`
-- **С подчеркиваниями**: `target_column`, `prediction_target`
-- **Избегать**: Пробелы, специальные символы, кириллицу
-- **Практические примеры**:
-  - **Классификация**: `'is_fraud'`, `'category'`, `'class'`
-- **Регрессия**: `'price'`, `'sales'`, `'temperature'`
-- **Временные ряды**: `'value'`, `'forecast'`, `'target'`
-- **Проверка существования**: AutoML Gluon автоматически проверит, что столбец существует
-- **Обработка ошибок**: Если столбец не найден, AutoML Gluon выдаст понятную ошибку
+- **What it means**: Name of column with target variable (what we predict)
+- **Why it's needed**: Tells AutoML Gluon which variable to predict
+- **Required parameter**: Yes, without it AutoML Gluon doesn't know what to predict
+- **Naming rules**:
+- **Latin letters**: `target`, `label`, `y`
+- **With underscores**: `target_column`, `prediction_target`
+- **Avoid**: Spaces, special characters, Cyrillic
+- **Practical examples**:
+- **Classification**: `'is_fraud'`, `'category'`, `'class'`
+- **Regression**: `'price'`, `'sales'`, `'temperature'`
+- **Time series**: `'value'`, `'forecast'`, `'target'`
+- **Existence check**: AutoML Gluon will automatically check that the column exists
+- **Error handling**: If column not found, AutoML Gluon will show a clear error
 
-**Параметр `problem_type`:**
+**Parameter `problem_type`:**
 
-- **Что означает**: Тип задачи машинного обучения
-- **Зачем нужен**: Определяет, какие алгоритмы и метрики использовать
-- **Автоматическое определение**: `'auto'` - AutoML Gluon сам определит тип
-- **Ручное указание**: Можно явно указать тип задачи
-- **Доступные значения**: - **`'auto'`** - автоматическое определение (рекомендуется)
-  - **`'binary'`** - бинарная классификация (2 класса)
-  - **`'multiclass'`** - многоклассовая классификация (3+ классов)
-  - **`'regression'`** - регрессия (предсказание чисел)
-- **Как AutoML Gluon определяет тип**:
-  - **Анализ данных**: Смотрит на уникальные значения в target
-- **Тип данных**: Проверяет, числа это или строки
-- **Количество классов**: Считает уникальные значения
-- **Практические примеры**:
-  - **2 уникальных значения**: `'binary'` (да/нет, спам/не спам)
-- **3+ уникальных значения**: `'multiclass'` (категории, классы)
-- **Много уникальных чисел**: `'regression'` (цены, температуры)
-- **Преимущества автоматического определения**:
-  - **Простота**: Не нужно думать о типе задачи
-- **Точность**: AutoML Gluon редко ошибается
-- **Гибкость**: Работает с любыми данными
-- **Когда указывать вручную**:
-  - **Специфические задачи**: Когда auto определение неправильное
-- **Оптимизация**: Когда знаете точный тип задачи
-- **Отладка**: Когда нужно контролировать процесс
+- **What it means**: Type of machine learning task
+- **Why it's needed**: Determines which algorithms and metrics to use
+- **Automatic detection**: `'auto'` - AutoML Gluon will automatically determine the type
+- **Manual specification**: Can explicitly specify task type
+- **Available values**: - **`'auto'`** - automatic detection (recommended)
+- **`'binary'`** - binary classification (2 classes)
+- **`'multiclass'`** - multiclass classification (3+ classes)
+- **`'regression'`** - regression (predicting numbers)
+- **How AutoML Gluon determines type**:
+- **Data analysis**: Looks at unique values in target
+- **Data type**: Checks if it's numbers or strings
+- **Number of classes**: Counts unique values
+- **Practical examples**:
+- **2 unique values**: `'binary'` (yes/no, spam/not spam)
+- **3+ unique values**: `'multiclass'` (categories, classes)
+- **Many unique numbers**: `'regression'` (prices, temperatures)
+- **Advantages of automatic detection**:
+- **Simplicity**: No need to think about task type
+- **Accuracy**: AutoML Gluon rarely makes mistakes
+- **Flexibility**: Works with any data
+- **When to specify manually**:
+- **Specific tasks**: When auto detection is incorrect
+- **Optimization**: When you know the exact task type
+- **Debugging**: When you need to control the process
 
-**Параметр `eval_metric`:**
+**Parameter `eval_metric`:**
 
-- **Что означает**: Метрика для оценки качества модели
-- **Зачем нужен**: Определяет, как измерять качество модели
-- **Автоматический выбор**: `'auto'` - AutoML Gluon выберет лучшую метрику
-- **Ручное указание**: Можно явно указать метрику
-- **Доступные метрики по типам задач**:
-  - **Классификация**: `'accuracy'`, `'f1'`, `'roc_auc'`, `'precision'`, `'recall'`
-- **Регрессия**: `'rmse'`, `'mae'`, `'r2'`, `'mape'`
-- **Как AutoML Gluon выбирает метрику**:
-  - **Бинарная классификация**: `'roc_auc'` (лучше для несбалансированных данных)
-- **Многоклассовая классификация**: `'accuracy'` (простая и понятная)
-- **Регрессия**: `'rmse'` (стандартная метрика)
-- **Практические примеры выбора метрики**:
-  - **Медицинская диагностика**: `'roc_auc'` (важна точность)
-- **Рекомендации**: `'f1'` (баланс точности и полноты)
-- **Прогнозирование цен**: `'rmse'` (средняя ошибка)
-- **Анализ настроений**: `'accuracy'` (простота интерпретации)
-- **Влияние на обучение**:
-  - **Разные метрики**: Могут дать разные лучшие модели
-- **Оптимизация**: AutoML Gluon оптимизирует выбранную метрику
-- **Сравнение**: Можно сравнить модели по разным метрикам
+- **What it means**: Metric for evaluating model quality
+- **Why it's needed**: Determines how to measure model quality
+- **Automatic selection**: `'auto'` - AutoML Gluon will choose the best metric
+- **Manual specification**: Can explicitly specify metric
+- **Available metrics by task type**:
+- **Classification**: `'accuracy'`, `'f1'`, `'roc_auc'`, `'precision'`, `'recall'`
+- **Regression**: `'rmse'`, `'mae'`, `'r2'`, `'mape'`
+- **How AutoML Gluon chooses metric**:
+- **Binary classification**: `'roc_auc'` (better for imbalanced data)
+- **Multiclass classification**: `'accuracy'` (simple and understandable)
+- **Regression**: `'rmse'` (standard metric)
+- **Practical examples of metric selection**:
+- **Medical diagnosis**: `'roc_auc'` (accuracy is important)
+- **Recommendations**: `'f1'` (balance of precision and recall)
+- **Price forecasting**: `'rmse'` (mean error)
+- **Sentiment analysis**: `'accuracy'` (simplicity of interpretation)
+- **Impact on training**:
+- **Different metrics**: Can give different best models
+- **Optimization**: AutoML Gluon optimizes the selected metric
+- **Comparison**: Can compare models on different metrics
 
-## Типы задач
+## Task Types
 
-<img src="images/optimized/automl_theory.png" alt="Типы задач машинного обучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: Обзор типов задач машинного обучения в AutoML Gluon*
+<img src="images/optimized/automl_theory.png" alt="Machine learning task types" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 3: Overview of machine learning task types in AutoML Gluon*
 
-**Почему важно понимать типы задач?** Потому что разные задачи требуют разных подходов. Это как разница между диагностикой болезни и измерением температуры - методы разные.
+**Why is it important to understand task types?** Because different tasks require different approaches. It's like the difference between diagnosing a disease and measuring temperature - methods are different.
 
-### 📊 Сравнение типов задач
+### 📊 Task Types Comparison
 
-<img src="images/optimized/metrics_detailed.png" alt="Сравнение типов задач" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: Детальное сравнение типов задач и их метрик*
+<img src="images/optimized/metrics_Detailed.png" alt="Task types comparison" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 4: Detailed comparison of task types and their metrics*
 
-**Почему важно сравнивать типы задач?** Потому что это помогает выбрать правильный подход и метрики для вашей задачи:
+**Why is it important to compare task types?** Because it helps choose the right approach and metrics for your task:
 
-- **Классификация**: Предсказание категорий (спам/не спам, больной/здоровый)
-- **Регрессия**: Предсказание численных значений (цена, количество, время)
-- **Временные ряды**: Предсказание будущих значений на основе истории
-- **Многоклассовая классификация**: Выбор из множества категорий
-- **Бинарная классификация**: Простой выбор между двумя вариантами
+- **Classification**: Predicting categories (spam/not spam, sick/healthy)
+- **Regression**: Predicting numerical values (price, quantity, time)
+- **Time series**: Predicting future values based on history
+- **Multiclass classification**: Choosing from multiple categories
+- **Binary classification**: Simple choice between two options
 
-### Классификация
+### Classification
 
-**Что такое классификация?** Это предсказание категории или класса. Например, спам/не спам, больной/здоровый, покупатель/не покупатель.
+**What is classification?** It's predicting a category or class. For example, spam/not spam, sick/healthy, buyer/not buyer.
 
-**Почему классификация так популярна?** Потому что большинство бизнес-задач - это классификация:
-- Обнаружение мошенничества
-- Медицинская диагностика
-- Рекомендательные системы
-- Анализ настроений
+**Why is classification so popular?** Because most business tasks are classification:
+- Fraud detection
+- Medical diagnosis
+- Recommendation systems
+- Sentiment analysis
 
 ```python
-# Бинарная классификация
+# Binary classification
 predictor = TabularPredictor(
-    label='is_fraud',
-    problem_type='binary',
-    eval_metric='accuracy'
+ label='is_fraud',
+ problem_type='binary',
+ eval_metric='accuracy'
 )
 ```
-**Почему бинарная классификация проще?** Потому что есть только два варианта ответа - да или нет.
+**Why is binary classification simpler?** Because there are only two answer options - yes or no.
 
 ```python
-# Многоклассовая классификация
+# Multiclass classification
 predictor = TabularPredictor(
-    label='category',
-    problem_type='multiclass',
-    eval_metric='accuracy'
+ label='category',
+ problem_type='multiclass',
+ eval_metric='accuracy'
 )
 ```
-**Почему многоклассовая сложнее?** Потому что нужно выбрать из множества вариантов, и ошибки более дорогие.
+**Why is multiclass more complex?** Because you need to choose from multiple options, and errors are more costly.
 
-### Регрессия
+### Regression
 
-**Что такое регрессия?** Это предсказание численного значения. Например, цена дома, количество продаж, время до события.
+**What is regression?** It's predicting a numerical value. For example, house price, sales quantity, time to event.
 
-**Почему регрессия важна?** Потому что многие бизнес-метрики - это числа:
-- Прогнозирование продаж
-- Оценка недвижимости
-- Предсказание времени
-- Финансовое моделирование
+**Why is regression important?** Because many business metrics are numbers:
+- Sales forecasting
+- Real estate valuation
+- Time prediction
+- Financial modeling
 
 ```python
-# Регрессия
+# Regression
 predictor = TabularPredictor(
-    label='price',
-    problem_type='regression',
-    eval_metric='rmse'
+ label='price',
+ problem_type='regression',
+ eval_metric='rmse'
 )
 ```
 
-## Обучение модели
+## Model Training
 
-### 🔄 Процесс обучения модели
+### 🔄 Model Training Process
 
-<img src="images/optimized/retraining_workflow.png" alt="Процесс обучения модели" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: Детальная схема процесса обучения модели в AutoML Gluon*
+<img src="images/optimized/retraining_workflow.png" alt="Model training process" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 5: Detailed diagram of model training process in AutoML Gluon*
 
-**Почему важно понимать процесс обучения?** Потому что это помогает понять, что происходит внутри AutoML Gluon и как оптимизировать обучение:
+**Why is it important to understand the training process?** Because it helps understand what happens inside AutoML Gluon and how to optimize training:
 
-- **Data Loading**: Загрузка и проверка данных
-- **Feature Engineering**: Автоматическое создание признаков
-- **Model Training**: Параллельное обучение множества моделей
-- **Hyperparameter Tuning**: Оптимизация параметров
-- **Model Validation**: Оценка качества моделей
-- **Ensemble Creation**: Создание ансамблей
-- **Model Selection**: Выбор лучшей модели
-- **Final Evaluation**: Финальная оценка качества
+- **Data Loading**: Loading and checking data
+- **Feature Engineering**: Automatic feature creation
+- **Model Training**: Parallel training of multiple models
+- **Hyperparameter Tuning**: Parameter optimization
+- **Model Validation**: Model quality assessment
+- **Ensemble Creation**: Creating ensembles
+- **Model Selection**: Selecting best model
+- **Final Evaluation**: Final quality assessment
 
-### Базовое обучение
+### Basic Training
 
 ```python
-# Загрузка данных
+# Loading data
 train_data = pd.read_csv('train.csv')
 test_data = pd.read_csv('test.csv')
 
-# Обучение модели
+# Training model
 predictor.fit(train_data)
 
-# Предсказания
+# Predictions
 predictions = predictor.predict(test_data)
 ```
 
-### Обучение с ограничением времени
+### Training with Time Limit
 
 ```python
-# Обучение с ограничением времени (в секундах)
+# Training with time limit (in seconds)
 predictor.fit(
-    train_data,
-    time_limit=3600  # 1 час
+ train_data,
+time_limit=3600 # 1 hour
 )
 
-# Обучение с ограничением памяти
+# Training with memory limit
 predictor.fit(
-    train_data,
-    memory_limit=8  # 8GB RAM
+ train_data,
+ memory_limit=8 # 8GB RAM
 )
 ```
 
-#### 🔧 Детальное описание параметров метода fit()
+#### 🔧 Detailed Description of fit() Method Parameters
 
-**Параметр `time_limit`:**
+**Parameter `time_limit`:**
 
-- **Что означает**: Максимальное время обучения в секундах
-- **Зачем нужен**: Контролирует время обучения, предотвращает бесконечное обучение
-- **По умолчанию**: `None` (без ограничений)
-- **Рекомендуемые значения**:
-  - **Быстрые эксперименты**: `600` (10 минут)
-  - **Стандартные задачи**: `3600` (1 час)
-  - **Важные задачи**: `7200` (2 часа)
-  - **Максимальное качество**: `14400` (4 часа)
-- **Влияние на качество**:
-  - **Короткое время**: Базовая точность, быстрые результаты
-  - **Среднее время**: Хорошая точность, сбалансированный подход
-  - **Длинное время**: Максимальная точность, лучшие модели
-- **Оптимизация по ресурсам**:
-  - **CPU только**: Увеличить время в 2-3 раза
-  - **GPU доступна**: Уменьшить время в 2-3 раза
-  - **Много ядер**: Уменьшить время на 30-50%
-- **Практические примеры**:
-  - **Прототипирование**: `time_limit=300` (5 минут)
-  - **Разработка**: `time_limit=1800` (30 минут)
-  - **Продакшен**: `time_limit=7200` (2 часа)
+- **What it means**: Maximum training time in seconds
+- **Why it's needed**: Controls training time, prevents infinite training
+- **Default**: `None` (no limits)
+- **Recommended values**:
+- **Quick experiments**: `600` (10 minutes)
+- **Standard tasks**: `3600` (1 hour)
+- **Important tasks**: `7200` (2 hours)
+- **Maximum quality**: `14400` (4 hours)
+- **Impact on quality**:
+- **Short time**: Basic accuracy, quick results
+- **Medium time**: Good accuracy, balanced approach
+- **Long time**: Maximum accuracy, best models
+- **Optimization by resources**:
+- **CPU only**: Increase time by 2-3 times
+- **GPU available**: Decrease time by 2-3 times
+- **Many cores**: Decrease time by 30-50%
+- **Practical examples**:
+- **Prototyping**: `time_limit=300` (5 minutes)
+- **Development**: `time_limit=1800` (30 minutes)
+- **Production**: `time_limit=7200` (2 hours)
 
-**Параметр `memory_limit`:**
+**Parameter `memory_limit`:**
 
-- **Что означает**: Максимальное использование RAM в гигабайтах
-- **Зачем нужен**: Предотвращает переполнение памяти, контролирует ресурсы
-- **По умолчанию**: `None` (без ограничений)
-- **Рекомендуемые значения**:
-  - **Малые данные (< 1MB)**: `2-4` GB
-  - **Средние данные (1-100MB)**: `4-8` GB
-  - **Большие данные (100MB-1GB)**: `8-16` GB
-  - **Очень большие данные (> 1GB)**: `16-32` GB
-- **Влияние на производительность**:
-  - **Мало памяти**: Медленная работа, возможные ошибки
-  - **Достаточно памяти**: Быстрая работа, стабильность
-  - **Много памяти**: Максимальная скорость, обработка больших данных
-- **Оптимизация по типу задач**:
-  - **Классификация**: 2-4x размер данных
-  - **Регрессия**: 3-5x размер данных
-  - **Временные ряды**: 4-6x размер данных
-- **Мониторинг использования**:
-  - **Проверка**: `import psutil; print(f"RAM: {psutil.virtual_memory().percent}%")`
-  - **Оптимальное**: 70-80% от доступной памяти
-  - **Критическое**: > 90% от доступной памяти
+- **What it means**: Maximum RAM usage in gigabytes
+- **Why it's needed**: Prevents memory overflow, controls resources
+- **Default**: `None` (no limits)
+- **Recommended values**:
+- **Small data (< 1MB)**: `2-4` GB
+- **Medium data (1-100MB)**: `4-8` GB
+- **Large data (100MB-1GB)**: `8-16` GB
+- **Very large data (> 1GB)**: `16-32` GB
+- **Impact on performance**:
+- **Low memory**: Slow operation, possible errors
+- **Sufficient memory**: Fast operation, stability
+- **High memory**: Maximum speed, large data processing
+- **Optimization by task type**:
+- **Classification**: 2-4x data size
+- **Regression**: 3-5x data size
+- **Time series**: 4-6x data size
+- **Usage monitoring**:
+ - **Check**: `import psutil; print(f"RAM: {psutil.virtual_memory().percent}%")`
+- **Optimal**: 70-80% of available memory
+- **Critical**: > 90% of available memory
 
-**Параметр `holdout_frac`:**
+**Parameter `holdout_frac`:**
 
-- **Что означает**: Доля данных для holdout валидации (от 0.0 до 1.0)
-- **Зачем нужен**: Создает отдельный набор данных для финальной оценки модели
-- **По умолчанию**: `None` (используется кросс-валидация)
-- **Рекомендуемые значения**:
-  - **Малые данные (< 1000 строк)**: `0.1-0.2` (10-20%)
-  - **Средние данные (1000-10000 строк)**: `0.15-0.25` (15-25%)
-  - **Большие данные (> 10000 строк)**: `0.2-0.3` (20-30%)
-- **Влияние на обучение**:
-  - **Маленький holdout**: Больше данных для обучения, но менее надежная оценка
-  - **Большой holdout**: Меньше данных для обучения, но более надежная оценка
-- **Практические примеры**:
-  - **Быстрое тестирование**: `holdout_frac=0.1` (10%)
-  - **Стандартная валидация**: `holdout_frac=0.2` (20%)
-  - **Тщательная валидация**: `holdout_frac=0.3` (30%)
-- **Когда использовать**:
-  - **Быстрая оценка**: Когда нужно быстро оценить качество
-  - **Большие данные**: Когда данных достаточно для holdout
-  - **Финальная оценка**: Для получения объективной оценки модели
+- **What it means**: Fraction of data for holdout validation (from 0.0 to 1.0)
+- **Why it's needed**: Creates a separate dataset for final model evaluation
+- **Default**: `None` (cross-validation is used)
+- **Recommended values**:
+- **Small data (< 1000 rows)**: `0.1-0.2` (10-20%)
+- **Medium data (1000-10000 rows)**: `0.15-0.25` (15-25%)
+- **Large data (> 10000 rows)**: `0.2-0.3` (20-30%)
+- **Impact on training**:
+- **Small holdout**: More data for training, but less reliable evaluation
+- **Large holdout**: Less data for training, but more reliable evaluation
+- **Practical examples**:
+- **Quick testing**: `holdout_frac=0.1` (10%)
+- **Standard validation**: `holdout_frac=0.2` (20%)
+- **Thorough validation**: `holdout_frac=0.3` (30%)
+- **When to use**:
+- **Quick evaluation**: When you need to quickly assess quality
+- **Large data**: When there's enough data for holdout
+- **Final evaluation**: For obtaining objective model assessment
 
-**Параметр `num_bag_folds`:**
+**Parameter `num_bag_folds`:**
 
-- **Что означает**: Количество фолдов для бэггинга (bagging)
-- **Зачем нужен**: Создает ансамбль моделей для повышения стабильности
-- **По умолчанию**: `8` (8 фолдов)
-- **Рекомендуемые значения**:
-  - **Быстрое обучение**: `3-5` фолдов
-  - **Стандартное обучение**: `5-8` фолдов
-  - **Качественное обучение**: `8-12` фолдов
-  - **Максимальное качество**: `12-20` фолдов
-- **Влияние на качество**:
-  - **Мало фолдов**: Быстрее обучение, но менее стабильные результаты
-  - **Много фолдов**: Медленнее обучение, но более стабильные результаты
-- **Оптимизация по времени**:
-  - **Ограниченное время**: `num_bag_folds=3`
-  - **Стандартное время**: `num_bag_folds=5-8`
-  - **Много времени**: `num_bag_folds=10-15`
-- **Практические примеры**:
-  - **Прототипирование**: `num_bag_folds=3`
-  - **Разработка**: `num_bag_folds=5`
-  - **Продакшен**: `num_bag_folds=8-10`
+- **What it means**: Number of folds for bagging
+- **Why it's needed**: Creates an ensemble of models for increased stability
+- **Default**: `8` (8 folds)
+- **Recommended values**:
+- **Quick training**: `3-5` folds
+- **Standard training**: `5-8` folds
+- **Quality training**: `8-12` folds
+- **Maximum quality**: `12-20` folds
+- **Impact on quality**:
+- **Few folds**: Faster training, but less stable results
+- **Many folds**: Slower training, but more stable results
+- **Time optimization**:
+- **Limited time**: `num_bag_folds=3`
+- **Standard time**: `num_bag_folds=5-8`
+- **Plenty of time**: `num_bag_folds=10-15`
+- **Practical examples**:
+- **Prototyping**: `num_bag_folds=3`
+- **Development**: `num_bag_folds=5`
+- **Production**: `num_bag_folds=8-10`
 
-**Параметр `num_bag_sets`:**
+**Parameter `num_bag_sets`:**
 
-- **Что означает**: Количество наборов бэггинга (количество ансамблей)
-- **Зачем нужен**: Создает несколько независимых ансамблей для повышения качества
-- **По умолчанию**: `1` (один ансамбль)
-- **Рекомендуемые значения**:
-  - **Быстрое обучение**: `1` набор
-  - **Стандартное обучение**: `1-2` набора
-  - **Качественное обучение**: `2-3` набора
-  - **Максимальное качество**: `3-5` наборов
-- **Влияние на качество**:
-  - **Один набор**: Быстрее, но может быть менее стабильным
-  - **Несколько наборов**: Медленнее, но более стабильные результаты
-- **Оптимизация по ресурсам**:
-  - **Мало времени**: `num_bag_sets=1`
-  - **Стандартное время**: `num_bag_sets=1-2`
-  - **Много времени**: `num_bag_sets=2-3`
-- **Практические примеры**:
-  - **Быстрые эксперименты**: `num_bag_sets=1`
-  - **Стандартные задачи**: `num_bag_sets=1-2`
-  - **Важные задачи**: `num_bag_sets=2-3`
+- **What it means**: Number of bagging sets (number of ensembles)
+- **Why it's needed**: Creates several independent ensembles for improved quality
+- **Default**: `1` (one ensemble)
+- **Recommended values**:
+- **Quick training**: `1` set
+- **Standard training**: `1-2` sets
+- **Quality training**: `2-3` sets
+- **Maximum quality**: `3-5` sets
+- **Impact on quality**:
+- **One set**: Faster, but may be less stable
+- **Multiple sets**: Slower, but more stable results
+- **Resource optimization**:
+- **Limited time**: `num_bag_sets=1`
+- **Standard time**: `num_bag_sets=1-2`
+- **Plenty of time**: `num_bag_sets=2-3`
+- **Practical examples**:
+- **Quick experiments**: `num_bag_sets=1`
+- **Standard tasks**: `num_bag_sets=1-2`
+- **Important tasks**: `num_bag_sets=2-3`
 
-**Параметр `num_stack_levels`:**
+**Parameter `num_stack_levels`:**
 
-- **Что означает**: Количество уровней стекинга (stacking)
-- **Зачем нужен**: Создает многоуровневые ансамбли для повышения качества
-- **По умолчанию**: `0` (без стекинга)
-- **Рекомендуемые значения**:
-  - **Быстрое обучение**: `0` (без стекинга)
-  - **Стандартное обучение**: `0-1` уровень
-  - **Качественное обучение**: `1-2` уровня
-  - **Максимальное качество**: `2-3` уровня
-- **Влияние на качество**:
-  - **Без стекинга**: Быстрее, но может быть менее точным
-  - **Со стекингом**: Медленнее, но часто более точные результаты
-- **Оптимизация по времени**:
-  - **Ограниченное время**: `num_stack_levels=0`
-  - **Стандартное время**: `num_stack_levels=1`
-  - **Много времени**: `num_stack_levels=2`
-- **Практические примеры**:
-  - **Прототипирование**: `num_stack_levels=0`
-  - **Разработка**: `num_stack_levels=1`
-  - **Продакшен**: `num_stack_levels=1-2`
+- **What it means**: Number of stacking levels
+- **Why it's needed**: Creates multi-level ensembles for improved quality
+- **Default**: `0` (no stacking)
+- **Recommended values**:
+- **Quick training**: `0` (no stacking)
+- **Standard training**: `0-1` level
+- **Quality training**: `1-2` levels
+- **Maximum quality**: `2-3` levels
+- **Impact on quality**:
+- **Without stacking**: Faster, but may be less accurate
+- **With stacking**: Slower, but often more accurate results
+- **Time optimization**:
+- **Limited time**: `num_stack_levels=0`
+- **Standard time**: `num_stack_levels=1`
+- **Plenty of time**: `num_stack_levels=2`
+- **Practical examples**:
+- **Prototyping**: `num_stack_levels=0`
+- **Development**: `num_stack_levels=1`
+- **Production**: `num_stack_levels=1-2`
 
-**Параметр `verbosity`:**
+**Parameter `verbosity`:**
 
-- **Что означает**: Уровень детализации вывода (от 0 до 4)
-- **Зачем нужен**: Контролирует количество информации, выводимой во время обучения
-- **По умолчанию**: `2` (средний уровень)
-- **Доступные уровни**:
-  - **`0`** - Только ошибки
-  - **`1`** - Минимальная информация
-  - **`2`** - Стандартная информация (по умолчанию)
-  - **`3`** - Подробная информация
-  - **`4`** - Максимальная детализация
-- **Практические примеры**:
-  - **Продакшен**: `verbosity=1` (минимальный вывод)
-  - **Разработка**: `verbosity=2` (стандартный вывод)
-  - **Отладка**: `verbosity=3-4` (подробный вывод)
-- **Влияние на производительность**:
-  - **Высокий verbosity**: Может замедлить обучение из-за большого количества вывода
-  - **Низкий verbosity**: Быстрее, но меньше информации о процессе
+- **What it means**: Output detail level (from 0 to 4)
+- **Why it's needed**: Controls amount of information output during training
+- **Default**: `2` (medium level)
+- **Available levels**:
+- **`0`** - Errors only
+- **`1`** - Minimal information
+- **`2`** - Standard information (default)
+- **`3`** - Detailed information
+- **`4`** - Maximum detail
+- **Practical examples**:
+- **Production**: `verbosity=1` (minimal output)
+- **Development**: `verbosity=2` (standard output)
+- **Debugging**: `verbosity=3-4` (detailed output)
+- **Impact on performance**:
+- **High verbosity**: May slow down training due to large amount of output
+- **Low verbosity**: Faster, but less information about the process
 
-**Параметр `callbacks`:**
+**Parameter `callbacks`:**
 
-- **Что означает**: Список callback функций для мониторинга обучения
-- **Зачем нужен**: Позволяет отслеживать прогресс обучения и выполнять дополнительные действия
-- **По умолчанию**: `None` (без callback функций)
-- **Типы callback функций**:
-  - **Мониторинг прогресса**: Отслеживание времени обучения
-  - **Сохранение промежуточных результатов**: Сохранение моделей на каждом этапе
-  - **Ранняя остановка**: Остановка при достижении определенного качества
-  - **Логирование**: Запись информации в файлы
-- **Практические примеры**:
-  - **Мониторинг**: `callbacks=[progress_callback]`
-  - **Сохранение**: `callbacks=[save_callback]`
-  - **Ранняя остановка**: `callbacks=[early_stopping_callback]`
-- **Примеры callback функций**:
-  - **Прогресс**: Вывод процента завершения
-  - **Время**: Отслеживание времени обучения каждой модели
-  - **Качество**: Мониторинг улучшения метрик
-  - **Ресурсы**: Отслеживание использования памяти и CPU
+- **What it means**: List of callback functions for training monitoring
+- **Why it's needed**: Allows tracking training progress and performing additional actions
+- **Default**: `None` (no callback functions)
+- **Callback function types**:
+- **Progress monitoring**: Tracking training time
+- **Saving intermediate results**: Saving models at each stage
+- **Early stopping**: Stopping when certain quality is reached
+- **Logging**: Writing information to files
+- **Practical examples**:
+ - **Monitoring**: `callbacks=[progress_callback]`
+- **Saving**: `callbacks=[save_callback]`
+- **Early stopping**: `callbacks=[early_stopping_callback]`
+- **Callback function examples**:
+- **Progress**: Output percentage completion
+- **Time**: Tracking training time for each model
+- **Quality**: Monitoring metric improvements
+- **Resources**: Tracking memory and CPU usage
 
-### Обучение с пресетами
+### Training with Presets
 
 ```python
-# Различные пресеты качества
+# Different quality presets
 presets = [
-    'best_quality',      # Лучшее качество (долго)
-    'high_quality',      # Высокое качество
-    'good_quality',      # Хорошее качество
-    'medium_quality',    # Среднее качество
-    'optimize_for_deployment'  # Оптимизация для деплоя
+'best_quality', # Best quality (takes long)
+'high_quality', # High quality
+'good_quality', # Good quality
+'medium_quality', # Medium quality
+'optimize_for_deployment' # Optimization for deployment
 ]
 
 predictor.fit(
-    train_data,
-    presets='high_quality',
-    time_limit=1800  # 30 минут
+ train_data,
+ presets='high_quality',
+ time_limit=1800 # 30 minutes
 )
 ```
 
-#### 🔧 Детальное описание параметров пресетов
+#### 🔧 Detailed Description of Preset Parameters
 
-**Параметр `presets`:**
+**Parameter `presets`:**
 
-- **Что означает**: Предустановленные конфигурации качества модели
-- **Зачем нужен**: Упрощает выбор между скоростью и качеством
-- **По умолчанию**: `None` (стандартная конфигурация)
-- **Доступные пресеты**: **`'best_quality'`:**
-- **Что делает**: Максимальное качество модели
-- **Время обучения**: 4-8 часов
-- **Использует**: Все доступные алгоритмы, ансамбли, тюнинг гиперпараметров
-- **Когда использовать**: Для продакшена, когда качество критично
-- **Результат**: Лучшая точность, но долгое обучение
-- **Алгоритмы**: XGBoost, LightGBM, CatBoost, Neural Networks, Ensemble
-- **Валидация**: 5-fold CV + Holdout
-- **Тюнинг**: 50+ попыток оптимизации
+- **What it means**: Pre-configured model quality settings
+- **Why it's needed**: Simplifies choice between speed and quality
+- **Default**: `None` (standard configuration)
+- **Available presets**: **`'best_quality'`:**
+- **What it does**: Maximum model quality
+- **Training time**: 4-8 hours
+- **Uses**: All available algorithms, ensembles, hyperparameter tuning
+- **When to use**: For production, when quality is critical
+- **Result**: Best accuracy, but long training time
+- **Algorithms**: XGBoost, LightGBM, CatBoost, Neural networks, Ensemble
+- **Validation**: 5-fold CV + Holdout
+- **Tuning**: 50+ optimization attempts
 
 **`'high_quality'`:**
-- **Что делает**: Высокое качество с разумным временем
-- **Время обучения**: 2-4 часа
-- **Использует**: Основные алгоритмы + ансамбли
-- **Когда использовать**: Для большинства задач
-- **Результат**: Хорошая точность за разумное время
-- **Алгоритмы**: XGBoost, LightGBM, CatBoost, Ensemble
-- **Валидация**: 3-fold CV + Holdout
-- **Тюнинг**: 20+ попыток оптимизации
+- **What it does**: High quality with reasonable time
+- **Training time**: 2-4 hours
+- **Uses**: Main algorithms + ensembles
+- **When to use**: For most tasks
+- **Result**: Good accuracy in reasonable time
+- **Algorithms**: XGBoost, LightGBM, CatBoost, Ensemble
+- **Validation**: 3-fold CV + Holdout
+- **Tuning**: 20+ optimization attempts
 
 **`'good_quality'`:**
-- **Что делает**: Хорошее качество за короткое время
-- **Время обучения**: 30-60 минут
-- **Использует**: Основные алгоритмы без ансамблей
-- **Когда использовать**: Для быстрых экспериментов
-- **Результат**: Приемлемая точность быстро
-- **Алгоритмы**: XGBoost, LightGBM, CatBoost
-- **Валидация**: 3-fold CV
-- **Тюнинг**: 10+ попыток оптимизации
+- **What it does**: Good quality in short time
+- **Training time**: 30-60 minutes
+- **Uses**: Main algorithms without ensembles
+- **When to use**: For quick experiments
+- **Result**: Acceptable accuracy quickly
+- **Algorithms**: XGBoost, LightGBM, CatBoost
+- **Validation**: 3-fold CV
+- **Tuning**: 10+ optimization attempts
 
 **`'medium_quality'`:**
-- **Что делает**: Среднее качество за очень короткое время
-- **Время обучения**: 10-30 минут
-- **Использует**: Только быстрые алгоритмы
-- **Когда использовать**: Для прототипирования
-- **Результат**: Базовая точность очень быстро
-- **Алгоритмы**: XGBoost, LightGBM
-- **Валидация**: Holdout
-- **Тюнинг**: 5+ попыток оптимизации
+- **What it does**: Medium quality in very short time
+- **Training time**: 10-30 minutes
+- **Uses**: Only fast algorithms
+- **When to use**: For prototyping
+- **Result**: Basic accuracy very quickly
+- **Algorithms**: XGBoost, LightGBM
+- **Validation**: Holdout
+- **Tuning**: 5+ optimization attempts
 
 **`'optimize_for_deployment'`:**
-- **Что делает**: Оптимизация для продакшена
-- **Время обучения**: 1-2 часа
-- **Использует**: Быстрые алгоритмы с оптимизацией
-- **Когда использовать**: Для продакшена с ограничениями ресурсов
-- **Результат**: Быстрые предсказания, хорошая точность
-- **Алгоритмы**: XGBoost, LightGBM (оптимизированные)
-- **Валидация**: 3-fold CV
-- **Тюнинг**: 15+ попыток оптимизации
-- **Особенности**: Меньший размер модели, быстрые предсказания
+- **What it does**: Optimization for production
+- **Training time**: 1-2 hours
+- **Uses**: Fast algorithms with optimization
+- **When to use**: For production with resource constraints
+- **Result**: Fast predictions, good accuracy
+- **Algorithms**: XGBoost, LightGBM (optimized)
+- **Validation**: 3-fold CV
+- **Tuning**: 15+ optimization attempts
+- **Features**: Smaller model size, fast predictions
 
-## Оценка качества модели
+## Model Quality Evaluation
 
-### 📊 Методы валидации и оценки
+### 📊 Validation and Evaluation Methods
 
-<img src="images/optimized/validation_methods.png" alt="Методы валидации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Различные методы валидации и оценки качества моделей*
+<img src="images/optimized/validation_methods.png" alt="Validation methods" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 6: Different validation and evaluation methods for model quality*
 
-**Почему важна правильная валидация?** Потому что она обеспечивает надежность и качество моделей:
+**Why is proper validation important?** Because it ensures reliability and quality of models:
 
-- **Holdout Validation**: Простое разделение на train/test (70/30)
-- **Cross-Validation**: K-fold кросс-валидация для более надежной оценки
-- **Time Series Split**: Специальная валидация для временных рядов
-- **Stratified Split**: Сохранение пропорций классов при разделении
-- **Walk-Forward Analysis**: Скользящее окно для временных рядов
-- **Bootstrap Validation**: Случайная выборка с возвращением
-- **Monte Carlo Validation**: Множественные случайные разделения
+- **Holdout Validation**: Simple train/test split (70/30)
+- **Cross-Validation**: K-fold cross-validation for more reliable evaluation
+- **Time Series Split**: Special validation for time series
+- **Stratified Split**: Preserving class proportions when splitting
+- **Walk-Forward Analysis**: Sliding window for time series
+- **Bootstrap Validation**: Random sampling with replacement
+- **Monte Carlo Validation**: Multiple random splits
 
-### Базовые метрики
+### Basic Metrics
 
 ```python
-# Оценка на тестовых данных
+# Evaluation on test data
 performance = predictor.evaluate(test_data)
 print(f"Model performance: {performance}")
 
-# Получение детального отчета
+# Getting detailed report
 performance = predictor.evaluate(
-    test_data,
-    detailed_report=True
+ test_data,
+ Detailed_Report=True
 )
 ```
 
-#### 🔧 Детальное описание параметров метода evaluate()
+#### 🔧 Detailed Description of evaluate() Method Parameters
 
-**Параметр `detailed_report`:**
+**Parameter `Detailed_Report`:**
 
-- **Что означает**: Включать ли детальную информацию в отчет
-- **Зачем нужен**: Позволяет получить подробную информацию о производительности
-- **По умолчанию**: `False` (базовый отчет)
-- **Доступные значения**:
-  - **`False`** - Базовый отчет (только основные метрики)
-  - **`True`** - Детальный отчет (все доступные метрики)
-- **Практические примеры**:
-  - **Быстрая оценка**: `detailed_report=False`
-  - **Тщательный анализ**: `detailed_report=True`
-- **Влияние на результат**:
-  - **Базовый отчет**: Только основная метрика (accuracy, rmse, etc.)
-  - **Детальный отчет**: Все доступные метрики + статистика
-- **Когда использовать**:
-  - **Быстрая проверка**: `detailed_report=False`
-  - **Анализ качества**: `detailed_report=True`
-  - **Отладка моделей**: `detailed_report=True`
+- **What it means**: Whether to include detailed information in report
+- **Why it's needed**: Allows getting detailed information about performance
+- **Default**: `False` (basic report)
+- **Available values**:
+- **`False`** - Basic report (only main metrics)
+- **`True`** - Detailed report (all available metrics)
+- **Practical examples**:
+- **Quick evaluation**: `Detailed_Report=False`
+- **Thorough analysis**: `Detailed_Report=True`
+- **Impact on result**:
+- **Basic report**: Only main metric (accuracy, rmse, etc.)
+- **Detailed report**: All available metrics + statistics
+- **When to use**:
+- **Quick check**: `Detailed_Report=False`
+- **Quality analysis**: `Detailed_Report=True`
+- **Model debugging**: `Detailed_Report=True`
 
-**Параметр `silent`:**
+**Parameter `silent`:**
 
-- **Что означает**: Отключать ли вывод информации во время оценки
-- **Зачем нужен**: Контролирует количество выводимой информации
-- **По умолчанию**: `False` (выводить информацию)
-- **Доступные значения**:
-  - **`False`** - Выводить информацию о процессе
-  - **`True`** - Тихо выполнять оценку
-- **Практические примеры**:
-  - **Интерактивная работа**: `silent=False`
-  - **Автоматизированные скрипты**: `silent=True`
-- **Влияние на производительность**:
-  - **silent=False**: Немного медленнее из-за вывода
-  - **silent=True**: Быстрее, но без информации о процессе
-- **Когда использовать**:
-  - **Разработка и отладка**: `silent=False`
-  - **Продакшен и автоматизация**: `silent=True`
+- **What it means**: Whether to disable information output during evaluation
+- **Why it's needed**: Controls amount of output information
+- **Default**: `False` (output information)
+- **Available values**:
+- **`False`** - Output process information
+- **`True`** - Perform evaluation silently
+- **Practical examples**:
+- **Interactive work**: `silent=False`
+- **Automated scripts**: `silent=True`
+- **Impact on performance**:
+- **silent=False**: Slightly slower due to output
+- **silent=True**: Faster, but without process information
+- **When to use**:
+- **Development and debugging**: `silent=False`
+- **Production and automation**: `silent=True`
 
-**Параметр `auxiliary_metrics`:**
+**Parameter `auxiliary_metrics`:**
 
-- **Что означает**: Включать ли дополнительные метрики в оценку
-- **Зачем нужен**: Позволяет получить расширенный набор метрик
-- **По умолчанию**: `True` (включать дополнительные метрики)
-- **Доступные значения**:
-  - **`False`** - Только основная метрика
-  - **`True`** - Основная + дополнительные метрики
-- **Практические примеры**:
-  - **Быстрая оценка**: `auxiliary_metrics=False`
-  - **Полный анализ**: `auxiliary_metrics=True`
-- **Влияние на результат**:
-  - **Без дополнительных метрик**: Только основная метрика
-  - **С дополнительными метриками**: Полный набор метрик
-- **Когда использовать**:
-  - **Быстрая проверка**: `auxiliary_metrics=False`
-  - **Детальный анализ**: `auxiliary_metrics=True`
+- **What it means**: Whether to include additional metrics in evaluation
+- **Why it's needed**: Allows getting extended set of metrics
+- **Default**: `True` (include additional metrics)
+- **Available values**:
+- **`False`** - Only main metric
+- **`True`** - Main + additional metrics
+- **Practical examples**:
+- **Quick evaluation**: `auxiliary_metrics=False`
+- **Full analysis**: `auxiliary_metrics=True`
+- **Impact on result**:
+- **Without additional metrics**: Only main metric
+- **With additional metrics**: Full set of metrics
+- **When to use**:
+- **Quick check**: `auxiliary_metrics=False`
+- **Detailed analysis**: `auxiliary_metrics=True`
 
-**Параметр `as_pandas`:**
+**Parameter `as_pandas`:**
 
-- **Что означает**: Возвращать результат как pandas DataFrame или словарь
-- **Зачем нужен**: Контролирует формат возвращаемых данных
-- **По умолчанию**: `True` (pandas DataFrame)
-- **Доступные значения**:
-  - **`True`** - pandas DataFrame (рекомендуется)
-  - **`False`** - словарь Python
-- **Практические примеры**:
-  - **Анализ данных**: `as_pandas=True` (удобно для анализа)
-  - **Интеграция с кодом**: `as_pandas=False` (словарь)
-- **Влияние на результат**:
-  - **pandas DataFrame**: Удобно для анализа и визуализации
-  - **Словарь**: Удобно для программной обработки
-- **Когда использовать**:
-  - **Анализ и визуализация**: `as_pandas=True`
-  - **Программная обработка**: `as_pandas=False`
+- **What it means**: Return result as pandas DataFrame or dictionary
+- **Why it's needed**: Controls format of returned data
+- **Default**: `True` (pandas DataFrame)
+- **Available values**:
+- **`True`** - pandas DataFrame (recommended)
+- **`False`** - Python dictionary
+- **Practical examples**:
+- **Data analysis**: `as_pandas=True` (convenient for analysis)
+- **Integration with code**: `as_pandas=False` (dictionary)
+- **Impact on result**:
+- **pandas DataFrame**: Convenient for analysis and visualization
+- **Dictionary**: Convenient for programmatic processing
+- **When to use**:
+- **Analysis and visualization**: `as_pandas=True`
+- **Programmatic processing**: `as_pandas=False`
 
-**Параметр `transform_features`:**
+**Parameter `transform_features`:**
 
-- **Что означает**: Применять ли трансформацию признаков перед оценкой
-- **Зачем нужен**: Обеспечивает правильную обработку данных
-- **По умолчанию**: `True` (применять трансформацию)
-- **Доступные значения**:
-  - **`True`** - Применять трансформацию (рекомендуется)
-  - **`False`** - Не применять трансформацию
-- **Практические примеры**:
-  - **Сырые данные**: `transform_features=True`
-  - **Предобработанные данные**: `transform_features=False`
-- **Влияние на результат**:
-  - **С трансформацией**: Правильная оценка
-  - **Без трансформации**: Может быть неправильная оценка
-- **Когда использовать**:
-  - **Новые данные**: `transform_features=True`
-  - **Обработанные данные**: `transform_features=False`
+- **What it means**: Whether to apply feature transformation before evaluation
+- **Why it's needed**: Ensures proper data processing
+- **Default**: `True` (apply transformation)
+- **Available values**:
+- **`True`** - Apply transformation (recommended)
+- **`False`** - Do not apply transformation
+- **Practical examples**:
+- **Raw data**: `transform_features=True`
+- **Preprocessed data**: `transform_features=False`
+- **Impact on result**:
+- **With transformation**: Correct evaluation
+- **Without transformation**: May be incorrect evaluation
+- **When to use**:
+- **New data**: `transform_features=True`
+- **Processed data**: `transform_features=False`
 
-**Практические примеры использования параметров:**
+**Practical examples of parameter usage:**
 
 ```python
-# Базовая оценка
+# Basic evaluation
 performance = predictor.evaluate(test_data)
 
-# Детальная оценка
-detailed_performance = predictor.evaluate(
-    test_data,
-    detailed_report=True,
-    silent=False,
-    auxiliary_metrics=True
+# Detailed evaluation
+Detailed_performance = predictor.evaluate(
+ test_data,
+ Detailed_Report=True,
+ silent=False,
+ auxiliary_metrics=True
 )
 
-# Быстрая оценка
+# Quick evaluation
 quick_performance = predictor.evaluate(
-    test_data,
-    detailed_report=False,
-    silent=True,
-    auxiliary_metrics=False
+ test_data,
+ Detailed_Report=False,
+ silent=True,
+ auxiliary_metrics=False
 )
 
-# Оценка для анализа
-analysis_performance = predictor.evaluate(
-    test_data,
-    detailed_report=True,
-    silent=False,
-    auxiliary_metrics=True,
-    as_pandas=True
+# Evaluation for analysis
+Analysis_performance = predictor.evaluate(
+ test_data,
+ Detailed_Report=True,
+ silent=False,
+ auxiliary_metrics=True,
+ as_pandas=True
 )
 
-# Оценка для программной обработки
+# Evaluation for programmatic processing
 programmatic_performance = predictor.evaluate(
-    test_data,
-    detailed_report=True,
-    silent=True,
-    auxiliary_metrics=True,
-    as_pandas=False
+ test_data,
+ Detailed_Report=True,
+ silent=True,
+ auxiliary_metrics=True,
+ as_pandas=False
 )
 
-# Анализ результатов
+# Result analysis
 print("Basic performance:", performance)
-print("Detailed performance shape:", detailed_performance.shape)
+print("Detailed performance shape:", Detailed_performance.shape)
 print("Quick performance keys:", quick_performance.keys())
 ```
 
-**Оптимизация производительности оценки:**
+**Evaluation performance optimization:**
 
 ```python
-# Быстрая оценка (минимальное время)
+# Quick evaluation (minimum time)
 fast_evaluation = predictor.evaluate(
-    test_data,
-    detailed_report=False,
-    silent=True,
-    auxiliary_metrics=False,
-    as_pandas=False
+ test_data,
+ Detailed_Report=False,
+ silent=True,
+ auxiliary_metrics=False,
+ as_pandas=False
 )
 
-# Полная оценка (максимальная информация)
+# Full evaluation (maximum information)
 full_evaluation = predictor.evaluate(
-    test_data,
-    detailed_report=True,
-    silent=False,
-    auxiliary_metrics=True,
-    as_pandas=True
+ test_data,
+ Detailed_Report=True,
+ silent=False,
+ auxiliary_metrics=True,
+ as_pandas=True
 )
 
-# Оценка для продакшена (баланс скорости и информации)
+# Evaluation for production (balance of speed and information)
 production_evaluation = predictor.evaluate(
-    test_data,
-    detailed_report=True,
-    silent=True,
-    auxiliary_metrics=True,
-    as_pandas=True
+ test_data,
+ Detailed_Report=True,
+ silent=True,
+ auxiliary_metrics=True,
+ as_pandas=True
 )
 ```
 
-**Интерпретация результатов оценки:**
+**Evaluation result interpretation:**
 
 ```python
-# Получение детального отчета
+# Getting detailed report
 performance = predictor.evaluate(
-    test_data,
-    detailed_report=True,
-    auxiliary_metrics=True
+ test_data,
+ Detailed_Report=True,
+ auxiliary_metrics=True
 )
 
-# Анализ основных метрик
-print("Основные метрики:")
+# Main metrics analysis
+print("Main metrics:")
 print(f"Accuracy: {performance['accuracy']:.4f}")
 print(f"F1-score: {performance['f1']:.4f}")
 print(f"ROC-AUC: {performance['roc_auc']:.4f}")
 
-# Анализ дополнительных метрик
-print("\nДополнительные метрики:")
+# Additional metrics analysis
+print("\nAdditional metrics:")
 print(f"Precision: {performance['precision']:.4f}")
 print(f"Recall: {performance['recall']:.4f}")
 print(f"Log Loss: {performance['log_loss']:.4f}")
 
-# Сравнение с baseline
-baseline_accuracy = 0.5  # Для бинарной классификации
+# Comparison with baseline
+baseline_accuracy = 0.5 # for binary classification
 improvement = (performance['accuracy'] - baseline_accuracy) / baseline_accuracy * 100
-print(f"\nУлучшение над baseline: {improvement:.2f}%")
+print(f"\nImprovement over baseline: {improvement:.2f}%")
 ```
 
-### Валидация
+### Validation
 
 ```python
-# Holdout валидация
+# Holdout validation
 predictor.fit(
-    train_data,
-    holdout_frac=0.2  # 20% данных для валидации
+ train_data,
+holdout_frac=0.2 # 20% of data for validation
 )
 
-# K-fold кросс-валидация
+# K-fold cross-validation
 predictor.fit(
-    train_data,
-    num_bag_folds=5,  # 5-fold CV
-    num_bag_sets=1
-)
-```
-
-#### 🔧 Детальное описание параметров валидации
-
-**Параметр `holdout_frac` - Holdout валидация**
-
-- **Что означает**: Доля данных, выделяемая для holdout валидации (от 0.0 до 1.0)
-- **Зачем нужен**: Создает отдельный набор данных для финальной оценки модели
-- **По умолчанию**: `None` (используется кросс-валидация)
-- **Рекомендуемые значения**:
-  - **Малые данные (< 1000 строк)**: `0.1-0.2` (10-20%)
-  - **Средние данные (1000-10000 строк)**: `0.15-0.25` (15-25%)
-  - **Большие данные (> 10000 строк)**: `0.2-0.3` (20-30%)
-- **Влияние на обучение**:
-  - **Маленький holdout**: Больше данных для обучения, но менее надежная оценка
-  - **Большой holdout**: Меньше данных для обучения, но более надежная оценка
-- **Практические примеры**:
-  - **Быстрое тестирование**: `holdout_frac=0.1` (10%)
-  - **Стандартная валидация**: `holdout_frac=0.2` (20%)
-  - **Тщательная валидация**: `holdout_frac=0.3` (30%)
-- **Когда использовать**:
-  - **Быстрая оценка**: Когда нужно быстро оценить качество
-  - **Большие данные**: Когда данных достаточно для holdout
-  - **Финальная оценка**: Для получения объективной оценки модели
-
-**Параметр `num_bag_folds` - Количество фолдов для бэггинга**
-
-- **Что означает**: Количество фолдов для бэггинга (bagging) валидации
-- **Зачем нужен**: Создает ансамбль моделей для повышения стабильности
-- **По умолчанию**: `8` (8 фолдов)
-- **Рекомендуемые значения**:
-  - **Быстрое обучение**: `3-5` фолдов
-  - **Стандартное обучение**: `5-8` фолдов
-  - **Качественное обучение**: `8-12` фолдов
-  - **Максимальное качество**: `12-20` фолдов
-- **Влияние на качество**:
-  - **Мало фолдов**: Быстрее обучение, но менее стабильные результаты
-  - **Много фолдов**: Медленнее обучение, но более стабильные результаты
-- **Оптимизация по времени**:
-  - **Ограниченное время**: `num_bag_folds=3`
-  - **Стандартное время**: `num_bag_folds=5-8`
-  - **Много времени**: `num_bag_folds=10-15`
-- **Практические примеры**:
-  - **Прототипирование**: `num_bag_folds=3`
-  - **Разработка**: `num_bag_folds=5`
-  - **Продакшен**: `num_bag_folds=8-10`
-
-**Параметр `num_bag_sets` - Количество наборов бэггинга**
-
-- **Что означает**: Количество наборов бэггинга (количество ансамблей)
-- **Зачем нужен**: Создает несколько независимых ансамблей для повышения качества
-- **По умолчанию**: `1` (один ансамбль)
-- **Рекомендуемые значения**:
-  - **Быстрое обучение**: `1` набор
-  - **Стандартное обучение**: `1-2` набора
-  - **Качественное обучение**: `2-3` набора
-  - **Максимальное качество**: `3-5` наборов
-- **Влияние на качество**:
-  - **Один набор**: Быстрее, но может быть менее стабильным
-  - **Несколько наборов**: Медленнее, но более стабильные результаты
-- **Оптимизация по ресурсам**:
-  - **Мало времени**: `num_bag_sets=1`
-  - **Стандартное время**: `num_bag_sets=1-2`
-  - **Много времени**: `num_bag_sets=2-3`
-- **Практические примеры**:
-  - **Быстрые эксперименты**: `num_bag_sets=1`
-  - **Стандартные задачи**: `num_bag_sets=1-2`
-  - **Важные задачи**: `num_bag_sets=2-3`
-
-**Параметр `num_stack_levels` - Уровни стекинга**
-
-- **Что означает**: Количество уровней стекинга (stacking) валидации
-- **Зачем нужен**: Создает многоуровневые ансамбли для повышения качества
-- **По умолчанию**: `0` (без стекинга)
-- **Рекомендуемые значения**:
-  - **Быстрое обучение**: `0` (без стекинга)
-  - **Стандартное обучение**: `0-1` уровень
-  - **Качественное обучение**: `1-2` уровня
-  - **Максимальное качество**: `2-3` уровня
-- **Влияние на качество**:
-  - **Без стекинга**: Быстрее, но может быть менее точным
-  - **Со стекингом**: Медленнее, но часто более точные результаты
-- **Оптимизация по времени**:
-  - **Ограниченное время**: `num_stack_levels=0`
-  - **Стандартное время**: `num_stack_levels=1`
-  - **Много времени**: `num_stack_levels=2`
-- **Практические примеры**:
-  - **Прототипирование**: `num_stack_levels=0`
-  - **Разработка**: `num_stack_levels=1`
-  - **Продакшен**: `num_stack_levels=1-2`
-
-**Стратегии валидации:**
-
-```python
-# Стратегия 1: Быстрая валидация
-predictor.fit(
-    train_data,
-    holdout_frac=0.2,
-    num_bag_folds=3,
-    num_bag_sets=1,
-    num_stack_levels=0
-)
-
-# Стратегия 2: Стандартная валидация
-predictor.fit(
-    train_data,
-    holdout_frac=0.2,
-    num_bag_folds=5,
-    num_bag_sets=1,
-    num_stack_levels=1
-)
-
-# Стратегия 3: Качественная валидация
-predictor.fit(
-    train_data,
-    holdout_frac=0.2,
-    num_bag_folds=8,
-    num_bag_sets=2,
-    num_stack_levels=1
-)
-
-# Стратегия 4: Максимальное качество
-predictor.fit(
-    train_data,
-    holdout_frac=0.2,
-    num_bag_folds=10,
-    num_bag_sets=3,
-    num_stack_levels=2
+ train_data,
+ num_bag_folds=5, # 5-fold CV
+ num_bag_sets=1
 )
 ```
 
-**Оптимизация валидации по размеру данных:**
+#### 🔧 Detailed Description of Validation Parameters
+
+**Parameter `holdout_frac` - Holdout validation**
+
+- **What it means**: Fraction of data allocated for holdout validation (from 0.0 to 1.0)
+- **Why it's needed**: Creates a separate dataset for final model evaluation
+- **Default**: `None` (cross-validation is used)
+- **Recommended values**:
+- **Small data (< 1000 rows)**: `0.1-0.2` (10-20%)
+- **Medium data (1000-10000 rows)**: `0.15-0.25` (15-25%)
+- **Large data (> 10000 rows)**: `0.2-0.3` (20-30%)
+- **Impact on training**:
+- **Small holdout**: More data for training, but less reliable evaluation
+- **Large holdout**: Less data for training, but more reliable evaluation
+- **Practical examples**:
+- **Quick testing**: `holdout_frac=0.1` (10%)
+- **Standard validation**: `holdout_frac=0.2` (20%)
+- **Thorough validation**: `holdout_frac=0.3` (30%)
+- **When to use**:
+- **Quick evaluation**: When you need to quickly assess quality
+- **Large data**: When there's enough data for holdout
+- **Final evaluation**: For obtaining objective model assessment
+
+**Parameter `num_bag_folds` - Number of bagging folds**
+
+- **What it means**: Number of folds for bagging validation
+- **Why it's needed**: Creates an ensemble of models for increased stability
+- **Default**: `8` (8 folds)
+- **Recommended values**:
+- **Quick training**: `3-5` folds
+- **Standard training**: `5-8` folds
+- **Quality training**: `8-12` folds
+- **Maximum quality**: `12-20` folds
+- **Impact on quality**:
+- **Few folds**: Faster training, but less stable results
+- **Many folds**: Slower training, but more stable results
+- **Time optimization**:
+- **Limited time**: `num_bag_folds=3`
+- **Standard time**: `num_bag_folds=5-8`
+- **Plenty of time**: `num_bag_folds=10-15`
+- **Practical examples**:
+- **Prototyping**: `num_bag_folds=3`
+- **Development**: `num_bag_folds=5`
+- **Production**: `num_bag_folds=8-10`
+
+**Parameter `num_bag_sets` - Number of bagging sets**
+
+- **What it means**: Number of bagging sets (number of ensembles)
+- **Why it's needed**: Creates several independent ensembles for improved quality
+- **Default**: `1` (one ensemble)
+- **Recommended values**:
+- **Quick training**: `1` set
+- **Standard training**: `1-2` sets
+- **Quality training**: `2-3` sets
+- **Maximum quality**: `3-5` sets
+- **Impact on quality**:
+- **One set**: Faster, but may be less stable
+- **Multiple sets**: Slower, but more stable results
+- **Resource optimization**:
+- **Limited time**: `num_bag_sets=1`
+- **Standard time**: `num_bag_sets=1-2`
+- **Plenty of time**: `num_bag_sets=2-3`
+- **Practical examples**:
+- **Quick experiments**: `num_bag_sets=1`
+- **Standard tasks**: `num_bag_sets=1-2`
+- **Important tasks**: `num_bag_sets=2-3`
+
+**Parameter `num_stack_levels` - Stacking levels**
+
+- **What it means**: Number of stacking levels for validation
+- **Why it's needed**: Creates multi-level ensembles for improved quality
+- **Default**: `0` (no stacking)
+- **Recommended values**:
+- **Quick training**: `0` (no stacking)
+- **Standard training**: `0-1` level
+- **Quality training**: `1-2` levels
+- **Maximum quality**: `2-3` levels
+- **Impact on quality**:
+- **Without stacking**: Faster, but may be less accurate
+- **With stacking**: Slower, but often more accurate results
+- **Time optimization**:
+- **Limited time**: `num_stack_levels=0`
+- **Standard time**: `num_stack_levels=1`
+- **Plenty of time**: `num_stack_levels=2`
+- **Practical examples**:
+- **Prototyping**: `num_stack_levels=0`
+- **Development**: `num_stack_levels=1`
+- **Production**: `num_stack_levels=1-2`
+
+**Validation strategies:**
 
 ```python
-# Малые данные (< 1000 строк)
+# Strategy 1: Quick validation
+predictor.fit(
+ train_data,
+ holdout_frac=0.2,
+ num_bag_folds=3,
+ num_bag_sets=1,
+ num_stack_levels=0
+)
+
+# Strategy 2: Standard validation
+predictor.fit(
+ train_data,
+ holdout_frac=0.2,
+ num_bag_folds=5,
+ num_bag_sets=1,
+ num_stack_levels=1
+)
+
+# Strategy 3: Quality validation
+predictor.fit(
+ train_data,
+ holdout_frac=0.2,
+ num_bag_folds=8,
+ num_bag_sets=2,
+ num_stack_levels=1
+)
+
+# Strategy 4: Maximum quality
+predictor.fit(
+ train_data,
+ holdout_frac=0.2,
+ num_bag_folds=10,
+ num_bag_sets=3,
+ num_stack_levels=2
+)
+```
+
+**Validation optimization by data size:**
+
+```python
+# Small data (< 1000 rows)
 small_data_validation = {
-    'holdout_frac': 0.1,      # 10% для holdout
-    'num_bag_folds': 3,       # 3-fold CV
-    'num_bag_sets': 1,        # 1 ансамбль
-    'num_stack_levels': 0     # Без стекинга
+ 'holdout_frac': 0.1, # 10% for holdout
+ 'num_bag_folds': 3, # 3-fold CV
+'num_bag_sets': 1, # 1 ensemble
+'num_stack_levels': 0 # No stacking
 }
 
-# Средние данные (1000-10000 строк)
+# Medium data (1000-10000 rows)
 medium_data_validation = {
-    'holdout_frac': 0.2,      # 20% для holdout
-    'num_bag_folds': 5,       # 5-fold CV
-    'num_bag_sets': 1,        # 1 ансамбль
-    'num_stack_levels': 1     # 1 уровень стекинга
+ 'holdout_frac': 0.2, # 20% for holdout
+ 'num_bag_folds': 5, # 5-fold CV
+'num_bag_sets': 1, # 1 ensemble
+'num_stack_levels': 1 # 1 stacking level
 }
 
-# Большие данные (> 10000 строк)
+# Large data (> 10000 rows)
 large_data_validation = {
-    'holdout_frac': 0.2,      # 20% для holdout
-    'num_bag_folds': 8,       # 8-fold CV
-    'num_bag_sets': 2,        # 2 ансамбля
-    'num_stack_levels': 1     # 1 уровень стекинга
+ 'holdout_frac': 0.2, # 20% for holdout
+ 'num_bag_folds': 8, # 8-fold CV
+'num_bag_sets': 2, # 2 ensembles
+'num_stack_levels': 1 # 1 stacking level
 }
 ```
 
-**Влияние параметров валидации на производительность:**
+**Impact of validation parameters on performance:**
 
 ```python
-# Анализ влияния параметров
+# Parameter impact analysis
 def analyze_validation_impact():
-    """Анализ влияния параметров валидации на время и качество"""
-    
-    # Конфигурации для тестирования
-    configs = [
-        {'name': 'Быстрая', 'holdout_frac': 0.2, 'num_bag_folds': 3, 'num_bag_sets': 1, 'num_stack_levels': 0},
-        {'name': 'Стандартная', 'holdout_frac': 0.2, 'num_bag_folds': 5, 'num_bag_sets': 1, 'num_stack_levels': 1},
-        {'name': 'Качественная', 'holdout_frac': 0.2, 'num_bag_folds': 8, 'num_bag_sets': 2, 'num_stack_levels': 1},
-        {'name': 'Максимальная', 'holdout_frac': 0.2, 'num_bag_folds': 10, 'num_bag_sets': 3, 'num_stack_levels': 2}
-    ]
-    
-    for config in configs:
-        print(f"\n{config['name']} валидация:")
-        print(f"  Holdout: {config['holdout_frac']*100}%")
-        print(f"  Bag folds: {config['num_bag_folds']}")
-        print(f"  Bag sets: {config['num_bag_sets']}")
-        print(f"  Stack levels: {config['num_stack_levels']}")
-        
-        # Оценка времени (примерная)
-        time_multiplier = (config['num_bag_folds'] * config['num_bag_sets'] * 
-                          (2 ** config['num_stack_levels']))
-        print(f"  Примерное время: {time_multiplier}x базового")
+"""Analysis of validation parameter impact on time and quality"""
 
-# Запуск анализа
+# Configurations for testing
+ configs = [
+{'name': 'Quick', 'holdout_frac': 0.2, 'num_bag_folds': 3, 'num_bag_sets': 1, 'num_stack_levels': 0},
+{'name': 'Standard', 'holdout_frac': 0.2, 'num_bag_folds': 5, 'num_bag_sets': 1, 'num_stack_levels': 1},
+{'name': 'Quality', 'holdout_frac': 0.2, 'num_bag_folds': 8, 'num_bag_sets': 2, 'num_stack_levels': 1},
+{'name': 'Maximum', 'holdout_frac': 0.2, 'num_bag_folds': 10, 'num_bag_sets': 3, 'num_stack_levels': 2}
+ ]
+
+ for config in configs:
+print(f"\n{config['name']} validation:")
+ print(f" Holdout: {config['holdout_frac']*100}%")
+ print(f" Bag folds: {config['num_bag_folds']}")
+ print(f" Bag sets: {config['num_bag_sets']}")
+ print(f" Stack levels: {config['num_stack_levels']}")
+
+# Time estimation (approximate)
+ time_multiplier = (config['num_bag_folds'] * config['num_bag_sets'] *
+ (2 ** config['num_stack_levels']))
+print(f" Approximate time: {time_multiplier}x baseline")
+
+# Run analysis
 analyze_validation_impact()
 ```
 
-**Рекомендации по выбору стратегии валидации:**
+**Recommendations for choosing validation strategy:**
 
 ```python
-# Рекомендации по выбору стратегии
+# Recommendations for strategy selection
 def choose_validation_strategy(data_size, time_limit, quality_requirement):
-    """Выбор стратегии валидации на основе требований"""
-    
-    if data_size < 1000:
-        # Малые данные - простая валидация
-        return {
-            'holdout_frac': 0.1,
-            'num_bag_folds': 3,
-            'num_bag_sets': 1,
-            'num_stack_levels': 0
-        }
-    elif data_size < 10000:
-        # Средние данные - сбалансированная валидация
-        if time_limit < 1800:  # Меньше 30 минут
-            return {
-                'holdout_frac': 0.2,
-                'num_bag_folds': 3,
-                'num_bag_sets': 1,
-                'num_stack_levels': 0
-            }
-        else:
-            return {
-                'holdout_frac': 0.2,
-                'num_bag_folds': 5,
-                'num_bag_sets': 1,
-                'num_stack_levels': 1
-            }
-    else:
-        # Большие данные - качественная валидация
-        if quality_requirement == 'high':
-            return {
-                'holdout_frac': 0.2,
-                'num_bag_folds': 8,
-                'num_bag_sets': 2,
-                'num_stack_levels': 1
-            }
-        else:
-            return {
-                'holdout_frac': 0.2,
-                'num_bag_folds': 5,
-                'num_bag_sets': 1,
-                'num_stack_levels': 1
-            }
+"""Choose validation strategy based on requirements"""
 
-# Примеры использования
+ if data_size < 1000:
+# Small data - simple validation
+ return {
+ 'holdout_frac': 0.1,
+ 'num_bag_folds': 3,
+ 'num_bag_sets': 1,
+ 'num_stack_levels': 0
+ }
+ elif data_size < 10000:
+# Medium data - balanced validation
+if time_limit < 1800: # Less than 30 minutes
+ return {
+ 'holdout_frac': 0.2,
+ 'num_bag_folds': 3,
+ 'num_bag_sets': 1,
+ 'num_stack_levels': 0
+ }
+ else:
+ return {
+ 'holdout_frac': 0.2,
+ 'num_bag_folds': 5,
+ 'num_bag_sets': 1,
+ 'num_stack_levels': 1
+ }
+ else:
+# Large data - quality validation
+ if quality_requirement == 'high':
+ return {
+ 'holdout_frac': 0.2,
+ 'num_bag_folds': 8,
+ 'num_bag_sets': 2,
+ 'num_stack_levels': 1
+ }
+ else:
+ return {
+ 'holdout_frac': 0.2,
+ 'num_bag_folds': 5,
+ 'num_bag_sets': 1,
+ 'num_stack_levels': 1
+ }
+
+# Usage examples
 small_data_config = choose_validation_strategy(500, 600, 'medium')
 medium_data_config = choose_validation_strategy(5000, 1800, 'high')
 large_data_config = choose_validation_strategy(50000, 3600, 'high')
 
-print("Конфигурация для малых данных:", small_data_config)
-print("Конфигурация для средних данных:", medium_data_config)
-print("Конфигурация для больших данных:", large_data_config)
+print("Configuration for small data:", small_data_config)
+print("Configuration for medium data:", medium_data_config)
+print("Configuration for large data:", large_data_config)
 ```
 
-## Предсказания
+## Predictions
 
-### Базовые предсказания
+### Basic Predictions
 
 ```python
-# Предсказания классов/значений
+# Class/value predictions
 predictions = predictor.predict(test_data)
 
-# Вероятности (для классификации)
+# Probabilities (for classification)
 probabilities = predictor.predict_proba(test_data)
 ```
 
-#### 🔧 Детальное описание параметров методов предсказания
+#### 🔧 Detailed Description of Prediction Method Parameters
 
-**Метод `predict()` - Основные предсказания**
+**Method `predict()` - Main Predictions**
 
-**Параметр `include_confidence`:**
+**Parameter `include_confidence`:**
 
-- **Что означает**: Включать ли доверительные интервалы в результат
-- **Зачем нужен**: Позволяет оценить неопределенность предсказаний
-- **По умолчанию**: `False` (без доверительных интервалов)
-- **Доступные значения**:
-  - **`False`** - Только предсказания
-  - **`True`** - Предсказания + доверительные интервалы
-- **Практические примеры**:
-  - **Стандартные предсказания**: `include_confidence=False`
-  - **Анализ рисков**: `include_confidence=True`
-- **Влияние на результат**:
-  - **Без интервалов**: Простой массив предсказаний
-  - **С интервалами**: DataFrame с колонками prediction, lower, upper
-- **Когда использовать**:
-  - **Быстрые предсказания**: Когда не нужна оценка неопределенности
-  - **Анализ рисков**: Когда важно понимать надежность предсказаний
-  - **Бизнес-решения**: Когда нужно учитывать неопределенность
+- **What it means**: Whether to include confidence intervals in result
+- **Why it's needed**: Allows assessing prediction uncertainty
+- **Default**: `False` (without confidence intervals)
+- **Available values**:
+- **`False`** - Only predictions
+- **`True`** - Predictions + confidence intervals
+- **Practical examples**:
+- **Standard predictions**: `include_confidence=False`
+- **Risk analysis**: `include_confidence=True`
+- **Impact on result**:
+- **Without intervals**: Simple array of predictions
+- **With intervals**: DataFrame with columns Prediction, lower, upper
+- **When to use**:
+- **Fast predictions**: When uncertainty assessment is not needed
+- **Risk analysis**: When it's important to understand prediction reliability
+- **Business decisions**: When uncertainty needs to be considered
 
-**Параметр `as_pandas`:**
+**Parameter `as_pandas`:**
 
-- **Что означает**: Возвращать результат как pandas DataFrame или numpy array
-- **Зачем нужен**: Контролирует формат возвращаемых данных
-- **По умолчанию**: `True` (pandas DataFrame)
-- **Доступные значения**:
-  - **`True`** - pandas DataFrame (рекомендуется)
-  - **`False`** - numpy array
-- **Практические примеры**:
-  - **Анализ данных**: `as_pandas=True` (удобно для анализа)
-  - **Интеграция с другими библиотеками**: `as_pandas=False` (numpy array)
-- **Влияние на производительность**:
-  - **pandas DataFrame**: Немного медленнее, но удобнее
-  - **numpy array**: Быстрее, но менее удобно для анализа
-- **Когда использовать**:
-  - **Анализ и визуализация**: `as_pandas=True`
-  - **Высокая производительность**: `as_pandas=False`
-  - **Интеграция с scikit-learn**: `as_pandas=False`
+- **What it means**: Return result as pandas DataFrame or numpy array
+- **Why it's needed**: Controls format of returned data
+- **Default**: `True` (pandas DataFrame)
+- **Available values**:
+- **`True`** - pandas DataFrame (recommended)
+ - **`False`** - numpy array
+- **Practical examples**:
+- **Data analysis**: `as_pandas=True` (convenient for analysis)
+- **Integration with other libraries**: `as_pandas=False` (numpy array)
+- **Impact on performance**:
+- **pandas DataFrame**: Slightly slower, but more convenient
+- **numpy array**: Faster, but less convenient for analysis
+- **When to use**:
+- **Analysis and visualization**: `as_pandas=True`
+- **High performance**: `as_pandas=False`
+ - **Integration with scikit-learn**: `as_pandas=False`
 
-**Параметр `transform_features`:**
+**Parameter `transform_features`:**
 
-- **Что означает**: Применять ли трансформацию признаков перед предсказанием
-- **Зачем нужен**: Обеспечивает правильную обработку новых данных
-- **По умолчанию**: `True` (применять трансформацию)
-- **Доступные значения**:
-  - **`True`** - Применять трансформацию (рекомендуется)
-  - **`False`** - Не применять трансформацию
-- **Практические примеры**:
-  - **Новые данные**: `transform_features=True` (обязательно)
-  - **Уже обработанные данные**: `transform_features=False`
-- **Влияние на результат**:
-  - **С трансформацией**: Правильные предсказания
-  - **Без трансформации**: Могут быть неправильные предсказания
-- **Когда использовать**:
-  - **Сырые данные**: `transform_features=True`
-  - **Предобработанные данные**: `transform_features=False`
+- **What it means**: Whether to apply feature transformation before prediction
+- **Why it's needed**: Ensures proper processing of new data
+- **Default**: `True` (apply transformation)
+- **Available values**:
+- **`True`** - Apply transformation (recommended)
+- **`False`** - Do not apply transformation
+- **Practical examples**:
+- **New data**: `transform_features=True` (required)
+- **Already processed data**: `transform_features=False`
+- **Impact on result**:
+- **With transformation**: Correct predictions
+- **Without transformation**: May be incorrect predictions
+- **When to use**:
+- **Raw data**: `transform_features=True`
+- **Preprocessed data**: `transform_features=False`
 
-**Метод `predict_proba()` - Вероятности предсказаний**
+**Method `predict_proba()` - Prediction Probabilities**
 
-**Параметр `as_pandas`:**
+**Parameter `as_pandas`:**
 
-- **Что означает**: Возвращать результат как pandas DataFrame или numpy array
-- **Зачем нужен**: Контролирует формат возвращаемых вероятностей
-- **По умолчанию**: `True` (pandas DataFrame)
-- **Доступные значения**:
-  - **`True`** - pandas DataFrame с названиями классов
-  - **`False`** - numpy array с индексами классов
-- **Практические примеры**:
-  - **Анализ вероятностей**: `as_pandas=True` (удобно читать)
-  - **Математические вычисления**: `as_pandas=False` (быстрее)
-- **Влияние на результат**:
-  - **pandas DataFrame**: Колонки с названиями классов
-  - **numpy array**: Колонки с индексами классов
-- **Когда использовать**:
-  - **Интерпретация результатов**: `as_pandas=True`
-  - **Вычисления**: `as_pandas=False`
+- **What it means**: Return result as pandas DataFrame or numpy array
+- **Why it's needed**: Controls format of returned probabilities
+- **Default**: `True` (pandas DataFrame)
+- **Available values**:
+- **`True`** - pandas DataFrame with class names
+- **`False`** - numpy array with class indices
+- **Practical examples**:
+- **Probability analysis**: `as_pandas=True` (convenient to read)
+- **Mathematical computations**: `as_pandas=False` (faster)
+- **Impact on result**:
+- **pandas DataFrame**: Columns with class names
+- **numpy array**: Columns with class indices
+- **When to use**:
+- **Result interpretation**: `as_pandas=True`
+- **Computations**: `as_pandas=False`
 
-**Параметр `transform_features`:**
+**Parameter `transform_features`:**
 
-- **Что означает**: Применять ли трансформацию признаков перед предсказанием
-- **Зачем нужен**: Обеспечивает правильную обработку новых данных
-- **По умолчанию**: `True` (применять трансформацию)
-- **Доступные значения**:
-  - **`True`** - Применять трансформацию (рекомендуется)
-  - **`False`** - Не применять трансформацию
-- **Практические примеры**:
-  - **Новые данные**: `transform_features=True`
-  - **Предобработанные данные**: `transform_features=False`
+- **What it means**: Whether to apply feature transformation before prediction
+- **Why it's needed**: Ensures proper processing of new data
+- **Default**: `True` (apply transformation)
+- **Available values**:
+- **`True`** - Apply transformation (recommended)
+- **`False`** - Do not apply transformation
+- **Practical examples**:
+- **New data**: `transform_features=True`
+- **Preprocessed data**: `transform_features=False`
 
-### Предсказания с дополнительной информацией
+### Predictions with Additional Information
 
 ```python
-# Предсказания с доверительными интервалами
+# Predictions with confidence intervals
 predictions_with_intervals = predictor.predict(
-    test_data,
-    include_confidence=True
+ test_data,
+ include_confidence=True
 )
 
-# Предсказания от отдельных моделей
+# Predictions from individual models
 individual_predictions = predictor.predict_multi(test_data)
 ```
 
-#### 🔧 Детальное описание дополнительных методов предсказания
+#### 🔧 Detailed Description of Additional Prediction Methods
 
-**Метод `predict_multi()` - Предсказания от отдельных моделей**
+**Method `predict_multi()` - Predictions from Individual Models**
 
-**Параметр `as_pandas`:**
+**Parameter `as_pandas`:**
 
-- **Что означает**: Возвращать результат как pandas DataFrame или numpy array
-- **Зачем нужен**: Контролирует формат возвращаемых предсказаний
-- **По умолчанию**: `True` (pandas DataFrame)
-- **Доступные значения**:
-  - **`True`** - pandas DataFrame с названиями моделей
-  - **`False`** - numpy array с индексами моделей
-- **Практические примеры**:
-  - **Анализ моделей**: `as_pandas=True` (удобно сравнивать)
-  - **Вычисления**: `as_pandas=False` (быстрее)
-- **Влияние на результат**:
-  - **pandas DataFrame**: Колонки с названиями моделей
-  - **numpy array**: Колонки с индексами моделей
-- **Когда использовать**:
-  - **Сравнение моделей**: `as_pandas=True`
-  - **Ансамблирование**: `as_pandas=False`
+- **What it means**: Return result as pandas DataFrame or numpy array
+- **Why it's needed**: Controls format of returned predictions
+- **Default**: `True` (pandas DataFrame)
+- **Available values**:
+- **`True`** - pandas DataFrame with model names
+- **`False`** - numpy array with model indices
+- **Practical examples**:
+- **Model analysis**: `as_pandas=True` (convenient to compare)
+- **Computations**: `as_pandas=False` (faster)
+- **Impact on result**:
+- **pandas DataFrame**: Columns with model names
+- **numpy array**: Columns with model indices
+- **When to use**:
+- **Model comparison**: `as_pandas=True`
+- **Ensembling**: `as_pandas=False`
 
-**Параметр `transform_features`:**
+**Parameter `transform_features`:**
 
-- **Что означает**: Применять ли трансформацию признаков перед предсказанием
-- **Зачем нужен**: Обеспечивает правильную обработку новых данных
-- **По умолчанию**: `True` (применять трансформацию)
-- **Доступные значения**:
-  - **`True`** - Применять трансформацию (рекомендуется)
-  - **`False`** - Не применять трансформацию
-- **Практические примеры**:
-  - **Новые данные**: `transform_features=True`
-  - **Предобработанные данные**: `transform_features=False`
+- **What it means**: Whether to apply feature transformation before prediction
+- **Why it's needed**: Ensures proper processing of new data
+- **Default**: `True` (apply transformation)
+- **Available values**:
+- **`True`** - Apply transformation (recommended)
+- **`False`** - Do not apply transformation
+- **Practical examples**:
+- **New data**: `transform_features=True`
+- **Preprocessed data**: `transform_features=False`
 
-**Метод `predict_proba_multi()` - Вероятности от отдельных моделей**
+**Method `predict_proba_multi()` - Probabilities from Individual Models**
 
-**Параметр `as_pandas`:**
+**Parameter `as_pandas`:**
 
-- **Что означает**: Возвращать результат как pandas DataFrame или numpy array
-- **Зачем нужен**: Контролирует формат возвращаемых вероятностей
-- **По умолчанию**: `True` (pandas DataFrame)
-- **Доступные значения**:
-  - **`True`** - pandas DataFrame с названиями моделей и классов
-  - **`False`** - numpy array с индексами моделей и классов
-- **Практические примеры**:
-  - **Анализ вероятностей**: `as_pandas=True` (удобно читать)
-  - **Вычисления**: `as_pandas=False` (быстрее)
-- **Влияние на результат**:
-  - **pandas DataFrame**: Многоуровневые колонки (модель, класс)
-  - **numpy array**: 3D массив (образцы, модели, классы)
-- **Когда использовать**:
-  - **Интерпретация**: `as_pandas=True`
-  - **Вычисления**: `as_pandas=False`
+- **What it means**: Return result as pandas DataFrame or numpy array
+- **Why it's needed**: Controls format of returned probabilities
+- **Default**: `True` (pandas DataFrame)
+- **Available values**:
+- **`True`** - pandas DataFrame with model and class names
+- **`False`** - numpy array with model and class indices
+- **Practical examples**:
+- **Probability analysis**: `as_pandas=True` (convenient to read)
+- **Computations**: `as_pandas=False` (faster)
+- **Impact on result**:
+- **pandas DataFrame**: Multi-level columns (model, class)
+- **numpy array**: 3D array (samples, models, classes)
+- **When to use**:
+- **Interpretation**: `as_pandas=True`
+- **Computations**: `as_pandas=False`
 
-**Практические примеры использования параметров:**
+**Practical examples of parameter usage:**
 
 ```python
-# Базовые предсказания
+# Basic predictions
 predictions = predictor.predict(test_data)
 
-# Предсказания с доверительными интервалами
+# Predictions with confidence intervals
 predictions_with_confidence = predictor.predict(
-    test_data,
-    include_confidence=True,
-    as_pandas=True
+ test_data,
+ include_confidence=True,
+ as_pandas=True
 )
 
-# Предсказания как numpy array
+# Predictions as numpy array
 predictions_numpy = predictor.predict(
-    test_data,
-    as_pandas=False
+ test_data,
+ as_pandas=False
 )
 
-# Вероятности для классификации
+# Probabilities for classification
 probabilities = predictor.predict_proba(test_data)
 
-# Вероятности как numpy array
+# Probabilities as numpy array
 probabilities_numpy = predictor.predict_proba(
-    test_data,
-    as_pandas=False
+ test_data,
+ as_pandas=False
 )
 
-# Предсказания от отдельных моделей
+# Predictions from individual models
 individual_predictions = predictor.predict_multi(test_data)
 
-# Вероятности от отдельных моделей
+# Probabilities from individual models
 individual_probabilities = predictor.predict_proba_multi(test_data)
 
-# Анализ результатов
+# Result analysis
 print("Predictions shape:", predictions.shape)
 print("Confidence intervals shape:", predictions_with_confidence.shape)
 print("Individual predictions shape:", individual_predictions.shape)
 print("Individual probabilities shape:", individual_probabilities.shape)
 ```
 
-**Оптимизация производительности предсказаний:**
+**Prediction performance optimization:**
 
 ```python
-# Быстрые предсказания (без доверительных интервалов)
+# Fast predictions (without confidence intervals)
 fast_predictions = predictor.predict(
-    test_data,
-    include_confidence=False,
-    as_pandas=False,
-    transform_features=True
+ test_data,
+ include_confidence=False,
+ as_pandas=False,
+ transform_features=True
 )
 
-# Детальные предсказания (с полной информацией)
-detailed_predictions = predictor.predict(
-    test_data,
-    include_confidence=True,
-    as_pandas=True,
-    transform_features=True
+# Detailed predictions (with full information)
+Detailed_predictions = predictor.predict(
+ test_data,
+ include_confidence=True,
+ as_pandas=True,
+ transform_features=True
 )
 
-# Предсказания для анализа моделей
-model_analysis = predictor.predict_multi(
-    test_data,
-    as_pandas=True,
-    transform_features=True
+# Predictions for model analysis
+model_Analysis = predictor.predict_multi(
+ test_data,
+ as_pandas=True,
+ transform_features=True
 )
 ```
 
-## Работа с признаками
+## Working with Features
 
-### Автоматическая обработка признаков
+### Automatic Feature Processing
 
 ```python
-# AutoGluon автоматически обрабатывает:
-# - Категориальные переменные (one-hot encoding, label encoding)
-# - Пропущенные значения (заполнение, индикаторы)
-# - Числовые переменные (нормализация, масштабирование)
-# - Текстовые переменные (TF-IDF, embeddings)
+# AutoGluon automatically processes:
+# - Categorical variables (one-hot encoding, label encoding)
+# - Missing values (filling, indicators)
+# - Numerical variables (normalization, scaling)
+# - Text variables (TF-IDF, embeddings)
 ```
 
-### Ручная настройка признаков
+### Manual Feature Configuration
 
 ```python
 from autogluon.features import FeatureGenerator
 
-# Создание генератора признаков
+# Create feature generator
 feature_generator = FeatureGenerator(
-    enable_nan_handling=True,
-    enable_categorical_encoding=True,
-    enable_text_special_features=True,
-    enable_text_ngram_features=True
+ enable_nan_handling=True,
+ enable_categorical_encoding=True,
+ enable_text_special_features=True,
+ enable_text_ngram_features=True
 )
 
-# Применение к данным
+# Apply to data
 train_data_processed = feature_generator.fit_transform(train_data)
 test_data_processed = feature_generator.transform(test_data)
 ```
 
-## Сохранение и загрузка моделей
+## Saving and Loading Models
 
-### Сохранение модели
+### Saving Model
 
 ```python
-# Сохранение модели
+# Save model
 predictor.save('my_model')
 
-# Сохранение с дополнительной информацией
+# Save with additional information
 predictor.save(
-    'my_model',
-    save_space=True,  # Экономия места
-    save_info=True   # Сохранение метаданных
+ 'my_model',
+save_space=True, # Save space
+save_info=True # Save metadata
 )
 ```
 
-### Загрузка модели
+### Loading Model
 
 ```python
-# Загрузка сохраненной модели
+# Load saved model
 predictor = TabularPredictor.load('my_model')
 
-# Загрузка с проверкой совместимости
+# Load with compatibility check
 predictor = TabularPredictor.load(
-    'my_model',
-    require_version_match=True
+ 'my_model',
+ require_version_match=True
 )
 ```
 
-## Работа с ансамблями
+## Working with Ensembles
 
-### 🤝 Принципы работы ансамблей
+### 🤝 Ensemble Working Principles
 
-<img src="images/optimized/robustness_analysis.png" alt="Работа ансамблей" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 7: Схема работы ансамблей и их преимущества*
+<img src="images/optimized/robustness_Analysis.png" alt="Ensemble working" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 7: Ensemble working scheme and their advantages*
 
-**Почему ансамбли так эффективны?** Потому что они объединяют сильные стороны разных моделей и компенсируют их слабости:
+**Why are ensembles so effective?** Because they combine strengths of different models and compensate for their weaknesses:
 
-- **Bagging**: Обучение множества моделей на разных подвыборках данных
-- **Boosting**: Последовательное обучение моделей с фокусом на ошибках
-- **Stacking**: Обучение мета-модели на предсказаниях базовых моделей
-- **Voting**: Простое голосование между моделями
-- **Blending**: Взвешенное объединение предсказаний
-- **Diversity**: Разнообразие моделей повышает качество ансамбля
+- **Bagging**: Training multiple models on different data subsets
+- **Boosting**: Sequential training of models focusing on errors
+- **Stacking**: Training meta-model on base model predictions
+- **Voting**: Simple voting between models
+- **Blending**: Weighted combination of predictions
+- **Diversity**: Model diversity improves ensemble quality
 
-### Настройка ансамбля
+### Ensemble Configuration
 
 ```python
-# Обучение с ансамблем
+# Training with ensemble
 predictor.fit(
-    train_data,
-    num_bag_folds=5,      # Количество фолдов для бэггинга
-    num_bag_sets=2,       # Количество наборов бэггинга
-    num_stack_levels=1    # Уровни стекинга
+ train_data,
+num_bag_folds=5, # Number of bagging folds
+num_bag_sets=2, # Number of bagging sets
+num_stack_levels=1 # Stacking levels
 )
 ```
 
-### Анализ ансамбля
+### Ensemble Analysis
 
 ```python
-# Информация о моделях в ансамбле
+# Information about models in ensemble
 leaderboard = predictor.leaderboard()
 print(leaderboard)
 
-# Детальная информация о производительности
+# Detailed performance information
 leaderboard = predictor.leaderboard(
-    test_data,
-    extra_info=True,
-    silent=False
+ test_data,
+ extra_info=True,
+ silent=False
 )
 ```
 
-## Продвинутые настройки
+## Advanced Settings
 
-### ⚙️ Настройка гиперпараметров
+### ⚙️ Hyperparameter Configuration
 
-<img src="images/optimized/monte_carlo_analysis.png" alt="Настройка гиперпараметров" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 8: Процесс настройки гиперпараметров и оптимизации*
+<img src="images/optimized/monte_carlo_Analysis.png" alt="Hyperparameter configuration" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 8: Hyperparameter configuration and optimization process*
 
-**Почему важна настройка гиперпараметров?** Потому что правильные параметры могут улучшить качество модели на 10-30%:
+**Why is hyperparameter configuration important?** Because correct parameters can improve model quality by 10-30%:
 
-- **Grid Search**: Систематический поиск по сетке параметров
-- **Random Search**: Случайный поиск в пространстве параметров
-- **Bayesian Optimization**: Умный поиск с использованием предыдущих результатов
-- **Evolutionary Algorithms**: Генетические алгоритмы для оптимизации
-- **Multi-Objective Optimization**: Оптимизация нескольких метрик одновременно
-- **Early Stopping**: Остановка при отсутствии улучшений
-- **Resource Allocation**: Распределение ресурсов между разными алгоритмами
+- **Grid Search**: Systematic search on parameter grid
+- **Random Search**: Random search in parameter space
+- **Bayesian Optimization**: Smart search using previous results
+- **Evolutionary Algorithms**: Genetic algorithms for optimization
+- **Multi-Objective Optimization**: Optimizing multiple metrics simultaneously
+- **Early Stopping**: Stopping when no improvements
+- **Resource allocation**: Distributing resources between different algorithms
 
-### Настройка гиперпараметров
+### Hyperparameter Configuration
 
 ```python
-# Словарь с настройками для разных алгоритмов
+# Dictionary with settings for different algorithms
 hyperparameters = {
-    'GBM': [
-        {'num_boost_round': 100, 'num_leaves': 31},
-        {'num_boost_round': 200, 'num_leaves': 63}
-    ],
-    'CAT': [
-        {'iterations': 100, 'learning_rate': 0.1},
-        {'iterations': 200, 'learning_rate': 0.05}
-    ],
-    'XGB': [
-        {'n_estimators': 100, 'max_depth': 6},
-        {'n_estimators': 200, 'max_depth': 8}
-    ]
+ 'GBM': [
+ {'num_boost_round': 100, 'num_leaves': 31},
+ {'num_boost_round': 200, 'num_leaves': 63}
+ ],
+ 'CAT': [
+ {'iterations': 100, 'learning_rate': 0.1},
+ {'iterations': 200, 'learning_rate': 0.05}
+ ],
+ 'XGB': [
+ {'n_estimators': 100, 'max_depth': 6},
+ {'n_estimators': 200, 'max_depth': 8}
+ ]
 }
 
 predictor.fit(
-    train_data,
-    hyperparameters=hyperparameters
+ train_data,
+ hyperparameters=hyperparameters
 )
 ```
 
-#### 🔧 Детальное описание структуры hyperparameters
+#### 🔧 Detailed Description of Hyperparameters Structure
 
-**Общая структура hyperparameters словаря:**
+**General Structure of Hyperparameters Dictionary:**
 
 ```python
 hyperparameters = {
-    'algorithm_name': [
-        {'param1': value1, 'param2': value2},  # Вариант 1
-        {'param1': value3, 'param2': value4},  # Вариант 2
-        # ... больше вариантов
-    ],
-    # ... больше алгоритмов
+ 'algorithm_name': [
+{'param1': value1, 'param2': value2}, # Option 1
+{'param1': value3, 'param2': value4}, # Option 2
+# ... more options
+ ],
+# ... more algorithms
 }
 ```
 
-**Почему список словарей?** Потому что AutoML Gluon будет тестировать каждый вариант и выберет лучший.
+**Why list of dictionaries?** Because AutoML Gluon will test each option and choose the best one.
 
-**XGBoost (XGB) - Экстремальный градиентный бустинг**
+**XGBoost (XGB) - Extreme Gradient Boosting**
 
-**Основные параметры:**
-- **`n_estimators`**: Количество деревьев (100-1000)
-- **`max_depth`**: Максимальная глубина дерева (3-10)
-- **`learning_rate`**: Скорость обучения (0.01-0.3)
-- **`subsample`**: Доля образцов для каждого дерева (0.5-1.0)
-- **`colsample_bytree`**: Доля признаков для каждого дерева (0.5-1.0)
+**Main parameters:**
+- **`n_estimators`**: Number of trees (100-1000)
+- **`max_depth`**: Maximum tree depth (3-10)
+- **`learning_rate`**: Learning rate (0.01-0.3)
+- **`subsample`**: Fraction of samples for each tree (0.5-1.0)
+- **`colsample_bytree`**: Fraction of features for each tree (0.5-1.0)
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'XGB': [
-    # Быстрая модель
-    {'n_estimators': 100, 'max_depth': 6, 'learning_rate': 0.1},
-    # Сбалансированная модель
-    {'n_estimators': 200, 'max_depth': 8, 'learning_rate': 0.05},
-    # Тщательная модель
-    {'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.01},
-    # Регуляризованная модель
-    {'n_estimators': 300, 'max_depth': 6, 'learning_rate': 0.1, 
-     'subsample': 0.8, 'colsample_bytree': 0.8}
+# Fast model
+ {'n_estimators': 100, 'max_depth': 6, 'learning_rate': 0.1},
+# Balanced model
+ {'n_estimators': 200, 'max_depth': 8, 'learning_rate': 0.05},
+# Thorough model
+ {'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.01},
+# Regularized model
+ {'n_estimators': 300, 'max_depth': 6, 'learning_rate': 0.1,
+ 'subsample': 0.8, 'colsample_bytree': 0.8}
 ]
 ```
 
-**LightGBM (GBM) - Градиентный бустинг**
+**LightGBM (GBM) - Gradient Boosting**
 
-**Основные параметры:**
-- **`num_boost_round`**: Количество итераций бустинга (100-1000)
-- **`num_leaves`**: Количество листьев в дереве (31-255)
-- **`learning_rate`**: Скорость обучения (0.01-0.3)
-- **`feature_fraction`**: Доля признаков для каждой итерации (0.5-1.0)
-- **`bagging_fraction`**: Доля образцов для каждой итерации (0.5-1.0)
+**Main parameters:**
+- **`num_boost_round`**: Number of boosting iterations (100-1000)
+- **`num_leaves`**: Number of leaves in tree (31-255)
+- **`learning_rate`**: Learning rate (0.01-0.3)
+- **`feature_fraction`**: Fraction of features for each iteration (0.5-1.0)
+- **`bagging_fraction`**: Fraction of samples for each iteration (0.5-1.0)
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'GBM': [
-    # Быстрая модель
-    {'num_boost_round': 100, 'num_leaves': 31, 'learning_rate': 0.1},
-    # Сбалансированная модель
-    {'num_boost_round': 200, 'num_leaves': 63, 'learning_rate': 0.05},
-    # Тщательная модель
-    {'num_boost_round': 500, 'num_leaves': 127, 'learning_rate': 0.01},
-    # Регуляризованная модель
-    {'num_boost_round': 300, 'num_leaves': 63, 'learning_rate': 0.1,
-     'feature_fraction': 0.8, 'bagging_fraction': 0.8}
+# Fast model
+ {'num_boost_round': 100, 'num_leaves': 31, 'learning_rate': 0.1},
+# Balanced model
+ {'num_boost_round': 200, 'num_leaves': 63, 'learning_rate': 0.05},
+# Thorough model
+ {'num_boost_round': 500, 'num_leaves': 127, 'learning_rate': 0.01},
+# Regularized model
+ {'num_boost_round': 300, 'num_leaves': 63, 'learning_rate': 0.1,
+ 'feature_fraction': 0.8, 'bagging_fraction': 0.8}
 ]
 ```
 
-**CatBoost (CAT) - Категориальный бустинг**
+**CatBoost (CAT) - Categorical Boosting**
 
-**Основные параметры:**
-- **`iterations`**: Количество итераций (100-1000)
-- **`learning_rate`**: Скорость обучения (0.01-0.3)
-- **`depth`**: Глубина дерева (4-10)
-- **`l2_leaf_reg`**: L2 регуляризация (1-10)
-- **`border_count`**: Количество границ для числовых признаков (32-255)
+**Main parameters:**
+- **`iterations`**: Number of iterations (100-1000)
+- **`learning_rate`**: Learning rate (0.01-0.3)
+- **`depth`**: Tree depth (4-10)
+- **`l2_leaf_reg`**: L2 regularization (1-10)
+- **`border_count`**: Number of borders for numerical features (32-255)
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'CAT': [
-    # Быстрая модель
-    {'iterations': 100, 'learning_rate': 0.1, 'depth': 6},
-    # Сбалансированная модель
-    {'iterations': 200, 'learning_rate': 0.05, 'depth': 8},
-    # Тщательная модель
-    {'iterations': 500, 'learning_rate': 0.01, 'depth': 10},
-    # Регуляризованная модель
-    {'iterations': 300, 'learning_rate': 0.1, 'depth': 6,
-     'l2_leaf_reg': 3, 'border_count': 128}
+# Fast model
+ {'iterations': 100, 'learning_rate': 0.1, 'depth': 6},
+# Balanced model
+ {'iterations': 200, 'learning_rate': 0.05, 'depth': 8},
+# Thorough model
+ {'iterations': 500, 'learning_rate': 0.01, 'depth': 10},
+# Regularized model
+ {'iterations': 300, 'learning_rate': 0.1, 'depth': 6,
+ 'l2_leaf_reg': 3, 'border_count': 128}
 ]
 ```
 
-**Random Forest (RF) - Случайный лес**
+**Random Forest (RF) - Random Forest**
 
-**Основные параметры:**
-- **`n_estimators`**: Количество деревьев (100-1000)
-- **`max_depth`**: Максимальная глубина дерева (10-50)
-- **`min_samples_split`**: Минимум образцов для разделения (2-20)
-- **`min_samples_leaf`**: Минимум образцов в листе (1-10)
-- **`max_features`**: Количество признаков для разделения ('sqrt', 'log2', int)
+**Main parameters:**
+- **`n_estimators`**: Number of trees (100-1000)
+- **`max_depth`**: Maximum tree depth (10-50)
+- **`min_samples_split`**: Minimum samples for split (2-20)
+- **`min_samples_leaf`**: Minimum samples in leaf (1-10)
+- **`max_features`**: Number of features for split ('sqrt', 'log2', int)
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'RF': [
-    # Быстрая модель
-    {'n_estimators': 100, 'max_depth': 20, 'min_samples_split': 5},
-    # Сбалансированная модель
-    {'n_estimators': 200, 'max_depth': 30, 'min_samples_split': 10},
-    # Тщательная модель
-    {'n_estimators': 500, 'max_depth': 40, 'min_samples_split': 15},
-    # Регуляризованная модель
-    {'n_estimators': 300, 'max_depth': 25, 'min_samples_split': 10,
-     'min_samples_leaf': 5, 'max_features': 'sqrt'}
+# Fast model
+ {'n_estimators': 100, 'max_depth': 20, 'min_samples_split': 5},
+# Balanced model
+ {'n_estimators': 200, 'max_depth': 30, 'min_samples_split': 10},
+# Thorough model
+ {'n_estimators': 500, 'max_depth': 40, 'min_samples_split': 15},
+# Regularized model
+ {'n_estimators': 300, 'max_depth': 25, 'min_samples_split': 10,
+ 'min_samples_leaf': 5, 'max_features': 'sqrt'}
 ]
 ```
 
-**Extra Trees (XT) - Экстра деревья**
+**Extra Trees (XT) - Extra Trees**
 
-**Основные параметры:**
-- **`n_estimators`**: Количество деревьев (100-1000)
-- **`max_depth`**: Максимальная глубина дерева (10-50)
-- **`min_samples_split`**: Минимум образцов для разделения (2-20)
-- **`min_samples_leaf`**: Минимум образцов в листе (1-10)
-- **`max_features`**: Количество признаков для разделения ('sqrt', 'log2', int)
+**Main parameters:**
+- **`n_estimators`**: Number of trees (100-1000)
+- **`max_depth`**: Maximum tree depth (10-50)
+- **`min_samples_split`**: Minimum samples for split (2-20)
+- **`min_samples_leaf`**: Minimum samples in leaf (1-10)
+- **`max_features`**: Number of features for split ('sqrt', 'log2', int)
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'XT': [
-    # Быстрая модель
-    {'n_estimators': 100, 'max_depth': 20, 'min_samples_split': 5},
-    # Сбалансированная модель
-    {'n_estimators': 200, 'max_depth': 30, 'min_samples_split': 10},
-    # Тщательная модель
-    {'n_estimators': 500, 'max_depth': 40, 'min_samples_split': 15}
+# Fast model
+ {'n_estimators': 100, 'max_depth': 20, 'min_samples_split': 5},
+# Balanced model
+ {'n_estimators': 200, 'max_depth': 30, 'min_samples_split': 10},
+# Thorough model
+ {'n_estimators': 500, 'max_depth': 40, 'min_samples_split': 15}
 ]
 ```
 
-**Neural Networks (NN_TORCH) - Нейронные сети**
+**Neural Networks (NN_TORCH) - Neural Networks**
 
-**Основные параметры:**
-- **`num_epochs`**: Количество эпох (10-100)
-- **`learning_rate`**: Скорость обучения (0.001-0.1)
-- **`batch_size`**: Размер батча (32-512)
-- **`hidden_size`**: Размер скрытых слоев (64-512)
-- **`num_layers`**: Количество слоев (2-5)
+**Main parameters:**
+- **`num_epochs`**: Number of epochs (10-100)
+- **`learning_rate`**: Learning rate (0.001-0.1)
+- **`batch_size`**: Batch size (32-512)
+- **`hidden_size`**: Hidden layer size (64-512)
+- **`num_layers`**: Number of layers (2-5)
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'NN_TORCH': [
-    # Быстрая модель
-    {'num_epochs': 20, 'learning_rate': 0.01, 'batch_size': 64, 'hidden_size': 128},
-    # Сбалансированная модель
-    {'num_epochs': 50, 'learning_rate': 0.005, 'batch_size': 128, 'hidden_size': 256},
-    # Тщательная модель
-    {'num_epochs': 100, 'learning_rate': 0.001, 'batch_size': 256, 'hidden_size': 512},
-    # Глубокая модель
-    {'num_epochs': 80, 'learning_rate': 0.005, 'batch_size': 128, 'hidden_size': 256,
-     'num_layers': 4}
+# Fast model
+ {'num_epochs': 20, 'learning_rate': 0.01, 'batch_size': 64, 'hidden_size': 128},
+# Balanced model
+ {'num_epochs': 50, 'learning_rate': 0.005, 'batch_size': 128, 'hidden_size': 256},
+# Thorough model
+ {'num_epochs': 100, 'learning_rate': 0.001, 'batch_size': 256, 'hidden_size': 512},
+# Deep model
+ {'num_epochs': 80, 'learning_rate': 0.005, 'batch_size': 128, 'hidden_size': 256,
+ 'num_layers': 4}
 ]
 ```
 
-**Linear Models (LR) - Линейные модели**
+**Linear Models (LR) - Linear Models**
 
-**Основные параметры:**
-- **`C`**: Обратная сила регуляризации (0.01-100)
-- **`penalty`**: Тип регуляризации ('l1', 'l2', 'elasticnet')
-- **`solver`**: Алгоритм оптимизации ('liblinear', 'lbfgs', 'saga')
-- **`max_iter`**: Максимальное количество итераций (100-1000)
+**Main parameters:**
+- **`C`**: Inverse regularization strength (0.01-100)
+- **`penalty`**: Regularization type ('l1', 'l2', 'elasticnet')
+- **`solver`**: Optimization algorithm ('liblinear', 'lbfgs', 'saga')
+- **`max_iter`**: Maximum number of iterations (100-1000)
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'LR': [
-    # L2 регуляризация
-    {'C': 1.0, 'penalty': 'l2', 'solver': 'liblinear', 'max_iter': 1000},
-    # L1 регуляризация
-    {'C': 0.1, 'penalty': 'l1', 'solver': 'liblinear', 'max_iter': 1000},
-    # ElasticNet регуляризация
-    {'C': 0.5, 'penalty': 'elasticnet', 'solver': 'saga', 'max_iter': 1000},
-    # Сильная регуляризация
-    {'C': 0.01, 'penalty': 'l2', 'solver': 'lbfgs', 'max_iter': 2000}
+# L2 regularization
+ {'C': 1.0, 'penalty': 'l2', 'solver': 'liblinear', 'max_iter': 1000},
+# L1 regularization
+ {'C': 0.1, 'penalty': 'l1', 'solver': 'liblinear', 'max_iter': 1000},
+# ElasticNet regularization
+ {'C': 0.5, 'penalty': 'elasticnet', 'solver': 'saga', 'max_iter': 1000},
+# Strong regularization
+ {'C': 0.01, 'penalty': 'l2', 'solver': 'lbfgs', 'max_iter': 2000}
 ]
 ```
 
-**K-Nearest Neighbors (KNN) - K ближайших соседей**
+**K-Nearest Neighbors (KNN) - K Nearest Neighbors**
 
-**Основные параметры:**
-- **`n_neighbors`**: Количество соседей (3-20)
-- **`weights`**: Весовая функция ('uniform', 'distance')
-- **`algorithm`**: Алгоритм поиска ('auto', 'ball_tree', 'kd_tree', 'brute')
-- **`metric`**: Метрика расстояния ('euclidean', 'manhattan', 'minkowski')
+**Main parameters:**
+- **`n_neighbors`**: Number of neighbors (3-20)
+- **`weights`**: Weight function ('uniform', 'distance')
+- **`algorithm`**: Search algorithm ('auto', 'ball_tree', 'kd_tree', 'brute')
+- **`metric`**: Distance metric ('euclidean', 'manhattan', 'minkowski')
 
-**Практические примеры:**
+**Practical examples:**
 ```python
 'KNN': [
-    # Быстрая модель
-    {'n_neighbors': 5, 'weights': 'uniform', 'algorithm': 'auto'},
-    # Сбалансированная модель
-    {'n_neighbors': 10, 'weights': 'distance', 'algorithm': 'auto'},
-    # Тщательная модель
-    {'n_neighbors': 15, 'weights': 'distance', 'algorithm': 'ball_tree'},
-    # Специализированная модель
-    {'n_neighbors': 8, 'weights': 'distance', 'algorithm': 'kd_tree',
-     'metric': 'manhattan'}
+# Fast model
+ {'n_neighbors': 5, 'weights': 'uniform', 'algorithm': 'auto'},
+# Balanced model
+ {'n_neighbors': 10, 'weights': 'distance', 'algorithm': 'auto'},
+# Thorough model
+ {'n_neighbors': 15, 'weights': 'distance', 'algorithm': 'ball_tree'},
+# Specialized model
+ {'n_neighbors': 8, 'weights': 'distance', 'algorithm': 'kd_tree',
+ 'metric': 'manhattan'}
 ]
 ```
 
-**Полный пример настройки hyperparameters:**
+**Complete Example of Hyperparameter Settings:**
 
 ```python
-# Комплексная настройка гиперпараметров
+# Comprehensive hyperparameter configuration
 hyperparameters = {
-    # XGBoost - быстрые и тщательные варианты
-    'XGB': [
-        {'n_estimators': 100, 'max_depth': 6, 'learning_rate': 0.1},
-        {'n_estimators': 300, 'max_depth': 8, 'learning_rate': 0.05},
-        {'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.01}
-    ],
-    
-    # LightGBM - сбалансированные варианты
-    'GBM': [
-        {'num_boost_round': 200, 'num_leaves': 63, 'learning_rate': 0.1},
-        {'num_boost_round': 400, 'num_leaves': 127, 'learning_rate': 0.05},
-        {'num_boost_round': 600, 'num_leaves': 255, 'learning_rate': 0.01}
-    ],
-    
-    # CatBoost - для категориальных данных
-    'CAT': [
-        {'iterations': 200, 'learning_rate': 0.1, 'depth': 6},
-        {'iterations': 400, 'learning_rate': 0.05, 'depth': 8},
-        {'iterations': 600, 'learning_rate': 0.01, 'depth': 10}
-    ],
-    
-    # Random Forest - для интерпретируемости
-    'RF': [
-        {'n_estimators': 200, 'max_depth': 25, 'min_samples_split': 10},
-        {'n_estimators': 400, 'max_depth': 35, 'min_samples_split': 15},
-        {'n_estimators': 600, 'max_depth': 45, 'min_samples_split': 20}
-    ],
-    
-    # Neural Networks - для сложных паттернов
-    'NN_TORCH': [
-        {'num_epochs': 50, 'learning_rate': 0.01, 'batch_size': 128, 'hidden_size': 256},
-        {'num_epochs': 100, 'learning_rate': 0.005, 'batch_size': 256, 'hidden_size': 512},
-        {'num_epochs': 150, 'learning_rate': 0.001, 'batch_size': 512, 'hidden_size': 1024}
-    ]
+# XGBoost - fast and thorough options
+ 'XGB': [
+ {'n_estimators': 100, 'max_depth': 6, 'learning_rate': 0.1},
+ {'n_estimators': 300, 'max_depth': 8, 'learning_rate': 0.05},
+ {'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.01}
+ ],
+
+# LightGBM - balanced options
+ 'GBM': [
+ {'num_boost_round': 200, 'num_leaves': 63, 'learning_rate': 0.1},
+ {'num_boost_round': 400, 'num_leaves': 127, 'learning_rate': 0.05},
+ {'num_boost_round': 600, 'num_leaves': 255, 'learning_rate': 0.01}
+ ],
+
+# CatBoost - for categorical data
+ 'CAT': [
+ {'iterations': 200, 'learning_rate': 0.1, 'depth': 6},
+ {'iterations': 400, 'learning_rate': 0.05, 'depth': 8},
+ {'iterations': 600, 'learning_rate': 0.01, 'depth': 10}
+ ],
+
+# Random Forest - for interpretability
+ 'RF': [
+ {'n_estimators': 200, 'max_depth': 25, 'min_samples_split': 10},
+ {'n_estimators': 400, 'max_depth': 35, 'min_samples_split': 15},
+ {'n_estimators': 600, 'max_depth': 45, 'min_samples_split': 20}
+ ],
+
+# Neural networks - for complex patterns
+ 'NN_TORCH': [
+ {'num_epochs': 50, 'learning_rate': 0.01, 'batch_size': 128, 'hidden_size': 256},
+ {'num_epochs': 100, 'learning_rate': 0.005, 'batch_size': 256, 'hidden_size': 512},
+ {'num_epochs': 150, 'learning_rate': 0.001, 'batch_size': 512, 'hidden_size': 1024}
+ ]
 }
 
-# Обучение с настройкой гиперпараметров
+# Training with hyperparameter tuning
 predictor.fit(
-    train_data,
-    hyperparameters=hyperparameters,
-    time_limit=3600  # 1 час
+ train_data,
+ hyperparameters=hyperparameters,
+time_limit=3600 # 1 hour
 )
 ```
 
-**Стратегии настройки гиперпараметров:**
+**Hyperparameter Setting Strategies:**
 
 ```python
-# Стратегия 1: Быстрое тестирование
+# Strategy 1: Quick testing
 quick_hyperparameters = {
-    'XGB': [{'n_estimators': 100, 'max_depth': 6, 'learning_rate': 0.1}],
-    'GBM': [{'num_boost_round': 200, 'num_leaves': 63, 'learning_rate': 0.1}],
-    'CAT': [{'iterations': 200, 'learning_rate': 0.1, 'depth': 6}]
+ 'XGB': [{'n_estimators': 100, 'max_depth': 6, 'learning_rate': 0.1}],
+ 'GBM': [{'num_boost_round': 200, 'num_leaves': 63, 'learning_rate': 0.1}],
+ 'CAT': [{'iterations': 200, 'learning_rate': 0.1, 'depth': 6}]
 }
 
-# Стратегия 2: Сбалансированная
+# Strategy 2: Balanced
 balanced_hyperparameters = {
-    'XGB': [
-        {'n_estimators': 200, 'max_depth': 6, 'learning_rate': 0.1},
-        {'n_estimators': 300, 'max_depth': 8, 'learning_rate': 0.05}
-    ],
-    'GBM': [
-        {'num_boost_round': 300, 'num_leaves': 63, 'learning_rate': 0.1},
-        {'num_boost_round': 400, 'num_leaves': 127, 'learning_rate': 0.05}
-    ]
+ 'XGB': [
+ {'n_estimators': 200, 'max_depth': 6, 'learning_rate': 0.1},
+ {'n_estimators': 300, 'max_depth': 8, 'learning_rate': 0.05}
+ ],
+ 'GBM': [
+ {'num_boost_round': 300, 'num_leaves': 63, 'learning_rate': 0.1},
+ {'num_boost_round': 400, 'num_leaves': 127, 'learning_rate': 0.05}
+ ]
 }
 
-# Стратегия 3: Максимальное качество
+# Strategy 3: Maximum quality
 quality_hyperparameters = {
-    'XGB': [
-        {'n_estimators': 500, 'max_depth': 8, 'learning_rate': 0.05},
-        {'n_estimators': 800, 'max_depth': 10, 'learning_rate': 0.01},
-        {'n_estimators': 1000, 'max_depth': 12, 'learning_rate': 0.005}
-    ],
-    'GBM': [
-        {'num_boost_round': 600, 'num_leaves': 127, 'learning_rate': 0.05},
-        {'num_boost_round': 800, 'num_leaves': 255, 'learning_rate': 0.01},
-        {'num_boost_round': 1000, 'num_leaves': 511, 'learning_rate': 0.005}
-    ]
+ 'XGB': [
+ {'n_estimators': 500, 'max_depth': 8, 'learning_rate': 0.05},
+ {'n_estimators': 800, 'max_depth': 10, 'learning_rate': 0.01},
+ {'n_estimators': 1000, 'max_depth': 12, 'learning_rate': 0.005}
+ ],
+ 'GBM': [
+ {'num_boost_round': 600, 'num_leaves': 127, 'learning_rate': 0.05},
+ {'num_boost_round': 800, 'num_leaves': 255, 'learning_rate': 0.01},
+ {'num_boost_round': 1000, 'num_leaves': 511, 'learning_rate': 0.005}
+ ]
 }
 ```
 
-### Исключение алгоритмов
+### Excluding Algorithms
 
 ```python
-# Исключение определенных алгоритмов
+# Exclude certain algorithms
 excluded_model_types = ['KNN', 'NN_TORCH']
 
 predictor.fit(
-    train_data,
-    excluded_model_types=excluded_model_types
+ train_data,
+ excluded_model_types=excluded_model_types
 )
 ```
 
-### Настройка валидации
+### Validation Configuration
 
 ```python
-# Настройка стратегии валидации
+# Validation strategy configuration
 from autogluon.tabular.models import AbstractModel
 
 class CustomValidationStrategy(AbstractModel):
-    def _get_default_resources(self):
-        return {'num_cpus': 2, 'num_gpus': 0}
+ def _get_default_resources(self):
+ return {'num_cpus': 2, 'num_gpus': 0}
 
 predictor.fit(
-    train_data,
-    validation_strategy='custom',
-    custom_validation_strategy=CustomValidationStrategy()
+ train_data,
+ validation_strategy='custom',
+ custom_validation_strategy=CustomValidationStrategy()
 )
 ```
 
-## Работа с различными типами данных
+## Working with Different Data Types
 
-### 📊 Обработка различных типов данных
+### 📊 Processing Different Data Types
 
-<img src="images/optimized/advanced_topics_overview.png" alt="Обработка типов данных" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 9: Схема обработки различных типов данных в AutoML Gluon*
+<img src="images/optimized/advanced_topics_overView.png" alt="Data type processing" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 9: Diagram of different data type processing in AutoML Gluon*
 
-**Почему важна правильная обработка данных?** Потому что качество данных напрямую влияет на качество модели:
+**Why is proper data processing important?** Because data quality directly affects model quality:
 
-- **Numerical Data**: Числовые данные (возраст, цена, количество)
-- **Categorical Data**: Категориальные данные (цвет, категория, статус)
-- **Text Data**: Текстовые данные (описания, отзывы, комментарии)
-- **DateTime Data**: Временные данные (даты, время, временные метки)
-- **Mixed Data**: Смешанные типы данных в одном датасете
-- **Missing Data**: Обработка пропущенных значений
-- **Outliers**: Выявление и обработка выбросов
+- **Numerical data**: Numerical data (age, price, quantity)
+- **Categorical data**: Categorical data (color, category, status)
+- **Text data**: Text data (descriptions, reviews, comments)
+- **DateTime data**: Temporal data (dates, time, timestamps)
+- **Mixed data**: Mixed data types in one dataset
+- **Missing data**: Handling missing values
+- **Outliers**: Detection and handling of outliers
 
-### Категориальные данные
+### Categorical Data
 
 ```python
-# AutoGluon автоматически определяет категориальные переменные
-# Но можно указать их явно
+# AutoGluon automatically detects categorical variables
+# But can specify them explicitly
 categorical_columns = ['category', 'brand', 'region']
 
 predictor.fit(
-    train_data,
-    categorical_columns=categorical_columns
+ train_data,
+ categorical_columns=categorical_columns
 )
 ```
 
-### Текстовые данные
+### Text Data
 
 ```python
-# Для текстовых колонок AutoGluon автоматически создает признаки
+# For text columns AutoGluon automatically creates features
 text_columns = ['description', 'review_text']
 
 predictor.fit(
-    train_data,
-    text_columns=text_columns
+ train_data,
+ text_columns=text_columns
 )
 ```
 
-### Временные данные
+### Temporal Data
 
 ```python
-# Указание временных колонок
+# Specify temporal columns
 time_columns = ['date', 'timestamp']
 
 predictor.fit(
-    train_data,
-    time_columns=time_columns
+ train_data,
+ time_columns=time_columns
 )
 ```
 
-## Мониторинг обучения
+## Training Monitoring
 
-### 📈 Система мониторинга обучения
+### 📈 Training Monitoring System
 
-<img src="images/optimized/interpretability_overview.png" alt="Мониторинг обучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 10: Система мониторинга и интерпретации процесса обучения*
+<img src="images/optimized/interpretability_overView.png" alt="Training monitoring" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 10: Training monitoring and interpretation system*
 
-**Почему важен мониторинг обучения?** Потому что он помогает контролировать процесс и выявлять проблемы:
+**Why is training monitoring important?** Because it helps control the process and identify problems:
 
-- **Progress Tracking**: Отслеживание прогресса обучения
-- **Performance Monitoring**: Мониторинг производительности моделей
-- **Resource Usage**: Контроль использования ресурсов (CPU, RAM, GPU)
-- **Error Detection**: Выявление ошибок и проблем
-- **Quality Metrics**: Отслеживание метрик качества
-- **Model Comparison**: Сравнение различных моделей
-- **Early Stopping**: Автоматическая остановка при отсутствии улучшений
+- **Progress Tracking**: Tracking training progress
+- **Performance Monitoring**: Monitoring model performance
+- **Resource Usage**: Controlling resource usage (CPU, RAM, GPU)
+- **Error Detection**: Detecting errors and problems
+- **Quality Metrics**: Tracking quality metrics
+- **Model Comparison**: Comparing different models
+- **Early Stopping**: Automatic stopping when no improvements
 
-### Логирование
+### Logging
 
 ```python
 import logging
 
-# Настройка логирования
+# Logging configuration
 logging.basicConfig(level=logging.INFO)
 
-# Обучение с подробным логированием
+# Training with detailed logging
 predictor.fit(
-    train_data,
-    verbosity=2  # Подробное логирование
+ train_data,
+verbosity=2 # Detailed logging
 )
 ```
 
-### Callback функции
+### Callback Functions
 
 ```python
 def training_callback(model_name, model_path, model_info):
-    """Callback функция для мониторинга обучения"""
-    print(f"Training {model_name}...")
-    print(f"Model path: {model_path}")
-    print(f"Model info: {model_info}")
+"""Callback function for training monitoring"""
+ print(f"Training {model_name}...")
+ print(f"Model path: {model_path}")
+ print(f"Model info: {model_info}")
 
 predictor.fit(
-    train_data,
-    callbacks=[training_callback]
+ train_data,
+ callbacks=[training_callback]
 )
 ```
 
-## Примеры использования
+## Usage Examples
 
-### Полный пример классификации
+### Complete Classification Example
 
 ```python
 from autogluon.tabular import TabularPredictor
@@ -1823,51 +1823,51 @@ import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 
-# Создание синтетических данных
+# Create synthetic data
 X, y = make_classification(
-    n_samples=10000,
-    n_features=20,
-    n_informative=15,
-    n_redundant=5,
-    n_classes=2,
-    random_state=42
+ n_samples=10000,
+ n_features=20,
+ n_informative=15,
+ n_redundant=5,
+ n_classes=2,
+ random_state=42
 )
 
-# Создание DataFrame
+# Create DataFrame
 data = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(20)])
 data['target'] = y
 
-# Разделение на train/test
+# Split into train/test
 train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
-# Создание и обучение предиктора
+# Create and train predictor
 predictor = TabularPredictor(
-    label='target',
-    problem_type='binary',
-    eval_metric='accuracy'
+ label='target',
+ problem_type='binary',
+ eval_metric='accuracy'
 )
 
-# Обучение
+# Training
 predictor.fit(
-    train_data,
-    time_limit=300,  # 5 минут
-    presets='medium_quality'
+ train_data,
+ time_limit=300, # 5 minutes
+ presets='medium_quality'
 )
 
-# Предсказания
+# Predictions
 predictions = predictor.predict(test_data)
 probabilities = predictor.predict_proba(test_data)
 
-# Оценка качества
+# Quality evaluation
 performance = predictor.evaluate(test_data)
 print(f"Accuracy: {performance['accuracy']}")
 
-# Анализ лидерборда
+# Leaderboard analysis
 leaderboard = predictor.leaderboard()
 print(leaderboard)
 ```
 
-### Полный пример регрессии
+### Complete Regression Example
 
 ```python
 from autogluon.tabular import TabularPredictor
@@ -1876,119 +1876,119 @@ import numpy as np
 from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
 
-# Создание синтетических данных
+# Create synthetic data
 X, y = make_regression(
-    n_samples=10000,
-    n_features=20,
-    n_informative=15,
-    noise=0.1,
-    random_state=42
+ n_samples=10000,
+ n_features=20,
+ n_informative=15,
+ noise=0.1,
+ random_state=42
 )
 
-# Создание DataFrame
+# Create DataFrame
 data = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(20)])
 data['target'] = y
 
-# Разделение на train/test
+# Split into train/test
 train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
-# Создание и обучение предиктора
+# Create and train predictor
 predictor = TabularPredictor(
-    label='target',
-    problem_type='regression',
-    eval_metric='rmse'
+ label='target',
+ problem_type='regression',
+ eval_metric='rmse'
 )
 
-# Обучение
+# Training
 predictor.fit(
-    train_data,
-    time_limit=300,  # 5 минут
-    presets='high_quality'
+ train_data,
+ time_limit=300, # 5 minutes
+ presets='high_quality'
 )
 
-# Предсказания
+# Predictions
 predictions = predictor.predict(test_data)
 
-# Оценка качества
+# Quality evaluation
 performance = predictor.evaluate(test_data)
 print(f"RMSE: {performance['rmse']}")
 print(f"MAE: {performance['mae']}")
 
-# Анализ важности признаков
+# Feature importance analysis
 feature_importance = predictor.feature_importance()
 print(feature_importance)
 ```
 
-## Лучшие практики
+## Best Practices
 
-### 🎯 Рекомендации по использованию
+### 🎯 Usage Recommendations
 
-<img src="images/optimized/case_studies_overview.png" alt="Лучшие практики" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 11: Лучшие практики и рекомендации по использованию AutoML Gluon*
+<img src="images/optimized/case_studies_overView.png" alt="Best practices" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 11: Best practices and recommendations for using AutoML Gluon*
 
-**Почему важны лучшие практики?** Потому что они помогают избежать типичных ошибок и получить максимальное качество:
+**Why are best practices important?** Because they help avoid common mistakes and achieve maximum quality:
 
-- **Data Quality**: Обеспечение качества данных перед обучением
-- **Feature Engineering**: Создание информативных признаков
-- **Model Selection**: Выбор подходящих алгоритмов
-- **Validation Strategy**: Правильная стратегия валидации
-- **Hyperparameter Tuning**: Эффективная настройка параметров
-- **Ensemble Methods**: Использование ансамблей для повышения качества
-- **Monitoring**: Постоянный мониторинг производительности
+- **Data Quality**: Ensuring data quality before training
+- **Feature Engineering**: Creating informative features
+- **Model Selection**: Choosing appropriate algorithms
+- **Validation Strategy**: Proper validation strategy
+- **Hyperparameter Tuning**: Effective parameter configuration
+- **Ensemble Methods**: Using ensembles to improve quality
+- **Monitoring**: Constant performance monitoring
 
-### Подготовка данных
+### Data Preparation
 
 ```python
-# 1. Проверка качества данных
+# 1. Check data quality
 print("Data shape:", train_data.shape)
 print("Missing values:", train_data.isnull().sum().sum())
 print("Data types:", train_data.dtypes.value_counts())
 
-# 2. Обработка пропущенных значений
-train_data = train_data.dropna()  # Или заполнение
+# 2. Handle missing values
+train_data = train_data.dropna() # or filling
 
-# 3. Удаление константных признаков
+# 3. Remove constant features
 constant_columns = train_data.columns[train_data.nunique() <= 1]
 train_data = train_data.drop(columns=constant_columns)
 ```
 
-### Выбор метрик
+### Metric Selection
 
 ```python
-# Для классификации
+# For classification
 classification_metrics = [
-    'accuracy', 'balanced_accuracy', 'f1', 'f1_macro', 'f1_micro',
-    'precision', 'precision_macro', 'recall', 'recall_macro',
-    'roc_auc', 'log_loss'
+ 'accuracy', 'balanced_accuracy', 'f1', 'f1_macro', 'f1_micro',
+ 'precision', 'precision_macro', 'recall', 'recall_macro',
+ 'roc_auc', 'log_loss'
 ]
 
-# Для регрессии
+# For regression
 regression_metrics = [
-    'rmse', 'mae', 'mape', 'smape', 'r2', 'pearsonr', 'spearmanr'
+ 'rmse', 'mae', 'mape', 'smape', 'r2', 'pearsonr', 'spearmanr'
 ]
 ```
 
-### Оптимизация времени обучения
+### Training Time Optimization
 
 ```python
-# Быстрое обучение для экспериментов
+# Quick training for experiments
 predictor.fit(
-    train_data,
-    time_limit=60,  # 1 минута
-    presets='optimize_for_deployment'
+ train_data,
+time_limit=60, # 1 minute
+ presets='optimize_for_deployment'
 )
 
-# Качественное обучение для финальной модели
+# Quality training for final model
 predictor.fit(
-    train_data,
-    time_limit=3600,  # 1 час
-    presets='best_quality'
+ train_data,
+time_limit=3600, # 1 hour
+ presets='best_quality'
 )
 ```
 
-## Следующие шаги
+## Next Steps
 
-После освоения базового использования переходите к:
-- [Продвинутой конфигурации](./03_advanced_configuration.md)
-- [Работе с метриками](./04_metrics.md)
-- [Методам валидации](./05_validation.md)
+After mastering basic usage, proceed to:
+- [Advanced Configuration](./03_advanced_configuration.md)
+- [Working with Metrics](./04_metrics.md)
+- [Validation Methods](./05_validation.md)
