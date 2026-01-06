@@ -252,25 +252,36 @@ if echo "$@" | grep -q "uv run"; then
             apt-get update -qq -y >/dev/null 2>&1 && \
             apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
         fi
-        # Install mesonpy dependencies and mesonpy if not present (required for pandas)
+        # Install mesonpy dependencies and mesonpy if not present (required for pandas, matplotlib, contourpy)
         if ! python -c "import mesonpy" 2>/dev/null; then
             # Install dependencies first
             uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
             # Install mesonpy from git (not available in PyPI for Python 3.14)
             uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
         fi
+        # Install other build dependencies (cython, versioneer, pybind11, setuptools-scm)
+        if ! python -c "import cython" 2>/dev/null; then
+            uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+        fi
+        # Install cmake system package if not present (required for some packages)
+        if ! command -v cmake >/dev/null 2>&1; then
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq -y >/dev/null 2>&1 && \
+            apt-get install -y --no-install-recommends cmake >/dev/null 2>&1 || true
+        fi
     else
         # Create venv and install build dependencies
         uv venv /app/.venv >/dev/null 2>&1
         source /app/.venv/bin/activate 2>/dev/null || true
-        # Install ninja-build system package
+        # Install ninja-build and cmake system packages
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y >/dev/null 2>&1 && \
-        apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
+        apt-get install -y --no-install-recommends ninja-build cmake >/dev/null 2>&1 || true
         # Install build dependencies
         uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
         uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
         uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+        uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
     fi
     # Modify command to add --no-build-isolation if not present
     if ! echo "$@" | grep -q -- "--no-build-isolation"; then
@@ -415,22 +426,33 @@ CMD_WRAPPER_EOF
                         apt-get update -qq -y >/dev/null 2>&1 && \
                         apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
                     fi
-                    # Install mesonpy dependencies and mesonpy if not present (required for pandas)
+                    # Install mesonpy dependencies and mesonpy if not present (required for pandas, matplotlib, contourpy)
                     if ! python -c \"import mesonpy\" 2>/dev/null; then
                         uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
                         uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
                     fi
+                    # Install other build dependencies (cython, versioneer, pybind11, setuptools-scm)
+                    if ! python -c \"import cython\" 2>/dev/null; then
+                        uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+                    fi
+                    # Install cmake system package if not present
+                    if ! command -v cmake >/dev/null 2>&1; then
+                        export DEBIAN_FRONTEND=noninteractive
+                        apt-get update -qq -y >/dev/null 2>&1 && \
+                        apt-get install -y --no-install-recommends cmake >/dev/null 2>&1 || true
+                    fi
                 else
                     uv venv /app/.venv >/dev/null 2>&1
                     source /app/.venv/bin/activate 2>/dev/null || true
-                    # Install ninja-build system package
+                    # Install ninja-build and cmake system packages
                     export DEBIAN_FRONTEND=noninteractive
                     apt-get update -qq -y >/dev/null 2>&1 && \
-                    apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
+                    apt-get install -y --no-install-recommends ninja-build cmake >/dev/null 2>&1 || true
                     # Install build dependencies
                     uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
                     uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
                     uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+                    uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
                 fi
                 # Modify command to add --no-build-isolation if not present
                 if ! echo \"$command\" | grep -q -- \"--no-build-isolation\"; then
@@ -554,7 +576,7 @@ else
             >/dev/null 2>&1
         # Verify installation
         if command -v gcc >/dev/null 2>&1 && command -v g++ >/dev/null 2>&1; then
-            echo -e " \033[1;32m✓\033[0m"
+        echo -e " \033[1;32m✓\033[0m"
         else
             echo -e " \033[1;33m⚠\033[0m (installation may have failed)"
         fi
@@ -789,7 +811,7 @@ ENHANCED_SHELL_EOF
     if container exec --interactive --tty "$container_id" bash -c '
         trap "exit 0" EXIT INT TERM
             /tmp/enhanced_shell.sh
-        rm -f /tmp/enhanced_shell.sh
+            rm -f /tmp/enhanced_shell.sh
     ' 2>/dev/null; then
         return 0
     fi
