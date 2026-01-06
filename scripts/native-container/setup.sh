@@ -668,28 +668,79 @@ install_container_dependencies() {
             if [ $attempt -lt $((max_attempts - 1)) ]; then
                 print_status "Container not accessible, starting it (attempt $((attempt + 1))/$max_attempts)..."
                 
+                # Check container status first
+                local container_status=$(container list --all 2>/dev/null | grep "$container_name" | awk '{print $2}' || echo "not_found")
+                print_status "Container status before start: $container_status"
+                
                 # Try to start by name
                 if container start "$container_name" >/dev/null 2>&1; then
-                    sleep 5  # Give container more time to start
-                    # Start a keep-alive process to prevent container from stopping
-                    if container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
-                        sleep 2
-                        if container exec "$container_name" echo "test" >/dev/null 2>&1; then
-                            container_to_use="$container_name"
-                            return 0
+                    print_status "Container start command succeeded, waiting for container to be ready..."
+                    sleep 8  # Give container more time to start and initialize
+                    
+                    # Check if container is now running
+                    container_status=$(container list 2>/dev/null | grep "$container_name" | awk '{print $2}' || echo "not_running")
+                    print_status "Container status after start: $container_status"
+                    
+                    # Try to start keep-alive process multiple times
+                    local keep_alive_attempts=3
+                    local keep_alive_success=false
+                    
+                    for i in $(seq 1 $keep_alive_attempts); do
+                        print_status "Starting keep-alive process (attempt $i/$keep_alive_attempts)..."
+                        
+                        # Start keep-alive process and verify it's running
+                        if container exec "$container_name" bash -c "
+                            nohup sleep infinity >/dev/null 2>&1 &
+                            sleep 1
+                            if pgrep -f 'sleep infinity' >/dev/null 2>&1; then
+                                echo 'KEEP_ALIVE_SUCCESS'
+                            else
+                                echo 'KEEP_ALIVE_FAILED'
+                            fi
+                        " 2>&1 | grep -q "KEEP_ALIVE_SUCCESS"; then
+                            keep_alive_success=true
+                            print_status "Keep-alive process started successfully"
+                            break
                         fi
+                        
+        sleep 2
+                    done
+                    
+                    # Verify container is accessible
+                    sleep 2
+                    if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+                        container_to_use="$container_name"
+                        print_success "Container is now accessible by name"
+                        return 0
+                    else
+                        print_warning "Container started but still not accessible by name"
                     fi
+                else
+                    print_warning "Failed to start container by name"
                 fi
                 
                 # Try to start by ID
                 if [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
-                    sleep 5
-                    if container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
-                        sleep 2
-                        if container exec "$container_id" echo "test" >/dev/null 2>&1; then
-                            container_to_use="$container_id"
-                            return 0
+                    print_status "Container start command succeeded (by ID), waiting..."
+                    sleep 8
+                    
+                    # Start keep-alive process
+                    for i in $(seq 1 $keep_alive_attempts); do
+                        if container exec "$container_id" bash -c "
+                            nohup sleep infinity >/dev/null 2>&1 &
+                            sleep 1
+                            pgrep -f 'sleep infinity' >/dev/null 2>&1 && echo 'KEEP_ALIVE_SUCCESS' || echo 'KEEP_ALIVE_FAILED'
+                        " 2>&1 | grep -q "KEEP_ALIVE_SUCCESS"; then
+                            break
                         fi
+                        sleep 2
+                    done
+                    
+                    sleep 2
+                    if container exec "$container_id" echo "test" >/dev/null 2>&1; then
+                        container_to_use="$container_id"
+                        print_success "Container is now accessible by ID"
+                        return 0
                     fi
                 fi
             fi
@@ -697,6 +748,9 @@ install_container_dependencies() {
             attempt=$((attempt + 1))
         done
         
+        print_error "Failed to make container accessible after $max_attempts attempts"
+        print_status "Container status:"
+        container list --all | grep "$container_name" || echo "Container not in list"
         return 1
     }
     
@@ -753,63 +807,79 @@ install_container_dependencies() {
         local cmd="$1"
         local exit_code=0
         local output=""
+        local max_retries=2
+        local retry=0
         
-        # Ensure container is accessible and has keep-alive process running
-        if ! ensure_container_accessible; then
-            print_error "Container is not accessible, cannot execute command"
-            return 1
-        fi
-        
-        # Start keep-alive process in background before executing command
-        # This prevents container from stopping during long-running commands
-        print_status "Ensuring keep-alive process is running..."
-        container exec "$container_to_use" bash -c "
-            # Check if sleep infinity is already running
-            if ! pgrep -f 'sleep infinity' >/dev/null 2>&1; then
+        while [ $retry -lt $max_retries ]; do
+            # Ensure container is accessible and has keep-alive process running
+            if ! ensure_container_accessible; then
+                if [ $retry -eq $((max_retries - 1)) ]; then
+                    print_error "Container is not accessible after $max_retries attempts, cannot execute command"
+                    return 1
+                fi
+                print_warning "Container not accessible, retrying (attempt $((retry + 1))/$max_retries)..."
+                sleep 3
+                retry=$((retry + 1))
+                continue
+            fi
+            
+            # Start keep-alive process in background before executing command
+            # This prevents container from stopping during long-running commands
+            print_status "Ensuring keep-alive process is running..."
+            local keep_alive_result=""
+            keep_alive_result=$(container exec "$container_to_use" bash -c "
+                # Kill any existing sleep infinity processes to avoid duplicates
+                pkill -f 'sleep infinity' 2>/dev/null || true
+                sleep 1
                 # Start keep-alive process
                 nohup sleep infinity >/dev/null 2>&1 &
-                sleep 1
-            fi
-        " >/dev/null 2>&1 || true
-        
-        # Execute the command
-        print_status "Executing command in container..."
-        output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
-        exit_code=$?
-        
-        if [ $exit_code -eq 0 ]; then
-            echo "$output"
-            return 0
-        fi
-        
-        # If exec failed, try with container name or ID
-        if [ "$container_to_use" != "$container_name" ]; then
-            # Start keep-alive process
-            container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1 || true
-            sleep 1
+                local pid=\$!
+                sleep 2
+                # Verify process is running
+                if ps -p \$pid >/dev/null 2>&1; then
+                    echo 'KEEP_ALIVE_OK'
+                else
+                    echo 'KEEP_ALIVE_FAILED'
+                fi
+            " 2>&1)
             
-            output=$(container exec "$container_name" bash -c "$cmd" 2>&1)
+            if echo "$keep_alive_result" | grep -q "KEEP_ALIVE_OK"; then
+                print_status "Keep-alive process verified"
+            else
+                print_warning "Keep-alive process may not be running: $keep_alive_result"
+            fi
+            
+            # Verify container is still accessible before executing command
+            if ! container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
+                print_warning "Container became inaccessible after starting keep-alive, retrying..."
+                container_to_use=""
+                retry=$((retry + 1))
+                sleep 3
+                continue
+            fi
+            
+            # Execute the command
+            print_status "Executing command in container..."
+            output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
             exit_code=$?
+            
             if [ $exit_code -eq 0 ]; then
-                container_to_use="$container_name"
                 echo "$output"
                 return 0
             fi
-        fi
-        
-        if [ -n "$container_id" ] && [ "$container_to_use" != "$container_id" ]; then
-            # Start keep-alive process
-            container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1 || true
-            sleep 1
             
-            output=$(container exec "$container_id" bash -c "$cmd" 2>&1)
-            exit_code=$?
-            if [ $exit_code -eq 0 ]; then
-                container_to_use="$container_id"
-                echo "$output"
-                return 0
+            # Check if container is still accessible after command failure
+            if ! container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
+                print_warning "Container became inaccessible after command execution, will retry..."
+                container_to_use=""
+                retry=$((retry + 1))
+                sleep 3
+                continue
             fi
-        fi
+            
+            # Command failed but container is accessible - return error
+            break
+        done
         
         # Return error output for debugging
         echo "$output" >&2
@@ -988,7 +1058,7 @@ install_container_dependencies() {
     
     # Step 2: Install UV package manager (only if curl is available)
     if [ "$deps_installed" = true ]; then
-        print_status "Installing UV package manager..."
+    print_status "Installing UV package manager..."
         
         # Check if curl is available before trying to install UV
         print_status "Checking for curl..."
@@ -1016,14 +1086,14 @@ install_container_dependencies() {
             
             uv_install_output=$(exec_in_container "
                 curl -LsSf https://astral.sh/uv/install.sh | sh 2>&1 && \
-                export PATH=\"/root/.local/bin:\$PATH\" && \
+        export PATH=\"/root/.local/bin:\$PATH\" && \
                 uv --version 2>&1 && \
                 echo 'UV_INSTALL_SUCCESS'
             " 2>&1)
             uv_install_exit=$?
             
             if [ $uv_install_exit -eq 0 ] && echo "$uv_install_output" | grep -q "UV_INSTALL_SUCCESS"; then
-                # Verify UV installation
+        # Verify UV installation
                 print_status "Verifying UV installation..."
                 local uv_verify_output=""
                 local uv_verify_exit=0
@@ -1033,14 +1103,14 @@ install_container_dependencies() {
                 
                 if [ $uv_verify_exit -eq 0 ] && [ -n "$uv_verify_output" ]; then
                     uv_version=$(echo "$uv_verify_output" | head -1)
-                    print_success "UV installed successfully: $uv_version"
-                else
+            print_success "UV installed successfully: $uv_version"
+        else
                     print_warning "UV installation completed but verification failed (exit code: $uv_verify_exit)"
                     if [ -n "$uv_verify_output" ]; then
                         print_warning "Output: $uv_verify_output"
                     fi
-                fi
-            else
+        fi
+    else
                 print_warning "Failed to install UV (exit code: $uv_install_exit)"
                 # Show error details if available
                 if echo "$uv_install_output" | grep -qi "error\|failed\|cannot"; then
