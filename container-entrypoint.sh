@@ -204,10 +204,14 @@ install_system_dependencies() {
 setup_uv_environment() {
     log_message "=== Setting up UV Environment and Dependencies ==="
     
-    # Install system dependencies first (don't fail if it doesn't work)
-    install_system_dependencies || {
-        echo -e "\033[1;33m⚠️  System dependencies installation failed - some packages may fail to build\033[0m"
-        echo -e "\033[1;33m💡 You can install them manually: apt-get update && apt-get install -y build-essential gcc g++ libpq-dev libpq5 zlib1g-dev libjpeg-dev libpng-dev libfreetype6-dev liblcms2-dev libtiff-dev libwebp-dev libopenjp2-7-dev\033[0m"
+    # Skip system dependencies installation in entrypoint - exec.sh will handle it
+    # This prevents lock conflicts when both entrypoint and exec.sh try to install at the same time
+    # Check if system dependencies are already installed
+    if command -v gcc >/dev/null 2>&1 && command -v pkg-config >/dev/null 2>&1; then
+        echo -e "\033[1;32m✅ System dependencies already installed\033[0m"
+    else
+        echo -e "\033[1;33m⚠️  System dependencies will be installed on first shell access\033[0m"
+        echo -e "\033[1;33m💡 Or install manually: install-system-deps\033[0m"
     }
     
     # Check if virtual environment exists
@@ -262,15 +266,14 @@ setup_uv_environment() {
 install_dependencies() {
     echo -e "\033[1;33m📦 Installing dependencies from requirements.txt...\033[0m"
     
-    # First, ensure system dependencies are installed (required for building C extensions)
-    echo -e "\033[1;33m📦 Checking system dependencies (gcc, build tools)...\033[0m"
+    # Skip system dependencies installation - exec.sh will handle it
+    # This prevents lock conflicts when both entrypoint and exec.sh try to install at the same time
+    # Check if system dependencies are available
     if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
-        echo -e "\033[1;33m📦 Installing system dependencies...\033[0m"
-        install_system_dependencies || {
-            echo -e "\033[1;31m❌ Failed to install system dependencies\033[0m"
-            echo -e "\033[1;33m⚠️  Some packages may fail to build without system dependencies\033[0m"
-            echo -e "\033[1;33m💡 You can install them manually: install-system-deps\033[0m"
-        }
+        echo -e "\033[1;33m⚠️  System dependencies not installed yet\033[0m"
+        echo -e "\033[1;33m💡 They will be installed automatically on first shell access\033[0m"
+        echo -e "\033[1;33m💡 Or install manually: install-system-deps\033[0m"
+        echo -e "\033[1;33m⚠️  Some packages may fail to build without system dependencies\033[0m"
     else
         echo -e "\033[1;32m✅ System dependencies are available\033[0m"
     fi
