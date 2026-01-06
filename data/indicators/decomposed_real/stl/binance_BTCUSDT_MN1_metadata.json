@@ -1,0 +1,20 @@
+{
+  "method": "stl",
+  "params": {
+    "period": 24,
+    "seasonal": 7,
+    "trend": 25,
+    "robust": true
+  },
+  "components": [
+    "trend",
+    "seasonal",
+    "residual"
+  ],
+  "is_returns": false,
+  "is_log_returns": false,
+  "frequency": null,
+  "locale": "en",
+  "source_file": "data/raw_parquet/binance_BTCUSDT_MN1.parquet",
+  "target_column": "Open"
+}

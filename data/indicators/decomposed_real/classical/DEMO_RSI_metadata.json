@@ -1,0 +1,18 @@
+{
+  "method": "classical",
+  "params": {
+    "period": 12,
+    "mode": "additive"
+  },
+  "components": [
+    "trend",
+    "seasonal",
+    "residual"
+  ],
+  "is_returns": false,
+  "is_log_returns": false,
+  "frequency": null,
+  "locale": "en",
+  "source_file": "data/indicators/csv/DEMO_RSI.csv",
+  "target_column": "Close"
+}

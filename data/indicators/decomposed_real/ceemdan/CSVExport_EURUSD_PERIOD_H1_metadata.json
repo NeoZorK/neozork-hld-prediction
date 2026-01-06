@@ -1,0 +1,26 @@
+{
+  "method": "ceemdan",
+  "params": {
+    "max_imf": 8,
+    "trials": 100,
+    "noise_strength": 0.2,
+    "seed": null
+  },
+  "components": [
+    "IMF1",
+    "IMF2",
+    "IMF3",
+    "IMF4",
+    "IMF5",
+    "IMF6",
+    "IMF7",
+    "IMF8",
+    "residual"
+  ],
+  "is_returns": false,
+  "is_log_returns": false,
+  "frequency": null,
+  "locale": "ru",
+  "source_file": "data/cache/csv_converted/CSVExport_EURUSD_PERIOD_H1.parquet",
+  "target_column": "Close"
+}

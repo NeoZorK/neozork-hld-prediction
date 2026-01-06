@@ -1,0 +1,21 @@
+{
+  "method": "ceemdan",
+  "params": {
+    "max_imf": 5,
+    "trials": 100,
+    "noise_strength": 0.2,
+    "seed": null
+  },
+  "components": [
+    "IMF1",
+    "IMF2",
+    "IMF3",
+    "residual"
+  ],
+  "is_returns": false,
+  "is_log_returns": false,
+  "frequency": null,
+  "locale": "en",
+  "source_file": "data/indicators/parquet/DEMO_RSI.parquet",
+  "target_column": "Close"
+}
