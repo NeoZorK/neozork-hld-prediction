@@ -234,20 +234,49 @@ if [ -f /app/.venv/bin/activate ]; then
     source /app/.venv/bin/activate
 fi
 
-# Ensure setuptools and wheel are installed before running uv run commands
+# Ensure build dependencies are installed before running uv run commands
 # This is required for building packages in editable mode
-# uv run uses its own virtual environment, so we need to sync dependencies first
+# uv run uses build isolation, so we need to use --no-build-isolation and ensure build tools are in venv
 if echo "$@" | grep -q "uv run"; then
-    echo "Ensuring build dependencies are synced..." >&2
-    # Use uv sync to ensure all dependencies including build dependencies are installed
-    # This will install setuptools in the project's virtual environment
-    uv sync >/dev/null 2>&1 || {
-        # Fallback: try to install setuptools directly in venv
-        if [ -f /app/.venv/bin/activate ]; then
-            source /app/.venv/bin/activate
+    echo "Ensuring build dependencies (setuptools, wheel, mesonpy, ninja) are installed..." >&2
+    # First, ensure venv exists and has build dependencies
+    if [ -f /app/.venv/bin/activate ]; then
+        source /app/.venv/bin/activate
+        # Install setuptools and wheel if not present
+        if ! python -c "import setuptools" 2>/dev/null; then
             uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
         fi
-    }
+        # Install ninja-build system package if not present (required for mesonpy)
+        if ! command -v ninja >/dev/null 2>&1; then
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq -y >/dev/null 2>&1 && \
+            apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
+        fi
+        # Install mesonpy dependencies and mesonpy if not present (required for pandas)
+        if ! python -c "import mesonpy" 2>/dev/null; then
+            # Install dependencies first
+            uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
+            # Install mesonpy from git (not available in PyPI for Python 3.14)
+            uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+        fi
+    else
+        # Create venv and install build dependencies
+        uv venv /app/.venv >/dev/null 2>&1
+        source /app/.venv/bin/activate 2>/dev/null || true
+        # Install ninja-build system package
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update -qq -y >/dev/null 2>&1 && \
+        apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
+        # Install build dependencies
+        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+        uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
+        uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+    fi
+    # Modify command to add --no-build-isolation if not present
+    if ! echo "$@" | grep -q -- "--no-build-isolation"; then
+        # Replace "uv run" with "uv run --no-build-isolation"
+        set -- $(echo "$@" | sed 's/uv run/uv run --no-build-isolation/')
+    fi
 fi
 
 # Execute the command passed as argument
@@ -369,25 +398,47 @@ CMD_WRAPPER_EOF
                 export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
             fi
             export PYTHONPATH=\"/app:\$PYTHONPATH\"
-            # Ensure setuptools is installed before uv run commands
-            # uv run creates its own venv, so we need to sync dependencies first
+            # Ensure build dependencies are installed before uv run commands
+            # uv run uses build isolation, so we need to use --no-build-isolation and ensure build tools are in venv
             if echo \"$command\" | grep -q \"uv run\"; then
-                echo \"Ensuring build dependencies (setuptools, wheel) are available...\" >&2
-                # Use uv sync to ensure all dependencies including build dependencies are installed
-                uv sync >/dev/null 2>&1 || {
-                    # Fallback: try to install setuptools directly in venv
-                    if [ -f /app/.venv/bin/activate ]; then
-                        source /app/.venv/bin/activate
-                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
-                    else
-                        uv venv /app/.venv >/dev/null 2>&1
-                        source /app/.venv/bin/activate 2>/dev/null || true
+                echo \"Ensuring build dependencies (setuptools, wheel, mesonpy, ninja) are available...\" >&2
+                # First, ensure venv exists and has build dependencies
+                if [ -f /app/.venv/bin/activate ]; then
+                    source /app/.venv/bin/activate
+                    # Install setuptools and wheel if not present
+                    if ! python -c \"import setuptools\" 2>/dev/null; then
                         uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
                     fi
-                }
+                    # Install ninja-build system package if not present
+                    if ! command -v ninja >/dev/null 2>&1; then
+                        export DEBIAN_FRONTEND=noninteractive
+                        apt-get update -qq -y >/dev/null 2>&1 && \
+                        apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
+                    fi
+                    # Install mesonpy dependencies and mesonpy if not present (required for pandas)
+                    if ! python -c \"import mesonpy\" 2>/dev/null; then
+                        uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
+                        uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+                    fi
+                else
+                    uv venv /app/.venv >/dev/null 2>&1
+                    source /app/.venv/bin/activate 2>/dev/null || true
+                    # Install ninja-build system package
+                    export DEBIAN_FRONTEND=noninteractive
+                    apt-get update -qq -y >/dev/null 2>&1 && \
+                    apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
+                    # Install build dependencies
+                    uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                    uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
+                    uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+                fi
+                # Modify command to add --no-build-isolation if not present
+                if ! echo \"$command\" | grep -q -- \"--no-build-isolation\"; then
+                    command=\"\$(echo \"\$command\" | sed 's/uv run/uv run --no-build-isolation/')\"
+                fi
             fi
             cd /app
-            $command
+            eval \"\$command\"
         '"
     fi
     

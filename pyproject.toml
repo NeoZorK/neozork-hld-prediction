@@ -47,7 +47,7 @@ dependencies = [
     "jsonpointer==3.0.0",
     "jsonschema==4.23.0",
     "jsonschema-specifications==2024.10.1",
-    "kiwisolver==1.4.8",
+    "kiwisolver>=1.4.8",
     "MarkupSafe==3.0.2",
     "matplotlib==3.10.1",
     "matplotlib-inline==0.1.7",
@@ -152,7 +152,7 @@ dependencies = [
     "bcrypt>=4.3.0",
     "qrcode>=8.2",
     "pyjwt>=2.10.1",
-    "arch>=7.2.0",
+    "arch>=7.2.0,<9.0.0",
     "autogluon-tabular>=1.4.0; python_version<\"3.14\"",
     "ray>=2.52.0,<2.54.0; python_version<\"3.14\"",
     "openpyxl>=3.1.5",
@@ -173,9 +173,11 @@ dependencies = [
 requires = ["setuptools>=78.1.1", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.uv]
-# Ensure setuptools is available for build isolation
-extra-build-dependencies = ["setuptools>=78.1.1", "wheel"]
+[tool.uv.extra-build-dependencies]
+# Global build dependencies
+_ = ["setuptools>=78.1.1", "wheel"]
+# Build dependencies for pandas (requires mesonpy)
+pandas = ["mesonpy"]
 
 [tool.setuptools]
 packages = { find = { where = ["src"], exclude = ["tests"] } }
