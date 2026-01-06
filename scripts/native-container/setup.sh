@@ -582,32 +582,20 @@ install_container_dependencies() {
     
     print_status "Using container: $container_name (ID: $container_id)"
     
-    # Try to ensure container is running, but if it fails, we'll use container run instead
-    local use_exec=false
-    if ensure_container_running >/dev/null 2>&1; then
-        # Verify container is actually running and accessible
-        if container exec "$container_name" echo "test" >/dev/null 2>&1; then
-            use_exec=true
-        elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
-            use_exec=true
-            container_name="$container_id"
-        fi
+    # Ensure container is running - this is critical for installation
+    print_status "Ensuring container is running before installation..."
+    if ! ensure_container_running; then
+        print_warning "Could not ensure container is running, but will try to install dependencies anyway..."
     fi
     
-    # If container is not running, we'll need to start it for each command
-    # For now, we'll try to start it and use exec, but fall back to run if needed
-    if [ "$use_exec" = false ]; then
-        print_status "Container is not running, will start it for installation commands..."
-        # Try to start container one more time
-        if container start "$container_name" >/dev/null 2>&1 || \
-           ([ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1); then
-            sleep 5
-            if container exec "$container_name" echo "test" >/dev/null 2>&1; then
-                use_exec=true
-            elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
-                use_exec=true
-                container_name="$container_id"
-            fi
+    # Determine which container identifier to use
+    local container_to_use="$container_name"
+    if ! container exec "$container_name" echo "test" >/dev/null 2>&1; then
+        if [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+            container_to_use="$container_id"
+            print_status "Using container ID instead of name: $container_to_use"
+        else
+            print_warning "Container is not accessible, will try to start it for each command..."
         fi
     fi
     
@@ -616,35 +604,38 @@ install_container_dependencies() {
         local cmd="$1"
         local exit_code=0
         local output=""
+        local max_retries=3
+        local retry_count=0
         
-        # Ensure container is started before executing
-        if [ "$use_exec" = false ]; then
-            # Start container before executing command
-            if ! container start "$container_name" >/dev/null 2>&1; then
-                if [ -n "$container_id" ]; then
-                    container start "$container_id" >/dev/null 2>&1 || true
-                fi
-            fi
-            sleep 3  # Give container more time to start
-        fi
-        
-        # Try exec with name first
-        output=$(container exec "$container_name" bash -c "$cmd" 2>&1)
-        exit_code=$?
-        if [ $exit_code -eq 0 ]; then
-            echo "$output"
-            return 0
-        fi
-        
-        # Try with ID if name failed
-        if [ -n "$container_id" ] && [ "$container_id" != "$container_name" ]; then
-            output=$(container exec "$container_id" bash -c "$cmd" 2>&1)
+        # Always try to start container before executing command
+        # This ensures container is running even if it stopped
+        while [ $retry_count -lt $max_retries ]; do
+            # Try to execute command first (container might already be running)
+            output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
             exit_code=$?
+            
             if [ $exit_code -eq 0 ]; then
                 echo "$output"
                 return 0
             fi
-        fi
+            
+            # If exec failed, try to start container and retry
+            if [ $retry_count -lt $((max_retries - 1)) ]; then
+                print_status "Container not accessible, starting it (attempt $((retry_count + 1))/$max_retries)..."
+                container start "$container_name" >/dev/null 2>&1 || \
+                container start "$container_id" >/dev/null 2>&1 || true
+                sleep 3  # Give container time to start
+                
+                # Update container_to_use if needed
+                if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+                    container_to_use="$container_name"
+                elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+                    container_to_use="$container_id"
+                fi
+            fi
+            
+            retry_count=$((retry_count + 1))
+        done
         
         # Return error output for debugging
         echo "$output" >&2
@@ -654,36 +645,6 @@ install_container_dependencies() {
     # Step 1: Install system dependencies (gcc, build-essential, etc.)
     print_status "Installing system dependencies (gcc, build-essential, curl)..."
     
-    # First, ensure container is started and accessible
-    print_status "Ensuring container is running..."
-    local container_started=false
-    
-    # Try to start container if not running
-    if [ "$use_exec" = false ]; then
-        print_status "Starting container for dependency installation..."
-        if container start "$container_name" >/dev/null 2>&1; then
-            container_started=true
-        elif [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
-            container_started=true
-        fi
-        
-        if [ "$container_started" = true ]; then
-            sleep 5  # Give container time to fully start
-            # Verify container is accessible
-            if container exec "$container_name" echo "test" >/dev/null 2>&1 || \
-               ([ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1); then
-                use_exec=true
-                print_success "Container is running and accessible"
-            else
-                print_warning "Container started but not immediately accessible, will retry..."
-            fi
-        else
-            print_warning "Could not start container, will try to install dependencies anyway..."
-        fi
-    else
-        container_started=true
-    fi
-    
     # Install system dependencies with better error handling
     local deps_installed=false
     local install_output=""
@@ -691,7 +652,7 @@ install_container_dependencies() {
     print_status "Running apt-get update and installing packages..."
     install_output=$(exec_in_container "
         export DEBIAN_FRONTEND=noninteractive
-        apt-get update -qq -y 2>&1 && \
+        apt-get update -qq -y && \
         apt-get install -y --no-install-recommends \
             build-essential \
             gcc \
@@ -708,46 +669,62 @@ install_container_dependencies() {
             zlib1g-dev \
             libjpeg-dev \
             libpng-dev \
-            libfreetype6-dev 2>&1 && \
-        apt-get clean 2>&1 && \
-        rm -rf /var/lib/apt/lists/* 2>&1 && \
+            libfreetype6-dev && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/* && \
         echo 'INSTALL_SUCCESS'
     " 2>&1)
     
-    if echo "$install_output" | grep -q "INSTALL_SUCCESS"; then
+    local install_exit_code=$?
+    
+    if [ $install_exit_code -eq 0 ] && echo "$install_output" | grep -q "INSTALL_SUCCESS"; then
         deps_installed=true
+        print_status "Package installation command completed successfully"
     else
         # Show error output for debugging
+        print_warning "Package installation command failed (exit code: $install_exit_code)"
         if echo "$install_output" | grep -qi "error\|failed\|cannot"; then
             print_warning "Installation errors detected:"
             echo "$install_output" | grep -i "error\|failed\|cannot" | head -5 | while read line; do
                 print_warning "  $line"
             done
+        else
+            # Show last few lines of output for debugging
+            print_warning "Last lines of output:"
+            echo "$install_output" | tail -5 | while read line; do
+                print_warning "  $line"
+            done
         fi
     fi
     
-    # Verify installation
-    if [ "$deps_installed" = true ]; then
-        print_status "Verifying installed dependencies..."
-        local gcc_ok=false
-        local curl_ok=false
-        
-        if exec_in_container "command -v gcc >/dev/null 2>&1" >/dev/null 2>&1; then
-            gcc_ok=true
-        fi
-        
-        if exec_in_container "command -v curl >/dev/null 2>&1" >/dev/null 2>&1; then
-            curl_ok=true
-        fi
-        
-        if [ "$gcc_ok" = true ] && [ "$curl_ok" = true ]; then
-            print_success "System dependencies installed successfully (gcc and curl verified)"
-        else
-            print_warning "System dependencies installation completed but verification failed:"
-            [ "$gcc_ok" = false ] && print_warning "  - gcc not found"
-            [ "$curl_ok" = false ] && print_warning "  - curl not found"
-            deps_installed=false
-        fi
+    # Verify installation by checking if tools are available
+    print_status "Verifying installed dependencies..."
+    local gcc_ok=false
+    local curl_ok=false
+    
+    if exec_in_container "command -v gcc >/dev/null 2>&1" >/dev/null 2>&1; then
+        gcc_ok=true
+        print_status "✓ gcc found"
+    else
+        print_warning "✗ gcc not found"
+    fi
+    
+    if exec_in_container "command -v curl >/dev/null 2>&1" >/dev/null 2>&1; then
+        curl_ok=true
+        print_status "✓ curl found"
+    else
+        print_warning "✗ curl not found"
+    fi
+    
+    if [ "$gcc_ok" = true ] && [ "$curl_ok" = true ]; then
+        print_success "System dependencies installed successfully (gcc and curl verified)"
+        deps_installed=true
+    elif [ "$deps_installed" = true ]; then
+        # Installation command succeeded but verification failed - this is unusual
+        print_warning "Installation completed but verification failed:"
+        [ "$gcc_ok" = false ] && print_warning "  - gcc not found"
+        [ "$curl_ok" = false ] && print_warning "  - curl not found"
+        deps_installed=false
     else
         print_warning "Failed to install system dependencies (will be installed on first use)"
     fi
@@ -760,44 +737,64 @@ install_container_dependencies() {
         print_status "Checking for curl..."
         local curl_available=false
         local curl_check_output=""
+        local curl_check_exit=0
         
         curl_check_output=$(exec_in_container "command -v curl 2>&1" 2>&1)
-        if [ $? -eq 0 ] && [ -n "$curl_check_output" ]; then
+        curl_check_exit=$?
+        
+        if [ $curl_check_exit -eq 0 ] && [ -n "$curl_check_output" ]; then
             curl_available=true
-            print_status "curl found at: $curl_check_output"
+            print_status "✓ curl found at: $curl_check_output"
         else
-            print_warning "curl not found in container"
-            print_warning "Output: $curl_check_output"
+            print_warning "✗ curl not found in container (exit code: $curl_check_exit)"
+            if [ -n "$curl_check_output" ]; then
+                print_warning "Output: $curl_check_output"
+            fi
         fi
         
         if [ "$curl_available" = true ]; then
             print_status "Downloading and installing UV..."
             local uv_install_output=""
+            local uv_install_exit=0
+            
             uv_install_output=$(exec_in_container "
                 curl -LsSf https://astral.sh/uv/install.sh | sh 2>&1 && \
                 export PATH=\"/root/.local/bin:\$PATH\" && \
                 uv --version 2>&1 && \
                 echo 'UV_INSTALL_SUCCESS'
             " 2>&1)
+            uv_install_exit=$?
             
-            if echo "$uv_install_output" | grep -q "UV_INSTALL_SUCCESS"; then
+            if [ $uv_install_exit -eq 0 ] && echo "$uv_install_output" | grep -q "UV_INSTALL_SUCCESS"; then
                 # Verify UV installation
                 print_status "Verifying UV installation..."
                 local uv_verify_output=""
-                uv_verify_output=$(exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>&1" 2>&1)
+                local uv_verify_exit=0
                 
-                if [ $? -eq 0 ] && [ -n "$uv_verify_output" ]; then
+                uv_verify_output=$(exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>&1" 2>&1)
+                uv_verify_exit=$?
+                
+                if [ $uv_verify_exit -eq 0 ] && [ -n "$uv_verify_output" ]; then
                     uv_version=$(echo "$uv_verify_output" | head -1)
                     print_success "UV installed successfully: $uv_version"
                 else
-                    print_warning "UV installation completed but verification failed"
-                    print_warning "Output: $uv_verify_output"
+                    print_warning "UV installation completed but verification failed (exit code: $uv_verify_exit)"
+                    if [ -n "$uv_verify_output" ]; then
+                        print_warning "Output: $uv_verify_output"
+                    fi
                 fi
             else
-                print_warning "Failed to install UV"
+                print_warning "Failed to install UV (exit code: $uv_install_exit)"
                 # Show error details if available
                 if echo "$uv_install_output" | grep -qi "error\|failed\|cannot"; then
+                    print_warning "Installation errors:"
                     echo "$uv_install_output" | grep -i "error\|failed\|cannot" | head -3 | while read line; do
+                        print_warning "  $line"
+                    done
+                else
+                    # Show last few lines for debugging
+                    print_warning "Last lines of output:"
+                    echo "$uv_install_output" | tail -5 | while read line; do
                         print_warning "  $line"
                     done
                 fi
