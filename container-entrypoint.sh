@@ -826,15 +826,19 @@ post_start() {
 
 # Main execution
 main() {
+    # Ensure we can log even if something fails early
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting NeoZork HLD Prediction container..." >&2
     log_message "Starting NeoZork HLD Prediction container..."
     
     # Handle command line arguments
     case "${1:-}" in
         "init")
             init_container
+            exit 0
             ;;
         "post-start")
             post_start
+            exit 0
             ;;
         *)
             # Default behavior - full container initialization
@@ -901,9 +905,42 @@ main() {
             # Always start interactive bash shell to keep container running
             # This ensures container stays alive even if initialization had issues
             log_message "Container is ready for use. Starting interactive shell..."
-            # Start interactive bash shell
-            # Use exec to replace current process with bash
-            exec bash
+            
+            # Ensure bash is available - try multiple locations
+            BASH_CMD=""
+            if command -v bash &> /dev/null; then
+                BASH_CMD=$(command -v bash)
+            elif [ -f /bin/bash ]; then
+                BASH_CMD="/bin/bash"
+            elif [ -f /usr/bin/bash ]; then
+                BASH_CMD="/usr/bin/bash"
+            fi
+            
+            # Check if we're running in interactive mode (TTY attached)
+            if [ -t 0 ] && [ -n "$BASH_CMD" ]; then
+                # Interactive mode - start bash with proper configuration
+                log_message "Starting bash in interactive mode at: $BASH_CMD"
+                if [ -f /tmp/bash_config/.bashrc ]; then
+                    log_message "Loading bashrc from /tmp/bash_config/.bashrc"
+                    exec "$BASH_CMD" --rcfile /tmp/bash_config/.bashrc -i
+                else
+                    log_message "Starting bash without custom bashrc"
+                    exec "$BASH_CMD" -i
+                fi
+            else
+                # Non-interactive mode - keep container alive with a long-running process
+                log_message "Running in non-interactive mode. Keeping container alive..."
+                if [ -n "$BASH_CMD" ]; then
+                    # Start bash in non-interactive mode but keep it running
+                    exec "$BASH_CMD" -c "while true; do sleep 3600; done"
+                else
+                    # Fallback: use sleep loop if bash is not available
+                    log_message "Bash not found, using sleep loop to keep container alive"
+                    while true; do
+                        sleep 3600
+                    done
+                fi
+            fi
             ;;
     esac
 }
