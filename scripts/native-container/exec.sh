@@ -181,50 +181,75 @@ handle_eof() {
 # Set up EOF handler (using EXIT instead of EOF)
 trap handle_eof EXIT
 
-echo "=== NeoZork HLD Prediction Container Shell ==="
-echo "Setting up environment..."
-
 # Set non-interactive mode for apt
 export DEBIAN_FRONTEND=noninteractive
 
-# Update package list and install essential tools
-echo "Installing essential tools..."
-apt-get update -qq -y
-apt-get install -y -qq curl wget git
-
-# Check if we are in the right directory
-if [ ! -f "/app/requirements.txt" ]; then
-    echo "Error: requirements.txt not found. Are you in the correct directory?"
-    exit 1
-fi
-
-# Check if UV is available, install if not
-if ! command -v uv >/dev/null 2>&1; then
-    echo "Installing UV package manager..."
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    export PATH="$HOME/.cargo/bin:$PATH"
-    # Also add to system PATH for this session
-    export PATH="/root/.cargo/bin:$PATH"
-fi
-
-# Change to app directory
+# Change to app directory first
 cd /app
 
-# Create virtual environment and install dependencies using uv sync
-echo "Creating virtual environment and installing dependencies..."
-uv sync
-
-# Activate virtual environment
-echo "Activating virtual environment..."
-source .venv/bin/activate
+# Quick check: if venv exists and has packages, skip most setup
+if [ -d "/app/.venv" ] && [ -f "/app/.venv/pyvenv.cfg" ] && \
+   [ -f "/app/.venv/lib/python3.14/site-packages/pandas/__init__.py" ] 2>/dev/null; then
+    # Already set up, just activate and continue
+    source .venv/bin/activate 2>/dev/null || true
+    export VIRTUAL_ENV_SETUP_SKIPPED=1
+else
+    # Full setup needed
+    echo "=== NeoZork HLD Prediction Container Shell ==="
+    echo "Setting up environment..."
+    
+    # Check if essential tools are already installed (skip if present)
+    if ! command -v curl >/dev/null 2>&1 || ! command -v wget >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then
+        echo "Installing essential tools..."
+        apt-get update -qq -y >/dev/null 2>&1
+        apt-get install -y -qq curl wget git >/dev/null 2>&1
+    fi
+    
+    # Check if we are in the right directory
+    if [ ! -f "/app/requirements.txt" ]; then
+        echo "Error: requirements.txt not found. Are you in the correct directory?"
+        exit 1
+    fi
+    
+    # Check if UV is available, install if not
+    if ! command -v uv >/dev/null 2>&1; then
+        echo "Installing UV package manager..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+        export PATH="$HOME/.cargo/bin:$PATH"
+        export PATH="/root/.cargo/bin:$PATH"
+    fi
+    
+    # Check if virtual environment exists and has packages installed
+    if [ -d "/app/.venv" ] && [ -f "/app/.venv/pyvenv.cfg" ] && [ -d "/app/.venv/lib" ]; then
+        # Check if key packages are installed
+        if [ -d "/app/.venv/lib/python3.14/site-packages" ] && \
+           [ -f "/app/.venv/lib/python3.14/site-packages/pandas/__init__.py" ] 2>/dev/null; then
+            echo "Environment ready"
+        else
+            echo "Installing dependencies..."
+            uv pip install -r /app/requirements.txt --quiet 2>/dev/null || true
+        fi
+    else
+        echo "Creating virtual environment..."
+        uv venv /app/.venv >/dev/null 2>&1 || true
+        echo "Installing dependencies..."
+        uv pip install -r /app/requirements.txt --quiet 2>/dev/null || true
+    fi
+    
+    # Activate virtual environment
+    echo "Activating virtual environment..."
+    source .venv/bin/activate 2>/dev/null || {
+        if [ -f "/app/.venv/bin/activate" ]; then
+            source /app/.venv/bin/activate
+        fi
+    }
+fi
 
 # Verify virtual environment is activated
 if [ -z "$VIRTUAL_ENV" ]; then
     echo "Error: Virtual environment activation failed"
     exit 1
 fi
-
-echo "Virtual environment activated: $VIRTUAL_ENV"
 
 # Set up environment variables
 export PYTHONPATH="/app:$PYTHONPATH"
@@ -240,10 +265,10 @@ alias uv-update="uv sync --upgrade"
 alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
 alias uv-pytest="uv run pytest tests/ -n auto"
 
-echo "Environment setup complete!"
-echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
-echo "Type \"exit\" or press Ctrl+D to leave the container shell"
-echo ""
+# Show brief status only if venv was just set up
+if [ -z "$VIRTUAL_ENV_SETUP_SKIPPED" ]; then
+    echo "Environment ready. Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
+fi
 
 # Start interactive bash shell with simple configuration
 exec bash
