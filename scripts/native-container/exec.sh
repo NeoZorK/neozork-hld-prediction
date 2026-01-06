@@ -182,9 +182,11 @@ export MPLCONFIGDIR="/tmp/matplotlib-cache"
 cd /app
 
 # Install system dependencies if needed (gcc, build-essential)
+# This MUST complete synchronously before running commands
 if ! command -v gcc >/dev/null 2>&1; then
     export DEBIAN_FRONTEND=noninteractive
-    apt-get update -qq -y >/dev/null 2>&1 && \
+    # Install synchronously - wait for completion
+    apt-get update -qq -y >/dev/null 2>&1
     apt-get install -y --no-install-recommends \
         build-essential \
         gcc \
@@ -201,6 +203,13 @@ if ! command -v gcc >/dev/null 2>&1; then
         libpng-dev \
         libfreetype6-dev \
         >/dev/null 2>&1
+    apt-get clean >/dev/null 2>&1
+    rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+    # Verify installation completed
+    if ! command -v gcc >/dev/null 2>&1; then
+        echo "ERROR: Failed to install gcc" >&2
+        exit 1
+    fi
 fi
 
 # Install UV if not available
@@ -413,20 +422,31 @@ else
     
     if [ "$tools_needed" = true ]; then
         echo -n "📦 Installing essential tools and build dependencies (15-45s) "
+        # Install synchronously and wait for completion
+        export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y >/dev/null 2>&1 && \
-         apt-get install -y --no-install-recommends \
-             curl wget git \
-             build-essential gcc g++ \
+        apt-get install -y --no-install-recommends \
+            curl wget git \
+            build-essential \
+            gcc \
+            g++ \
             pkg-config \
-             libpq-dev libpq5 \
-             libffi-dev \
-             libxml2-dev libxslt1-dev \
+            libpq-dev \
+            libpq5 \
+            libffi-dev \
+            libxml2-dev \
+            libxslt1-dev \
             zlib1g-dev \
             libjpeg-dev \
             libpng-dev \
             libfreetype6-dev \
             >/dev/null 2>&1
-        echo -e " \033[1;32m✓\033[0m"
+        # Verify installation
+        if command -v gcc >/dev/null 2>&1 && command -v g++ >/dev/null 2>&1; then
+            echo -e " \033[1;32m✓\033[0m"
+        else
+            echo -e " \033[1;33m⚠\033[0m (installation may have failed)"
+        fi
     fi
 
 # Check if we are in the right directory
