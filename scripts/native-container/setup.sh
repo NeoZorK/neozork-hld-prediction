@@ -205,19 +205,42 @@ validate_container_config() {
         # Check if pyyaml is available, install if not
         if ! python3 -c "import yaml" 2>/dev/null; then
             print_status "Installing PyYAML for YAML validation..."
-            if command_exists pip3; then
-                if pip3 install pyyaml --quiet; then
-                    print_success "PyYAML installed successfully"
+            local pyyaml_installed=false
+            
+            # Try using uv first (preferred method)
+            if command_exists uv; then
+                if uv pip install --user pyyaml --quiet 2>/dev/null; then
+                    print_success "PyYAML installed successfully using UV"
+                    pyyaml_installed=true
+                else
+                    print_warning "Failed to install PyYAML with UV, trying pip3 with --user flag"
+                fi
+            fi
+            
+            # Fallback to pip3 with --user flag if UV failed or not available
+            if [ "$pyyaml_installed" = false ] && command_exists pip3; then
+                if python3 -m pip install --user pyyaml --quiet 2>/dev/null; then
+                    print_success "PyYAML installed successfully using pip3 --user"
+                    pyyaml_installed=true
                 else
                     print_warning "Failed to install PyYAML, skipping YAML validation"
                     return 0
                 fi
-            else
-                print_warning "pip3 not available, skipping YAML validation"
+            fi
+            
+            # Verify installation worked
+            if [ "$pyyaml_installed" = true ]; then
+                if ! python3 -c "import yaml" 2>/dev/null; then
+                    print_warning "PyYAML installed but not importable, skipping YAML validation"
+                    return 0
+                fi
+            elif ! command_exists uv && ! command_exists pip3; then
+                print_warning "Neither UV nor pip3 available, skipping YAML validation"
                 return 0
             fi
         fi
         
+        # Validate YAML syntax
         if python3 -c "import yaml; yaml.safe_load(open('container.yaml'))" 2>/dev/null; then
             print_success "Container configuration is valid YAML"
         else
