@@ -307,6 +307,10 @@ install_dependencies() {
     uv pip install --no-build-isolation --prefer-binary --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || {
         echo -e "\033[1;33m⚠️  Failed to install other build dependencies, continuing anyway\033[0m"
     }
+    # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+    uv pip install --no-build-isolation --prefer-binary --quiet numpy >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install numpy, continuing anyway\033[0m"
+    }
     
     # Install dependencies with optimizations for speed
     # Use --no-build-isolation and --prefer-binary for faster installation

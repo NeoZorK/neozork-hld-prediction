@@ -263,6 +263,10 @@ if echo "$@" | grep -q "uv run"; then
         if ! python -c "import cython" 2>/dev/null; then
             uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
         fi
+        # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+        if ! python -c "import numpy" 2>/dev/null; then
+            uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
+        fi
         # Install cmake system package if not present (required for some packages)
         if ! command -v cmake >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
@@ -282,6 +286,13 @@ if echo "$@" | grep -q "uv run"; then
         uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
         uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
         uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+        # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+        uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
+    fi
+    # Ensure numpy is installed before running uv run (required for pandas build)
+    if ! python -c "import numpy" 2>/dev/null; then
+        echo "Installing numpy (required for pandas build)..." >&2
+        uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
     fi
     # Modify command to add --no-build-isolation if not present
     if ! echo "$@" | grep -q -- "--no-build-isolation"; then
@@ -435,6 +446,10 @@ CMD_WRAPPER_EOF
                     if ! python -c \"import cython\" 2>/dev/null; then
                         uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
                     fi
+                    # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+                    if ! python -c \"import numpy\" 2>/dev/null; then
+                        uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
+                    fi
                     # Install cmake system package if not present
                     if ! command -v cmake >/dev/null 2>&1; then
                         export DEBIAN_FRONTEND=noninteractive
@@ -453,6 +468,8 @@ CMD_WRAPPER_EOF
                     uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
                     uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
                     uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+                    # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+                    uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
                 fi
                 # Modify command to add --no-build-isolation if not present
                 if ! echo \"$command\" | grep -q -- \"--no-build-isolation\"; then
@@ -742,6 +759,8 @@ if ! command -v uv >/dev/null 2>&1; then
                 uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
                 # Install other build dependencies
                 uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+                # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+                uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
             ) &
             build_deps_pid=$!
             dots=0
@@ -809,6 +828,8 @@ if ! command -v uv >/dev/null 2>&1; then
             uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
             # Install other build dependencies
             uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+            # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+            uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
         ) &
         build_deps_pid=$!
         dots=0
