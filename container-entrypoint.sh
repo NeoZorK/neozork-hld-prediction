@@ -111,6 +111,9 @@ install_system_dependencies() {
             g++ \
             libpq-dev \
             libpq5 \
+            libffi-dev \
+            libxml2-dev \
+            libxslt1-dev \
             curl \
             >/dev/null 2>&1; then
             apt-get clean >/dev/null 2>&1

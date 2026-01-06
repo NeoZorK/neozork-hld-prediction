@@ -227,6 +227,8 @@ else
              curl wget git \
              build-essential gcc g++ \
              libpq-dev libpq5 \
+             libffi-dev \
+             libxml2-dev libxslt1-dev \
              >/dev/null 2>&1) &
         apt_pid=$!
         dots=0
@@ -242,20 +244,20 @@ else
         wait $apt_pid
         echo -e " \033[1;32m✓\033[0m"
     fi
-    
-    # Check if we are in the right directory
-    if [ ! -f "/app/requirements.txt" ]; then
-        echo "Error: requirements.txt not found. Are you in the correct directory?"
-        exit 1
-    fi
-    
-    # Check if UV is available, install if not
-    if ! command -v uv >/dev/null 2>&1; then
+
+# Check if we are in the right directory
+if [ ! -f "/app/requirements.txt" ]; then
+    echo "Error: requirements.txt not found. Are you in the correct directory?"
+    exit 1
+fi
+
+# Check if UV is available, install if not
+if ! command -v uv >/dev/null 2>&1; then
         echo -n "📦 Installing UV package manager (5-15s) "
         (curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1) &
         uv_pid=$!
-        export PATH="$HOME/.cargo/bin:$PATH"
-        export PATH="/root/.cargo/bin:$PATH"
+    export PATH="$HOME/.cargo/bin:$PATH"
+    export PATH="/root/.cargo/bin:$PATH"
         dots=0
         while kill -0 $uv_pid 2>/dev/null; do
             printf "."
@@ -351,8 +353,8 @@ else
         elapsed=$(($(date +%s) - start_time))
         echo -e " \033[1;32m✓\033[0m (${elapsed}s)"
     fi
-    
-    # Activate virtual environment
+
+# Activate virtual environment
     echo -n "🔄 Activating virtual environment "
     source .venv/bin/activate 2>/dev/null || {
         if [ -f "/app/.venv/bin/activate" ]; then
@@ -386,10 +388,10 @@ alias uv-pytest="uv run pytest tests/ -n auto"
 if [ -z "$VIRTUAL_ENV_SETUP_SKIPPED" ]; then
     echo ""
     echo -e "\033[1;32m✓ Environment ready!\033[0m"
-    echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
+echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
     echo ""
 else
-    echo ""
+echo ""
 fi
 
 # Start interactive bash shell with simple configuration
