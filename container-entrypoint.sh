@@ -19,10 +19,17 @@ export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR=/tmp/matplotlib-cache
 
-# Limit parallel compilation jobs to reduce memory usage during matplotlib build
-export MAX_JOBS=2
-export CMAKE_BUILD_PARALLEL_LEVEL=2
+# Limit parallel compilation jobs to reduce memory usage during compilation
+# Set to 1 to minimize memory usage for packages like lxml and matplotlib
+export MAX_JOBS=1
+export CMAKE_BUILD_PARALLEL_LEVEL=1
+export MAKEFLAGS=-j1
 export NINJA_STATUS="[%f/%t] "
+# Limit memory usage for gcc compiler
+export CFLAGS="-O2 -pipe"
+export CXXFLAGS="-O2 -pipe"
+# Disable parallel compilation in setuptools
+export SETUPTOOLS_USE_DISTUTILS=stdlib
 
 # Function to log messages with timestamps
 log_message() {
@@ -222,8 +229,13 @@ install_dependencies() {
     echo -e "\033[1;33m📦 Installing dependencies from requirements.txt...\033[0m"
     
     # Set environment variables to limit parallel compilation
-    export MAX_JOBS=2
-    export CMAKE_BUILD_PARALLEL_LEVEL=2
+    # Use single job to minimize memory usage for packages like lxml
+    export MAX_JOBS=1
+    export CMAKE_BUILD_PARALLEL_LEVEL=1
+    export MAKEFLAGS=-j1
+    export CFLAGS="-O2 -pipe"
+    export CXXFLAGS="-O2 -pipe"
+    export SETUPTOOLS_USE_DISTUTILS=stdlib
     
     # Install dependencies (don't fail on error)
     if uv pip install -r /app/requirements.txt; then

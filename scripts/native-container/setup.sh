@@ -349,8 +349,12 @@ create_container() {
         --env PYTHONUNBUFFERED=1 \
         --env PYTHONDONTWRITEBYTECODE=1 \
         --env MPLCONFIGDIR=/tmp/matplotlib-cache \
-        --env MAX_JOBS=2 \
-        --env CMAKE_BUILD_PARALLEL_LEVEL=2 \
+        --env MAX_JOBS=1 \
+        --env CMAKE_BUILD_PARALLEL_LEVEL=1 \
+        --env MAKEFLAGS=-j1 \
+        --env "CFLAGS=-O2 -pipe" \
+        --env "CXXFLAGS=-O2 -pipe" \
+        --env SETUPTOOLS_USE_DISTUTILS=stdlib \
         --volume "$project_root:/app" \
         --volume "$project_root/data:/app/data" \
         --volume "$project_root/logs:/app/logs" \
@@ -359,7 +363,7 @@ create_container() {
         --volume "$project_root/mql5_feed:/app/mql5_feed" \
         --volume "$project_root/data/cache/uv_cache:/app/.uv_cache" \
         --cpus 2 \
-        --memory 4G \
+        --memory 8G \
         --arch arm64 \
         --os linux \
         --entrypoint /app/container-entrypoint.sh \
