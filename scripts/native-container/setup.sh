@@ -375,6 +375,102 @@ create_container() {
     fi
 }
 
+# Function to install system dependencies and UV in container
+install_container_dependencies() {
+    print_status "Installing system dependencies and UV in container..."
+    
+    # Get container ID
+    local container_id=$(container list --all | grep "neozork-hld-prediction" | awk '{print $1}')
+    if [ -z "$container_id" ]; then
+        print_error "Container not found after creation"
+        return 1
+    fi
+    
+    print_status "Container ID: $container_id"
+    
+    # Check if container is running, start it if not
+    if ! container list | grep -q "neozork-hld-prediction.*running"; then
+        print_status "Starting container to install dependencies..."
+        if ! container start "$container_id" >/dev/null 2>&1; then
+            print_warning "Failed to start container (dependencies will be installed on first use)"
+            return 1
+        fi
+        # Wait a moment for container to fully start
+        sleep 2
+    fi
+    
+    # Step 1: Install system dependencies (gcc, build-essential, etc.)
+    print_status "Installing system dependencies (gcc, build-essential, curl)..."
+    if container exec "$container_id" bash -c "
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update -qq -y >/dev/null 2>&1 && \
+        apt-get install -y --no-install-recommends \
+            build-essential \
+            gcc \
+            g++ \
+            pkg-config \
+            curl \
+            wget \
+            git \
+            libpq-dev \
+            libpq5 \
+            libffi-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            zlib1g-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libfreetype6-dev \
+            >/dev/null 2>&1 && \
+        apt-get clean >/dev/null 2>&1 && \
+        rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+    " 2>&1; then
+        # Verify gcc installation
+        if container exec "$container_id" bash -c "command -v gcc >/dev/null 2>&1"; then
+            print_success "System dependencies installed successfully"
+        else
+            print_warning "System dependencies installation completed but gcc not found"
+        fi
+    else
+        print_warning "Failed to install system dependencies (will be installed on first use)"
+    fi
+    
+    # Step 2: Install UV package manager
+    print_status "Installing UV package manager..."
+    if container exec "$container_id" bash -c "
+        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1 && \
+        export PATH=\"/root/.local/bin:\$PATH\" && \
+        uv --version >/dev/null 2>&1
+    " 2>&1; then
+        # Verify UV installation
+        if container exec "$container_id" bash -c "export PATH=\"/root/.local/bin:\$PATH\" && uv --version >/dev/null 2>&1"; then
+            uv_version=$(container exec "$container_id" bash -c "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>/dev/null" | head -1)
+            print_success "UV installed successfully: $uv_version"
+        else
+            print_warning "UV installation completed but not found in PATH"
+        fi
+    else
+        print_warning "Failed to install UV (will be installed on first use)"
+    fi
+    
+    # Step 3: Set up PATH in .bashrc for persistence
+    print_status "Setting up PATH in .bashrc..."
+    container exec "$container_id" bash -c "
+        if [ ! -f /root/.bashrc ]; then
+            touch /root/.bashrc
+        fi
+        if ! grep -q '/root/.local/bin' /root/.bashrc 2>/dev/null; then
+            echo 'export PATH=\"/root/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"' >> /root/.bashrc
+        fi
+        if ! grep -q '/usr/bin' /root/.bashrc 2>/dev/null; then
+            echo 'export PATH=\"/usr/bin:/usr/sbin:/bin:/sbin:\$PATH\"' >> /root/.bashrc
+        fi
+    " >/dev/null 2>&1
+    
+    print_success "Container dependencies installation completed"
+    return 0
+}
+
 # Function to build container
 build_container() {
     print_status "Building container image..."
@@ -522,6 +618,11 @@ main() {
     if ! create_container; then
         print_error "Container creation failed"
         exit 1
+    fi
+    
+    # Install container dependencies (UV and gcc)
+    if ! install_container_dependencies; then
+        print_warning "Container dependencies installation had issues (will be installed on first use)"
     fi
     
     # Build container
