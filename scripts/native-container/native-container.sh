@@ -44,11 +44,39 @@ print_menu() {
 
 # Function to check if Docker is running
 check_docker_running() {
+    # First check if container system service is running
+    if ! container system status >/dev/null 2>&1; then
+        print_warning "Container system service is not running"
+        print_status "Starting container system service..."
+        if container system start >/dev/null 2>&1; then
+            print_success "Container system service started"
+            sleep 2  # Wait for service to fully initialize
+        else
+            print_error "Failed to start container system service"
+            print_status "Please start the container service manually:"
+            print_status "  container system start"
+            return 1
+        fi
+    fi
+    
+    # Then check if we can list containers
     if ! container list --all >/dev/null 2>&1; then
-        print_error "Docker/native container service is not running"
-        print_status "Please start the container service first:"
-        print_status "  container system start"
-        return 1
+        print_error "Cannot access container service"
+        print_status "Trying to restart container system service..."
+        if container system start >/dev/null 2>&1; then
+            print_success "Container system service restarted"
+            sleep 2  # Wait for service to fully initialize
+            # Try again
+            if ! container list --all >/dev/null 2>&1; then
+                print_error "Still cannot access container service after restart"
+                return 1
+            fi
+        else
+            print_error "Failed to restart container system service"
+            print_status "Please start the container service manually:"
+            print_status "  container system start"
+            return 1
+        fi
     fi
     return 0
 }
