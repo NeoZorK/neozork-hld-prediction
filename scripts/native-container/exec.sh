@@ -432,15 +432,15 @@ else
         # Install synchronously and wait for completion
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y >/dev/null 2>&1 && \
-        apt-get install -y --no-install-recommends \
-            curl wget git \
+         apt-get install -y --no-install-recommends \
+             curl wget git \
             build-essential \
             gcc \
             g++ \
             pkg-config \
             libpq-dev \
             libpq5 \
-            libffi-dev \
+             libffi-dev \
             libxml2-dev \
             libxslt1-dev \
             zlib1g-dev \
@@ -599,20 +599,31 @@ fi
 # Start interactive bash shell with simple configuration
 # Ensure PATH is set before starting bash (UV installs to ~/.local/bin)
 export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+# Also ensure /usr/bin is in PATH for gcc and other system tools
+export PATH="/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
 # Also add PATH to .bashrc so it persists in new bash sessions
 if [ -f "$HOME/.bashrc" ]; then
     if ! grep -q "/root/.local/bin" "$HOME/.bashrc" 2>/dev/null; then
         echo 'export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"' >> "$HOME/.bashrc"
     fi
+    if ! grep -q "/usr/bin" "$HOME/.bashrc" 2>/dev/null; then
+        echo 'export PATH="/usr/bin:/usr/sbin:/bin:/sbin:$PATH"' >> "$HOME/.bashrc"
+    fi
 else
     echo 'export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"' > "$HOME/.bashrc"
+    echo 'export PATH="/usr/bin:/usr/sbin:/bin:/sbin:$PATH"' >> "$HOME/.bashrc"
+fi
+# Source .bashrc to ensure PATH is loaded in this session
+if [ -f "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc" 2>/dev/null || true
 fi
 # Use exec only if we're in interactive mode, otherwise just start bash
+# Use bash -l (login shell) to ensure .bashrc is loaded
 if [ -t 0 ]; then
-    exec bash -i
+    exec bash -il
 else
     # Non-interactive mode - start bash without exec to allow script to continue
-    bash -i
+    bash -il
 fi
 ENHANCED_SHELL_EOF
     
