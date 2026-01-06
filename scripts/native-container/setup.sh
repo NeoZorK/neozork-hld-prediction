@@ -349,6 +349,8 @@ create_container() {
         --env PYTHONUNBUFFERED=1 \
         --env PYTHONDONTWRITEBYTECODE=1 \
         --env MPLCONFIGDIR=/tmp/matplotlib-cache \
+        --env MAX_JOBS=2 \
+        --env CMAKE_BUILD_PARALLEL_LEVEL=2 \
         --volume "$project_root:/app" \
         --volume "$project_root/data:/app/data" \
         --volume "$project_root/logs:/app/logs" \

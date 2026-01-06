@@ -19,6 +19,11 @@ export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR=/tmp/matplotlib-cache
 
+# Limit parallel compilation jobs to reduce memory usage during matplotlib build
+export MAX_JOBS=2
+export CMAKE_BUILD_PARALLEL_LEVEL=2
+export NINJA_STATUS="[%f/%t] "
+
 # Function to log messages with timestamps
 log_message() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -90,16 +95,18 @@ install_system_dependencies() {
         return 1
     fi
     
-    # Check if gcc and Pillow dependencies are already installed
+    # Check if gcc, pkg-config and matplotlib dependencies are already installed
     if command -v gcc &> /dev/null && \
+       command -v pkg-config &> /dev/null && \
        [ -f /usr/include/zlib.h ] && \
        [ -f /usr/include/jpeglib.h ] && \
-       [ -f /usr/include/png.h ]; then
-        echo -e "\033[1;32m✅ Build tools and Pillow dependencies already installed\033[0m"
+       [ -f /usr/include/png.h ] && \
+       [ -f /usr/include/freetype2/freetype/freetype.h ]; then
+        echo -e "\033[1;32m✅ Build tools and matplotlib dependencies already installed\033[0m"
         return 0
     fi
     
-    echo -e "\033[1;33m📦 Installing build tools, PostgreSQL libraries, and Pillow dependencies...\033[0m"
+    echo -e "\033[1;33m📦 Installing build tools, PostgreSQL libraries, and matplotlib dependencies...\033[0m"
     
     # Set non-interactive mode
     export DEBIAN_FRONTEND=noninteractive
@@ -110,6 +117,7 @@ install_system_dependencies() {
             build-essential \
             gcc \
             g++ \
+            pkg-config \
             libpq-dev \
             libpq5 \
             libffi-dev \
@@ -130,10 +138,12 @@ install_system_dependencies() {
             
             # Verify installation
             if command -v gcc &> /dev/null && \
+               command -v pkg-config &> /dev/null && \
                [ -f /usr/include/zlib.h ] && \
                [ -f /usr/include/jpeglib.h ] && \
-               [ -f /usr/include/png.h ]; then
-                echo -e "\033[1;32m✅ System dependencies installed successfully (including Pillow dependencies)\033[0m"
+               [ -f /usr/include/png.h ] && \
+               [ -f /usr/include/freetype2/freetype/freetype.h ]; then
+                echo -e "\033[1;32m✅ System dependencies installed successfully (including matplotlib dependencies)\033[0m"
                 return 0
             else
                 echo -e "\033[1;33m⚠️  Installation completed but some dependencies may be missing\033[0m"
@@ -210,6 +220,10 @@ setup_uv_environment() {
 # Install dependencies using UV
 install_dependencies() {
     echo -e "\033[1;33m📦 Installing dependencies from requirements.txt...\033[0m"
+    
+    # Set environment variables to limit parallel compilation
+    export MAX_JOBS=2
+    export CMAKE_BUILD_PARALLEL_LEVEL=2
     
     # Install dependencies (don't fail on error)
     if uv pip install -r /app/requirements.txt; then
@@ -406,13 +420,14 @@ EOF
     # Create system dependencies installer wrapper
     cat > /tmp/bin/install-system-deps << 'EOF'
 #!/bin/bash
-echo "Installing system dependencies for building Python packages..."
+echo "Installing system dependencies for building Python packages (including matplotlib)..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq -y
 apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     g++ \
+    pkg-config \
     libpq-dev \
     libpq5 \
     libffi-dev \
@@ -429,7 +444,7 @@ apt-get install -y --no-install-recommends \
     >/dev/null 2>&1
 apt-get clean >/dev/null 2>&1
 rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
-echo "System dependencies installed successfully"
+echo "System dependencies installed successfully (including matplotlib build dependencies)"
 EOF
     chmod +x /tmp/bin/install-system-deps
 

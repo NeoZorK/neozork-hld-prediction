@@ -52,6 +52,9 @@ spec:
     - LOG_LEVEL=INFO
     - MCP_SERVER_TYPE=pycharm_copilot
     - MPLBACKEND=Agg
+    - MPLCONFIGDIR=/tmp/matplotlib-cache
+    - MAX_JOBS=2
+    - CMAKE_BUILD_PARALLEL_LEVEL=2
     - NEOZORK_TEST=1
   ports:
     - containerPort: 8000
