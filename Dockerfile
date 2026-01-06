@@ -38,13 +38,12 @@ COPY pyproject.toml /app/pyproject.toml
 COPY requirements.txt /app/requirements.txt
 
 # Install dependencies using uv pip install
-# Install all dependencies from requirements.txt, skip problematic ones if needed
+# Install psycopg2 from source (not binary) for Python 3.14 compatibility
 RUN cd /app && \
-    uv pip install --no-cache -r requirements.txt || \
-    (grep -v "^psycopg2-binary" requirements.txt > /tmp/req_no_pg.txt && \
-     uv pip install --no-cache -r /tmp/req_no_pg.txt && \
-     uv pip install --no-cache psycopg2-binary || echo "Warning: psycopg2-binary skipped" && \
-     rm -f /tmp/req_no_pg.txt) && \
+    grep -v "^psycopg2-binary" requirements.txt > /tmp/req_no_pg.txt && \
+    uv pip install --no-cache -r /tmp/req_no_pg.txt && \
+    uv pip install --no-cache "psycopg2>=2.9.11" --no-binary psycopg2 && \
+    rm -f /tmp/req_no_pg.txt && \
     find /opt/venv -name '*.pyc' -delete \
     && find /opt/venv -name '__pycache__' -delete \
     && find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf \
@@ -104,6 +103,7 @@ ENV UV_VENV_DIR=/app/.venv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     imagemagick \
+    libpq5 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc
