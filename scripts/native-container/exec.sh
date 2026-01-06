@@ -173,7 +173,6 @@ execute_in_container() {
         cat > "$temp_script" << 'CMD_WRAPPER_EOF'
 #!/bin/bash
 # Command wrapper that sets up environment and executes a command
-export PATH="$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
 # Set PATH to include UV installation directory (~/.local/bin)
 export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
 export PYTHONPATH="/app:$PYTHONPATH"
@@ -404,26 +403,19 @@ else
     
     if [ "$tools_needed" = true ]; then
         echo -n "📦 Installing essential tools and build dependencies (15-45s) "
-        (apt-get update -qq -y >/dev/null 2>&1 && \
+        apt-get update -qq -y >/dev/null 2>&1 && \
          apt-get install -y --no-install-recommends \
              curl wget git \
              build-essential gcc g++ \
+            pkg-config \
              libpq-dev libpq5 \
              libffi-dev \
              libxml2-dev libxslt1-dev \
-             >/dev/null 2>&1) &
-        apt_pid=$!
-        dots=0
-        while kill -0 $apt_pid 2>/dev/null; do
-            printf "."
-            sleep 0.3
-            dots=$((dots + 1))
-            if [ $dots -ge 50 ]; then
-                echo -e "\033[1;33m⚠ Taking longer than expected...\033[0m"
-                dots=0
-            fi
-        done
-        wait $apt_pid
+            zlib1g-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libfreetype6-dev \
+            >/dev/null 2>&1
         echo -e " \033[1;32m✓\033[0m"
     fi
 
@@ -436,20 +428,8 @@ fi
 # Check if UV is available, install if not
 if ! command -v uv >/dev/null 2>&1; then
         echo -n "📦 Installing UV package manager (5-15s) "
-        (curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1) &
-        uv_pid=$!
-        # UV installs to ~/.local/bin, not ~/.cargo/bin
-        dots=0
-        while kill -0 $uv_pid 2>/dev/null; do
-            printf "."
-            sleep 0.3
-            dots=$((dots + 1))
-            if [ $dots -ge 20 ]; then
-                echo -e "\033[1;33m⚠ Taking longer than expected...\033[0m"
-                dots=0
-            fi
-        done
-        wait $uv_pid
+        # Install UV synchronously to ensure it's available
+        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
         # Update PATH after UV installation (UV installs to ~/.local/bin)
         export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
         echo -e " \033[1;32m✓\033[0m"
@@ -603,7 +583,7 @@ ENHANCED_SHELL_EOF
     
     # Clean up temp file
     rm -f "$temp_script"
-    
+
     # Make the script executable
     container exec "$container_id" chmod +x /tmp/enhanced_shell.sh
     
@@ -618,7 +598,7 @@ ENHANCED_SHELL_EOF
     print_status "Attempting interactive mode with enhanced shell..."
     if container exec --interactive --tty "$container_id" bash -c '
         trap "exit 0" EXIT INT TERM
-        /tmp/enhanced_shell.sh
+            /tmp/enhanced_shell.sh
         rm -f /tmp/enhanced_shell.sh
     ' 2>/dev/null; then
         return 0
