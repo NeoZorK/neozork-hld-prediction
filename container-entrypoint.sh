@@ -311,6 +311,10 @@ install_dependencies() {
     uv pip install --no-build-isolation --prefer-binary --quiet numpy >/dev/null 2>&1 || {
         echo -e "\033[1;33m⚠️  Failed to install numpy, continuing anyway\033[0m"
     }
+    # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
+    uv pip install --no-build-isolation --prefer-binary --quiet scipy >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install scipy, continuing anyway\033[0m"
+    }
     
     # Install dependencies with optimizations for speed
     # Use --no-build-isolation and --prefer-binary for faster installation

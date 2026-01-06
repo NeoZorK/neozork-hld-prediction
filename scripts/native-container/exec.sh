@@ -267,6 +267,10 @@ if echo "$@" | grep -q "uv run"; then
         if ! python -c "import numpy" 2>/dev/null; then
             uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
         fi
+        # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
+        if ! python -c "import scipy" 2>/dev/null; then
+            uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
+        fi
         # Install cmake system package if not present (required for some packages)
         if ! command -v cmake >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
@@ -288,11 +292,17 @@ if echo "$@" | grep -q "uv run"; then
         uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
         # Install numpy BEFORE pandas (required for pandas build with mesonpy)
         uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
+        # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
+        uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
     fi
-    # Ensure numpy is installed before running uv run (required for pandas build)
+    # Ensure numpy and scipy are installed before running uv run (required for pandas and scikit-learn build)
     if ! python -c "import numpy" 2>/dev/null; then
         echo "Installing numpy (required for pandas build)..." >&2
         uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
+    fi
+    if ! python -c "import scipy" 2>/dev/null; then
+        echo "Installing scipy (required for scikit-learn build)..." >&2
+        uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
     fi
     # Modify command to add --no-build-isolation if not present
     if ! echo "$@" | grep -q -- "--no-build-isolation"; then
@@ -450,6 +460,10 @@ CMD_WRAPPER_EOF
                     if ! python -c \"import numpy\" 2>/dev/null; then
                         uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
                     fi
+                    # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
+                    if ! python -c \"import scipy\" 2>/dev/null; then
+                        uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
+                    fi
                     # Install cmake system package if not present
                     if ! command -v cmake >/dev/null 2>&1; then
                         export DEBIAN_FRONTEND=noninteractive
@@ -470,6 +484,8 @@ CMD_WRAPPER_EOF
                     uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
                     # Install numpy BEFORE pandas (required for pandas build with mesonpy)
                     uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
+                    # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
+                    uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
                 fi
                 # Modify command to add --no-build-isolation if not present
                 if ! echo \"$command\" | grep -q -- \"--no-build-isolation\"; then
@@ -640,22 +656,22 @@ else
                     sleep 2
                 fi
                 if apt-get install -y --no-install-recommends \
-                    curl wget git \
-                    build-essential \
-                    gcc \
-                    g++ \
-                    pkg-config \
+             curl wget git \
+            build-essential \
+            gcc \
+            g++ \
+            pkg-config \
                     ninja-build \
                     cmake \
-                    libpq-dev \
-                    libpq5 \
-                    libffi-dev \
-                    libxml2-dev \
-                    libxslt1-dev \
-                    zlib1g-dev \
-                    libjpeg-dev \
-                    libpng-dev \
-                    libfreetype6-dev \
+            libpq-dev \
+            libpq5 \
+             libffi-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            zlib1g-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libfreetype6-dev \
                     >"$error_log" 2>&1; then
                     install_success=true
                     break
@@ -685,7 +701,7 @@ else
                    command -v curl >/dev/null 2>&1 && \
                    [ -f /usr/include/zlib.h ] && \
                    [ -f /usr/include/png.h ]; then
-                    echo -e " \033[1;32m✓\033[0m"
+        echo -e " \033[1;32m✓\033[0m"
                     rm -f "$error_log"
                 else
                     echo -e " \033[1;33m⚠\033[0m (partial installation - some tools missing)"
@@ -763,17 +779,17 @@ if ! command -v uv >/dev/null 2>&1; then
                 uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
             ) &
             build_deps_pid=$!
-            dots=0
+                dots=0
             while kill -0 $build_deps_pid 2>/dev/null; do
-                printf "."
+                    printf "."
                 sleep 0.3
-                dots=$((dots + 1))
+                    dots=$((dots + 1))
                 if [ $dots -ge 15 ]; then
-                    dots=0
-                fi
-            done
+                        dots=0
+                    fi
+                done
             wait $build_deps_pid 2>/dev/null
-            echo -e " \033[1;32m✓\033[0m"
+                echo -e " \033[1;32m✓\033[0m"
             echo -n "📦 Installing dependencies (30-120s) "
             (uv pip install --no-build-isolation --quiet -r /app/requirements.txt --quiet 2>/dev/null) &
             install_pid=$!
