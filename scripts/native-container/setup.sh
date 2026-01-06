@@ -599,43 +599,74 @@ install_container_dependencies() {
         fi
     fi
     
+    # Silent version of exec_in_container for checking status
+    exec_in_container_silent() {
+        local cmd="$1"
+        container exec "$container_to_use" bash -c "$cmd" 2>/dev/null || \
+        container exec "$container_name" bash -c "$cmd" 2>/dev/null || \
+        container exec "$container_id" bash -c "$cmd" 2>/dev/null || true
+    }
+    
+    # Helper function to wait for apt-get processes to finish
+    wait_for_apt_lock() {
+        local max_wait=60
+        local wait_count=0
+        
+        while [ $wait_count -lt $max_wait ]; do
+            # Check if apt-get or dpkg processes are running
+            local apt_running=$(exec_in_container_silent "pgrep -f 'apt-get|dpkg' >/dev/null 2>&1 && echo 'yes' || echo 'no'" 2>/dev/null)
+            
+            if [ "$apt_running" != "yes" ]; then
+                # Check if lock files exist
+                local lock_exists=$(exec_in_container_silent "test -f /var/lib/dpkg/lock-frontend && echo 'yes' || echo 'no'" 2>/dev/null)
+                
+                if [ "$lock_exists" != "yes" ]; then
+                    return 0  # No locks, safe to proceed
+                fi
+            fi
+            
+            sleep 1
+            wait_count=$((wait_count + 1))
+        done
+        
+        return 1  # Timeout waiting for locks
+    }
+    
     # Helper function to execute command in container, starting it if needed
     exec_in_container() {
         local cmd="$1"
         local exit_code=0
         local output=""
-        local max_retries=3
-        local retry_count=0
         
-        # Always try to start container before executing command
-        # This ensures container is running even if it stopped
-        while [ $retry_count -lt $max_retries ]; do
-            # Try to execute command first (container might already be running)
-            output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
+        # Try to execute command first (container should already be running)
+        output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
+        exit_code=$?
+        
+        if [ $exit_code -eq 0 ]; then
+            echo "$output"
+            return 0
+        fi
+        
+        # If exec failed, try with container name or ID
+        if [ "$container_to_use" != "$container_name" ]; then
+            output=$(container exec "$container_name" bash -c "$cmd" 2>&1)
             exit_code=$?
-            
             if [ $exit_code -eq 0 ]; then
+                container_to_use="$container_name"
                 echo "$output"
                 return 0
             fi
-            
-            # If exec failed, try to start container and retry
-            if [ $retry_count -lt $((max_retries - 1)) ]; then
-                print_status "Container not accessible, starting it (attempt $((retry_count + 1))/$max_retries)..."
-                container start "$container_name" >/dev/null 2>&1 || \
-                container start "$container_id" >/dev/null 2>&1 || true
-                sleep 3  # Give container time to start
-                
-                # Update container_to_use if needed
-                if container exec "$container_name" echo "test" >/dev/null 2>&1; then
-                    container_to_use="$container_name"
-                elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
-                    container_to_use="$container_id"
-                fi
+        fi
+        
+        if [ -n "$container_id" ] && [ "$container_to_use" != "$container_id" ]; then
+            output=$(container exec "$container_id" bash -c "$cmd" 2>&1)
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
+                container_to_use="$container_id"
+                echo "$output"
+                return 0
             fi
-            
-            retry_count=$((retry_count + 1))
-        done
+        fi
         
         # Return error output for debugging
         echo "$output" >&2
@@ -645,12 +676,47 @@ install_container_dependencies() {
     # Step 1: Install system dependencies (gcc, build-essential, etc.)
     print_status "Installing system dependencies (gcc, build-essential, curl)..."
     
+    # Ensure container is running and wait for any existing apt-get processes to finish
+    print_status "Ensuring container is running and waiting for apt locks..."
+    
+    # Start container if not running
+    if ! container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
+        print_status "Starting container..."
+        container start "$container_name" >/dev/null 2>&1 || \
+        container start "$container_id" >/dev/null 2>&1 || true
+        sleep 5  # Give container time to fully start
+        
+        # Update container_to_use
+        if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+            container_to_use="$container_name"
+        elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+            container_to_use="$container_id"
+        fi
+    fi
+    
+    # Wait for any existing apt-get processes to finish
+    print_status "Waiting for any existing apt-get processes to finish..."
+    if wait_for_apt_lock; then
+        print_status "Apt locks cleared, proceeding with installation..."
+    else
+        print_warning "Apt locks still present after waiting, but proceeding anyway..."
+    fi
+    
     # Install system dependencies with better error handling
     local deps_installed=false
     local install_output=""
     
     print_status "Running apt-get update and installing packages..."
     install_output=$(exec_in_container "
+        # Wait for any remaining apt-get processes
+        while pgrep -f 'apt-get|dpkg' >/dev/null 2>&1; do
+            sleep 1
+        done
+        # Wait a bit more to ensure locks are released
+        sleep 2
+        # Remove any stale lock files
+        rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/cache/apt/archives/lock 2>/dev/null || true
+        # Now proceed with installation
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y && \
         apt-get install -y --no-install-recommends \
