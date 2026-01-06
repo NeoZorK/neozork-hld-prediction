@@ -80,9 +80,68 @@ verify_uv() {
     fi
 }
 
+# Install system dependencies required for building Python packages
+install_system_dependencies() {
+    log_message "Installing system dependencies for building Python packages..."
+    
+    # Check if we're on Debian/Ubuntu (python:3.14-slim is Debian-based)
+    if ! command -v apt-get &> /dev/null; then
+        echo -e "\033[1;33m⚠️  apt-get not available - skipping system dependencies installation\033[0m"
+        return 1
+    fi
+    
+    # Check if gcc is already installed
+    if command -v gcc &> /dev/null; then
+        echo -e "\033[1;32m✅ Build tools already installed\033[0m"
+        return 0
+    fi
+    
+    echo -e "\033[1;33m📦 Installing build tools and PostgreSQL libraries...\033[0m"
+    
+    # Set non-interactive mode
+    export DEBIAN_FRONTEND=noninteractive
+    
+    # Update package list and install build dependencies with error handling
+    if apt-get update -qq 2>&1 | grep -v "^$" >/tmp/apt_update.log 2>&1; then
+        if apt-get install -y --no-install-recommends \
+            build-essential \
+            gcc \
+            g++ \
+            libpq-dev \
+            libpq5 \
+            curl \
+            2>&1 | grep -v "^$" >/tmp/apt_install.log 2>&1; then
+            apt-get clean >/dev/null 2>&1
+            rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+            
+            # Verify installation
+            if command -v gcc &> /dev/null; then
+                echo -e "\033[1;32m✅ System dependencies installed successfully\033[0m"
+                rm -f /tmp/apt_update.log /tmp/apt_install.log 2>/dev/null
+                return 0
+            else
+                echo -e "\033[1;33m⚠️  Installation completed but gcc not found in PATH\033[0m"
+                return 1
+            fi
+        else
+            echo -e "\033[1;33m⚠️  Failed to install packages - check /tmp/apt_install.log\033[0m"
+            return 1
+        fi
+    else
+        echo -e "\033[1;33m⚠️  Failed to update package list - check /tmp/apt_update.log\033[0m"
+        return 1
+    fi
+}
+
 # Setup UV environment and install dependencies
 setup_uv_environment() {
     log_message "=== Setting up UV Environment and Dependencies ==="
+    
+    # Install system dependencies first (don't fail if it doesn't work)
+    install_system_dependencies || {
+        echo -e "\033[1;33m⚠️  System dependencies installation failed - some packages may fail to build\033[0m"
+        echo -e "\033[1;33m💡 You can install them manually: apt-get update && apt-get install -y build-essential gcc g++ libpq-dev libpq5\033[0m"
+    }
     
     # Check if virtual environment exists
     if [ ! -d "/app/.venv" ]; then
@@ -622,7 +681,11 @@ main() {
             verify_uv
             
             # Step 3: Setup UV environment and install dependencies
-            setup_uv_environment
+            # Don't fail if setup fails - allow manual installation later
+            setup_uv_environment || {
+                echo -e "\033[1;33m⚠️  UV environment setup had issues - you can install dependencies manually later\033[0m"
+                echo -e "\033[1;33m💡 Run 'uv-install' inside the container to install dependencies\033[0m"
+            }
             
             # Step 4: Setup bash environment
             setup_bash_environment
