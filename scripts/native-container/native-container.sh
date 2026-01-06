@@ -95,11 +95,16 @@ start_container_sequence() {
             read -p "Press Enter to continue to shell..." 2>/dev/null || true
         fi
         
-        # Execute shell - exec.sh will handle TTY detection internally
-        ./scripts/native-container/exec.sh --shell
+        # Execute shell - use exec.sh which handles TTY detection
+        # When called from menu, exec.sh will use script command for pseudo-TTY
+        print_status "Launching shell..."
+        if ./scripts/native-container/exec.sh --shell; then
+            exit_code=0
+        else
+            exit_code=$?
+        fi
         
         # Check exit code
-        exit_code=$?
         if [ $exit_code -eq 0 ]; then
             print_success "Container session completed"
         else

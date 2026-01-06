@@ -182,7 +182,8 @@ execute_enhanced_shell() {
     
     # Create temporary script file in container using heredoc
     print_status "Creating enhanced shell script in container..."
-    container exec "$container_id" bash -c 'cat > /tmp/enhanced_shell.sh << "EOF"
+    container exec "$container_id" bash << 'HEREDOC_EOF'
+cat > /tmp/enhanced_shell.sh << 'ENHANCED_SHELL_EOF'
 #!/bin/bash
 
 # Enhanced shell startup for NeoZork HLD Prediction container
@@ -424,7 +425,8 @@ else
     # Non-interactive mode - start bash without exec to allow script to continue
     bash -i
 fi
-EOF'
+ENHANCED_SHELL_EOF
+HEREDOC_EOF
 
     # Make the script executable
     container exec "$container_id" chmod +x /tmp/enhanced_shell.sh
@@ -435,7 +437,7 @@ EOF'
     # Start interactive shell
     print_status "Starting interactive shell..."
     
-    # Method 1: Try interactive mode with enhanced shell (works when called directly)
+    # Method 1: Try interactive mode with enhanced shell
     # Suppress stderr to avoid "fd is not a pty" errors when TTY is not available
     print_status "Attempting interactive mode with enhanced shell..."
     if container exec --interactive --tty "$container_id" bash -c '
@@ -453,21 +455,16 @@ EOF'
     fi
     
     # Method 3: Use script command to create pseudo-TTY (works from menu)
+    # This is the most reliable method when called from menu scripts
     if command -v script >/dev/null 2>&1; then
-        print_status "Using script command to create pseudo-TTY..."
-        script -q /dev/null container exec --interactive --tty "$container_id" /bin/bash -i 2>&1 && return 0
+        print_status "Using script command to create pseudo-TTY (menu call)..."
+        # script creates a pseudo-TTY that works even when stdin is not a TTY
+        script -q /dev/null bash -c "container exec --interactive --tty $container_id /bin/bash -i" 2>&1 && return 0
     fi
     
-    # Method 4: Last resort - non-interactive bash with setup
-    print_warning "All interactive methods failed, using non-interactive fallback..."
-    print_warning "Note: You can still use commands, but some interactive features may be limited"
-    container exec "$container_id" bash -c '
-        cd /app
-        [ -f .venv/bin/activate ] && source .venv/bin/activate 2>/dev/null || true
-        export PYTHONPATH=/app
-        echo "Environment setup complete. Type commands or 'exit' to leave."
-        /bin/bash
-    ' 2>&1
+    # Method 4: Direct container exec without TTY flags (fallback)
+    print_warning "Interactive TTY methods failed, trying direct exec..."
+    container exec "$container_id" /tmp/enhanced_shell.sh 2>&1
     return $?
     
     # Additional cleanup
