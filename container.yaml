@@ -47,6 +47,7 @@ spec:
     - UV_ONLY=true
     - UV_CACHE_DIR=/app/.uv_cache
     - UV_VENV_DIR=/app/.venv
+    - UV_LINK_MODE=copy
     - DOCKER_CONTAINER=false
     - NATIVE_CONTAINER=true
     - LOG_LEVEL=INFO

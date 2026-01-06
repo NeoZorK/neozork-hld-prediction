@@ -29,6 +29,7 @@ export USE_UV=true
 export UV_ONLY=true
 export UV_CACHE_DIR=/app/.uv_cache
 export UV_VENV_DIR=/app/.venv
+export UV_LINK_MODE=copy
 export NATIVE_CONTAINER=true
 export DOCKER_CONTAINER=false
 

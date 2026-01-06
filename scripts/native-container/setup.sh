@@ -428,6 +428,7 @@ create_container() {
             --env UV_ONLY=true \
             --env UV_CACHE_DIR=/app/.uv_cache \
             --env UV_VENV_DIR=/app/.venv \
+            --env UV_LINK_MODE=copy \
             --env NATIVE_CONTAINER=true \
             --env DOCKER_CONTAINER=false \
             --env LOG_LEVEL=INFO \
