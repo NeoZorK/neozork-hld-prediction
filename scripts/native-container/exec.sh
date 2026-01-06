@@ -260,10 +260,12 @@ CMD_WRAPPER_EOF
         # First ensure system dependencies are installed, then setup environment, then run command
         local wrapped_command="bash -c '
             # Step 1: Install system dependencies if needed (gcc, build-essential, etc.)
+            # This MUST complete synchronously before running the command
             if ! command -v gcc >/dev/null 2>&1; then
                 echo \"Installing system dependencies (gcc, build-essential)...\" >&2
                 export DEBIAN_FRONTEND=noninteractive
-                apt-get update -qq -y >/dev/null 2>&1 && \
+                # Install synchronously - wait for completion
+                apt-get update -qq -y >/dev/null 2>&1
                 apt-get install -y --no-install-recommends \
                     build-essential \
                     gcc \
@@ -279,9 +281,14 @@ CMD_WRAPPER_EOF
                     libjpeg-dev \
                     libpng-dev \
                     libfreetype6-dev \
-                    >/dev/null 2>&1 && \
-                apt-get clean >/dev/null 2>&1 && \
+                    >/dev/null 2>&1
+                apt-get clean >/dev/null 2>&1
                 rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+                # Verify installation completed
+                if ! command -v gcc >/dev/null 2>&1; then
+                    echo \"ERROR: Failed to install gcc\" >&2
+                    exit 1
+                fi
             fi
             
             # Step 2: Execute setup from enhanced_shell.sh (before interactive shell)
