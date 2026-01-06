@@ -181,6 +181,7 @@ handle_eof() {
 # Set up EOF handler (using EXIT instead of EOF)
 trap handle_eof EXIT
 
+
 # Set non-interactive mode for apt
 export DEBIAN_FRONTEND=noninteractive
 
@@ -191,18 +192,32 @@ cd /app
 if [ -d "/app/.venv" ] && [ -f "/app/.venv/pyvenv.cfg" ] && \
    [ -f "/app/.venv/lib/python3.14/site-packages/pandas/__init__.py" ] 2>/dev/null; then
     # Already set up, just activate and continue
+    echo -e "\033[1;32m✓\033[0m Environment ready"
     source .venv/bin/activate 2>/dev/null || true
     export VIRTUAL_ENV_SETUP_SKIPPED=1
 else
     # Full setup needed
     echo "=== NeoZork HLD Prediction Container Shell ==="
-    echo "Setting up environment..."
+    echo "Setting up environment (this may take 1-3 minutes on first run)..."
+    echo ""
     
     # Check if essential tools are already installed (skip if present)
     if ! command -v curl >/dev/null 2>&1 || ! command -v wget >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then
-        echo "Installing essential tools..."
-        apt-get update -qq -y >/dev/null 2>&1
-        apt-get install -y -qq curl wget git >/dev/null 2>&1
+        echo -n "📦 Installing essential tools (10-30s) "
+        (apt-get update -qq -y >/dev/null 2>&1 && apt-get install -y -qq curl wget git >/dev/null 2>&1) &
+        local apt_pid=$!
+        local dots=0
+        while kill -0 $apt_pid 2>/dev/null; do
+            printf "."
+            sleep 0.3
+            dots=$((dots + 1))
+            if [ $dots -ge 30 ]; then
+                echo -e "\033[1;33m⚠ Taking longer than expected...\033[0m"
+                dots=0
+            fi
+        done
+        wait $apt_pid
+        echo -e " \033[1;32m✓\033[0m"
     fi
     
     # Check if we are in the right directory
@@ -213,10 +228,23 @@ else
     
     # Check if UV is available, install if not
     if ! command -v uv >/dev/null 2>&1; then
-        echo "Installing UV package manager..."
-        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+        echo -n "📦 Installing UV package manager (5-15s) "
+        (curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1) &
+        local uv_pid=$!
         export PATH="$HOME/.cargo/bin:$PATH"
         export PATH="/root/.cargo/bin:$PATH"
+        local dots=0
+        while kill -0 $uv_pid 2>/dev/null; do
+            printf "."
+            sleep 0.3
+            dots=$((dots + 1))
+            if [ $dots -ge 20 ]; then
+                echo -e "\033[1;33m⚠ Taking longer than expected...\033[0m"
+                dots=0
+            fi
+        done
+        wait $uv_pid
+        echo -e " \033[1;32m✓\033[0m"
     fi
     
     # Check if virtual environment exists and has packages installed
@@ -224,25 +252,84 @@ else
         # Check if key packages are installed
         if [ -d "/app/.venv/lib/python3.14/site-packages" ] && \
            [ -f "/app/.venv/lib/python3.14/site-packages/pandas/__init__.py" ] 2>/dev/null; then
-            echo "Environment ready"
+            echo -e "\033[1;32m✓\033[0m Environment ready"
         else
-            echo "Installing dependencies..."
-            uv pip install -r /app/requirements.txt --quiet 2>/dev/null || true
+            echo -n "📦 Installing dependencies (30-120s) "
+            (uv pip install -r /app/requirements.txt --quiet 2>/dev/null) &
+            local install_pid=$!
+            local dots=0
+            local start_time=$(date +%s)
+            while kill -0 $install_pid 2>/dev/null; do
+                local elapsed=$(($(date +%s) - start_time))
+                if [ $elapsed -ge 180 ]; then
+                    kill $install_pid 2>/dev/null
+                    echo -e "\033[1;33m⚠ Timeout after 180s - dependencies may be partially installed\033[0m"
+                    break
+                fi
+                printf "."
+                sleep 0.5
+                dots=$((dots + 1))
+                if [ $((dots % 20)) -eq 0 ]; then
+                    printf " [${elapsed}s]"
+                    sleep 0.1
+                    printf "\b\b\b\b\b\b\b\b"
+                fi
+            done
+            wait $install_pid 2>/dev/null
+            local elapsed=$(($(date +%s) - start_time))
+            echo -e " \033[1;32m✓\033[0m (${elapsed}s)"
         fi
     else
-        echo "Creating virtual environment..."
-        uv venv /app/.venv >/dev/null 2>&1 || true
-        echo "Installing dependencies..."
-        uv pip install -r /app/requirements.txt --quiet 2>/dev/null || true
+        echo -n "📦 Creating virtual environment (2-5s) "
+        (uv venv /app/.venv >/dev/null 2>&1) &
+        local venv_pid=$!
+        local dots=0
+        while kill -0 $venv_pid 2>/dev/null; do
+            printf "."
+            sleep 0.2
+            dots=$((dots + 1))
+            if [ $dots -ge 15 ]; then
+                echo -e "\033[1;33m⚠ Taking longer than expected...\033[0m"
+                dots=0
+            fi
+        done
+        wait $venv_pid
+        echo -e " \033[1;32m✓\033[0m"
+        
+        echo -n "📦 Installing dependencies (30-120s) "
+        (uv pip install -r /app/requirements.txt --quiet 2>/dev/null) &
+        local install_pid=$!
+        local dots=0
+        local start_time=$(date +%s)
+        while kill -0 $install_pid 2>/dev/null; do
+            local elapsed=$(($(date +%s) - start_time))
+            if [ $elapsed -ge 180 ]; then
+                kill $install_pid 2>/dev/null
+                echo -e "\033[1;33m⚠ Timeout after 180s - dependencies may be partially installed\033[0m"
+                break
+            fi
+            printf "."
+            sleep 0.5
+            dots=$((dots + 1))
+            if [ $((dots % 20)) -eq 0 ]; then
+                printf " [${elapsed}s]"
+                sleep 0.1
+                printf "\b\b\b\b\b\b\b\b"
+            fi
+        done
+        wait $install_pid 2>/dev/null
+        local elapsed=$(($(date +%s) - start_time))
+        echo -e " \033[1;32m✓\033[0m (${elapsed}s)"
     fi
     
     # Activate virtual environment
-    echo "Activating virtual environment..."
+    echo -n "🔄 Activating virtual environment "
     source .venv/bin/activate 2>/dev/null || {
         if [ -f "/app/.venv/bin/activate" ]; then
             source /app/.venv/bin/activate
         fi
     }
+    echo -e "\033[1;32m✓\033[0m"
 fi
 
 # Verify virtual environment is activated
@@ -265,9 +352,14 @@ alias uv-update="uv sync --upgrade"
 alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
 alias uv-pytest="uv run pytest tests/ -n auto"
 
-# Show brief status only if venv was just set up
+# Show brief status
 if [ -z "$VIRTUAL_ENV_SETUP_SKIPPED" ]; then
-    echo "Environment ready. Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
+    echo ""
+    echo -e "\033[1;32m✓ Environment ready!\033[0m"
+    echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
+    echo ""
+else
+    echo ""
 fi
 
 # Start interactive bash shell with simple configuration
