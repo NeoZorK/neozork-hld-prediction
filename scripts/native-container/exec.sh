@@ -236,10 +236,21 @@ fi
 
 # Ensure setuptools and wheel are installed before running uv run commands
 # This is required for building packages in editable mode
+# uv run uses its own virtual environment, so we need to install setuptools there
 if echo "$@" | grep -q "uv run"; then
+    # Check if setuptools is available in the current Python environment
     if ! python -c "import setuptools" 2>/dev/null; then
         echo "Installing setuptools and wheel for build..." >&2
-        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+        # Try to install in current venv if activated
+        if [ -n "$VIRTUAL_ENV" ] && [ -f "$VIRTUAL_ENV/bin/activate" ]; then
+            uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+        else
+            # If no venv activated, install globally or use uv sync first
+            # uv run will create its own venv, so we need to ensure setuptools is available
+            # Use uv sync to ensure all dependencies including setuptools are installed
+            echo "Ensuring dependencies are synced (including setuptools)..." >&2
+            uv sync --no-build-isolation >/dev/null 2>&1 || uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+        fi
     fi
 fi
 
@@ -322,11 +333,23 @@ CMD_WRAPPER_EOF
             fi
             
             # Step 5: Ensure setuptools is installed before uv run commands
+            # uv run creates its own venv, so we need to sync dependencies first
             if echo \"$command\" | grep -q \"uv run\"; then
-                if ! python -c \"import setuptools\" 2>/dev/null; then
-                    echo \"Installing setuptools and wheel for build...\" >&2
-                    uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
-                fi
+                echo \"Ensuring build dependencies (setuptools, wheel) are available...\" >&2
+                # Use uv sync to ensure all dependencies including build dependencies are installed
+                # This will install setuptools in the project's virtual environment
+                uv sync --no-build-isolation >/dev/null 2>&1 || {
+                    # Fallback: try to install setuptools directly in venv
+                    if [ -f /app/.venv/bin/activate ]; then
+                        source /app/.venv/bin/activate
+                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                    else
+                        # Create venv if it doesn't exist and install setuptools
+                        uv venv /app/.venv >/dev/null 2>&1
+                        source /app/.venv/bin/activate 2>/dev/null || true
+                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                    fi
+                }
             fi
             
             # Step 6: Execute the command
@@ -351,10 +374,21 @@ CMD_WRAPPER_EOF
             fi
             export PYTHONPATH=\"/app:\$PYTHONPATH\"
             # Ensure setuptools is installed before uv run commands
+            # uv run creates its own venv, so we need to sync dependencies first
             if echo \"$command\" | grep -q \"uv run\"; then
-                if ! python -c \"import setuptools\" 2>/dev/null; then
-                    uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
-                fi
+                echo \"Ensuring build dependencies (setuptools, wheel) are available...\" >&2
+                # Use uv sync to ensure all dependencies including build dependencies are installed
+                uv sync --no-build-isolation >/dev/null 2>&1 || {
+                    # Fallback: try to install setuptools directly in venv
+                    if [ -f /app/.venv/bin/activate ]; then
+                        source /app/.venv/bin/activate
+                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                    else
+                        uv venv /app/.venv >/dev/null 2>&1
+                        source /app/.venv/bin/activate 2>/dev/null || true
+                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                    fi
+                }
             fi
             cd /app
             $command
@@ -599,6 +633,17 @@ if ! command -v uv >/dev/null 2>&1; then
     source .venv/bin/activate 2>/dev/null || {
         if [ -f "/app/.venv/bin/activate" ]; then
             source /app/.venv/bin/activate
+        fi
+    }
+    echo -e "\033[1;32m✓\033[0m"
+    
+    # Ensure setuptools and wheel are installed in the venv (required for uv run)
+    # Use uv sync to ensure build dependencies are installed
+    echo -n "📦 Ensuring build dependencies (setuptools, wheel) "
+    uv sync --no-build-isolation >/dev/null 2>&1 || {
+        # Fallback: install setuptools directly if sync fails
+        if ! python -c "import setuptools" 2>/dev/null; then
+            uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
         fi
     }
     echo -e "\033[1;32m✓\033[0m"
