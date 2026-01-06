@@ -129,6 +129,8 @@ else
 fi
 
 # Set up environment variables
+# Ensure PATH includes UV installation directory (~/.local/bin)
+export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
 export PYTHONPATH="/app:$PYTHONPATH"
 export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
@@ -172,30 +174,50 @@ execute_in_container() {
 #!/bin/bash
 # Command wrapper that sets up environment and executes a command
 export PATH="$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+# Set PATH to include UV installation directory (~/.local/bin)
+export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
 export PYTHONPATH="/app:$PYTHONPATH"
 export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR="/tmp/matplotlib-cache"
 cd /app
 
+# Install system dependencies if needed (gcc, build-essential)
+if ! command -v gcc >/dev/null 2>&1; then
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq -y >/dev/null 2>&1 && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        gcc \
+        g++ \
+        pkg-config \
+        curl \
+        libpq-dev \
+        libpq5 \
+        libffi-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libfreetype6-dev \
+        >/dev/null 2>&1
+fi
+
 # Install UV if not available
 if ! command -v uv >/dev/null 2>&1; then
     # Check if curl is available
     if ! command -v curl >/dev/null 2>&1; then
         # Install curl first if needed
+        export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y >/dev/null 2>&1
         apt-get install -y --no-install-recommends curl >/dev/null 2>&1
     fi
     # Install UV
     if command -v curl >/dev/null 2>&1; then
         curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
-        export PATH="$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
-        # Verify installation
-        if [ -f "$HOME/.cargo/bin/uv" ]; then
-            export PATH="$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
-        elif [ -f "/root/.cargo/bin/uv" ]; then
-            export PATH="/root/.cargo/bin:$PATH"
-        fi
+        # UV installs to ~/.local/bin, update PATH
+        export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
     fi
 fi
 
@@ -227,10 +249,34 @@ CMD_WRAPPER_EOF
         local wrapped_command="bash -c \"/tmp/cmd_wrapper.sh $command\""
     elif container exec "$container_id" test -f /tmp/enhanced_shell.sh 2>/dev/null; then
         # Use enhanced shell script - execute command through the shell
-        # Execute the setup part, then run the command
-        # Since enhanced_shell.sh has async UV installation, we execute setup and wait
+        # First ensure system dependencies are installed, then setup environment, then run command
         local wrapped_command="bash -c '
-            # Execute setup from enhanced_shell.sh (before interactive shell)
+            # Step 1: Install system dependencies if needed (gcc, build-essential, etc.)
+            if ! command -v gcc >/dev/null 2>&1; then
+                echo \"Installing system dependencies (gcc, build-essential)...\" >&2
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get update -qq -y >/dev/null 2>&1 && \
+                apt-get install -y --no-install-recommends \
+                    build-essential \
+                    gcc \
+                    g++ \
+                    pkg-config \
+                    curl \
+                    libpq-dev \
+                    libpq5 \
+                    libffi-dev \
+                    libxml2-dev \
+                    libxslt1-dev \
+                    zlib1g-dev \
+                    libjpeg-dev \
+                    libpng-dev \
+                    libfreetype6-dev \
+                    >/dev/null 2>&1 && \
+                apt-get clean >/dev/null 2>&1 && \
+                rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+            fi
+            
+            # Step 2: Execute setup from enhanced_shell.sh (before interactive shell)
             setup_part=\$(sed -n \"/^# Start interactive bash shell/q\" /tmp/enhanced_shell.sh 2>/dev/null)
             if [ -n \"\$setup_part\" ]; then
                 # Execute setup synchronously
@@ -238,22 +284,43 @@ CMD_WRAPPER_EOF
                 # Wait for background jobs (UV installation)
                 wait 2>/dev/null || true
             fi
-            # Ensure PATH is correct after setup (UV installs to ~/.local/bin)
+            
+            # Step 3: Ensure PATH is correct (UV installs to ~/.local/bin)
             export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
-            # If UV still not found, install it synchronously
+            
+            # Step 4: If UV still not found, install it synchronously
             if ! command -v uv >/dev/null 2>&1; then
                 if command -v curl >/dev/null 2>&1; then
-                    curl -LsSf https://astral.sh/uv/install.sh | sh
+                    echo \"Installing UV package manager...\" >&2
+                    curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
                     export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
                 fi
             fi
-            # Execute the command
+            
+            # Step 5: Execute the command
             cd /app
             $command
         '"
     else
-        # Fallback: basic setup
-        local wrapped_command="bash -c 'export PATH=\"\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"; export PYTHONPATH=\"/app:\$PYTHONPATH\"; cd /app; $command'"
+        # Fallback: basic setup with system dependencies and UV installation
+        local wrapped_command="bash -c '
+            # Install system dependencies if needed
+            if ! command -v gcc >/dev/null 2>&1; then
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get update -qq -y >/dev/null 2>&1 && \
+                apt-get install -y --no-install-recommends build-essential gcc g++ pkg-config curl libpq-dev libpq5 libffi-dev libxml2-dev libxslt1-dev >/dev/null 2>&1
+            fi
+            # Set PATH for UV (installs to ~/.local/bin)
+            export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
+            # Install UV if needed
+            if ! command -v uv >/dev/null 2>&1 && command -v curl >/dev/null 2>&1; then
+                curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+                export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
+            fi
+            export PYTHONPATH=\"/app:\$PYTHONPATH\"
+            cd /app
+            $command
+        '"
     fi
     
     exec_cmd="$exec_cmd $container_id $wrapped_command"
@@ -315,6 +382,8 @@ fi
 
 if [ "$pandas_found" = true ]; then
     # Already set up, just activate and continue
+    # Ensure PATH includes UV installation directory
+    export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
     echo -e "\033[1;32m✓\033[0m Environment ready"
     source .venv/bin/activate 2>/dev/null || true
     export VIRTUAL_ENV_SETUP_SKIPPED=1
@@ -369,8 +438,7 @@ if ! command -v uv >/dev/null 2>&1; then
         echo -n "📦 Installing UV package manager (5-15s) "
         (curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1) &
         uv_pid=$!
-    export PATH="$HOME/.cargo/bin:$PATH"
-    export PATH="/root/.cargo/bin:$PATH"
+        # UV installs to ~/.local/bin, not ~/.cargo/bin
         dots=0
         while kill -0 $uv_pid 2>/dev/null; do
             printf "."
@@ -382,6 +450,8 @@ if ! command -v uv >/dev/null 2>&1; then
             fi
         done
         wait $uv_pid
+        # Update PATH after UV installation (UV installs to ~/.local/bin)
+        export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
         echo -e " \033[1;32m✓\033[0m"
     fi
     
@@ -484,6 +554,8 @@ if [ -z "$VIRTUAL_ENV" ]; then
 fi
 
 # Set up environment variables
+# Ensure PATH includes UV installation directory (~/.local/bin)
+export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
 export PYTHONPATH="/app:$PYTHONPATH"
 export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
