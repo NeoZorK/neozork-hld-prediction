@@ -30,15 +30,18 @@ export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR=/tmp/matplotlib-cache
 
-# Limit parallel compilation jobs to reduce memory usage during compilation
-# Set to 1 to minimize memory usage for packages like lxml and matplotlib
-export MAX_JOBS=1
-export CMAKE_BUILD_PARALLEL_LEVEL=1
-export MAKEFLAGS=-j1
+# Optimize parallel compilation for speed (container has 8GB RAM and 4 CPUs)
+# Use 4 jobs for faster compilation while staying within memory limits
+export MAX_JOBS=4
+export CMAKE_BUILD_PARALLEL_LEVEL=4
+export MAKEFLAGS=-j4
 export NINJA_STATUS="[%f/%t] "
-# Limit memory usage for gcc compiler
-export CFLAGS="-O2 -pipe"
-export CXXFLAGS="-O2 -pipe"
+# Optimize compiler flags for speed
+export CFLAGS="-O2 -pipe -march=native"
+export CXXFLAGS="-O2 -pipe -march=native"
+# Prefer binary wheels over source builds when available (but allow source if needed)
+# Note: PIP_ONLY_BINARY=:all: might block some packages, so we use --prefer-binary flag instead
+export UV_NO_BUILD_ISOLATION=1
 
 # Function to log messages with timestamps
 log_message() {
@@ -228,7 +231,7 @@ setup_uv_environment() {
             echo -e "\033[1;33m🔄 Checking for dependency updates...\033[0m"
             
             # Update dependencies if needed (don't fail on error)
-            if uv pip install --upgrade -r /app/requirements.txt; then
+            if uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt; then
                 echo -e "\033[1;32m✅ Dependencies updated successfully\033[0m"
             else
                 echo -e "\033[1;33m⚠️  Dependency update had issues - continuing anyway\033[0m"
@@ -263,22 +266,26 @@ install_dependencies() {
         echo -e "\033[1;32m✅ System dependencies are available\033[0m"
     fi
     
-    # Set environment variables to limit parallel compilation
-    # Use single job to minimize memory usage for packages like lxml
-    export MAX_JOBS=1
-    export CMAKE_BUILD_PARALLEL_LEVEL=1
-    export MAKEFLAGS=-j1
-    export CFLAGS="-O2 -pipe"
-    export CXXFLAGS="-O2 -pipe"
+    # Set environment variables for optimized parallel compilation
+    # Use 4 jobs for faster compilation (container has 8GB RAM and 4 CPUs)
+    export MAX_JOBS=4
+    export CMAKE_BUILD_PARALLEL_LEVEL=4
+    export MAKEFLAGS=-j4
+    export CFLAGS="-O2 -pipe -march=native"
+    export CXXFLAGS="-O2 -pipe -march=native"
+    # Prefer binary wheels over source builds (but allow source if needed)
+    # Note: Using --prefer-binary flag instead of PIP_ONLY_BINARY=:all: to allow source builds if wheels unavailable
+    export UV_NO_BUILD_ISOLATION=1
     
     # First, ensure setuptools and wheel are installed (required for building packages)
     echo -e "\033[1;33m📦 Installing build tools (setuptools, wheel)...\033[0m"
-    uv pip install --upgrade setuptools>=78.1.1 wheel || {
+    uv pip install --no-build-isolation --prefer-binary --upgrade setuptools>=78.1.1 wheel || {
         echo -e "\033[1;33m⚠️  Failed to install setuptools/wheel, continuing anyway\033[0m"
     }
     
-    # Install dependencies (don't fail on error)
-    if uv pip install -r /app/requirements.txt; then
+    # Install dependencies with optimizations for speed
+    # Use --no-build-isolation and --prefer-binary for faster installation
+    if uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt; then
         echo -e "\033[1;32m✅ Dependencies installed successfully\033[0m"
         return 0
     else
@@ -430,10 +437,10 @@ fi
 
 # Ensure setuptools and wheel are installed first (required for Python 3.14)
 echo "Installing build tools (setuptools, wheel)..."
-uv pip install --upgrade setuptools>=78.1.1 wheel
+uv pip install --no-build-isolation --prefer-binary --upgrade setuptools>=78.1.1 wheel
 
-# Install all dependencies
-uv pip install -r /app/requirements.txt
+# Install all dependencies with optimizations for speed
+uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt
 EOF
     chmod +x /tmp/bin/uv-install
 
@@ -441,7 +448,7 @@ EOF
 #!/bin/bash
 echo "Updating dependencies using UV..."
 source /app/.venv/bin/activate
-uv pip install --upgrade -r /app/requirements.txt
+uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt
 EOF
     chmod +x /tmp/bin/uv-update
 

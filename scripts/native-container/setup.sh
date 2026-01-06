@@ -349,11 +349,12 @@ create_container() {
         --env PYTHONUNBUFFERED=1 \
         --env PYTHONDONTWRITEBYTECODE=1 \
         --env MPLCONFIGDIR=/tmp/matplotlib-cache \
-        --env MAX_JOBS=1 \
-        --env CMAKE_BUILD_PARALLEL_LEVEL=1 \
-        --env MAKEFLAGS=-j1 \
-        --env "CFLAGS=-O2 -pipe" \
-        --env "CXXFLAGS=-O2 -pipe" \
+        --env MAX_JOBS=4 \
+        --env CMAKE_BUILD_PARALLEL_LEVEL=4 \
+        --env MAKEFLAGS=-j4 \
+        --env "CFLAGS=-O2 -pipe -march=native" \
+        --env "CXXFLAGS=-O2 -pipe -march=native" \
+        --env "UV_NO_BUILD_ISOLATION=1" \
         --volume "$project_root:/app" \
         --volume "$project_root/data:/app/data" \
         --volume "$project_root/logs:/app/logs" \
@@ -361,7 +362,7 @@ create_container() {
         --volume "$project_root/tests:/app/tests" \
         --volume "$project_root/mql5_feed:/app/mql5_feed" \
         --volume "$project_root/data/cache/uv_cache:/app/.uv_cache" \
-        --cpus 2 \
+        --cpus 4 \
         --memory 8G \
         --arch arm64 \
         --os linux \

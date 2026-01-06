@@ -139,8 +139,8 @@ export MPLCONFIGDIR="/tmp/matplotlib-cache"
 # Create useful aliases
 alias nz="python /app/run_analysis.py"
 alias eda="python /app/scripts/eda_script.py"
-alias uv-install="uv pip install -r /app/requirements.txt"
-alias uv-update="uv pip install -r /app/requirements.txt --upgrade"
+alias uv-install="uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt"
+alias uv-update="uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt"
 alias uv-test="uv run python -c 'import sys; print(f\"Python {sys.version}\"); import pandas, numpy, matplotlib; print(\"Core packages imported successfully\")'"
 alias uv-pytest="uv run pytest tests/ -n auto"
 
@@ -487,7 +487,7 @@ if ! command -v uv >/dev/null 2>&1; then
             echo -e "\033[1;32m✓\033[0m Environment ready"
         else
             echo -n "📦 Installing dependencies (30-120s) "
-            (uv pip install -r /app/requirements.txt --quiet 2>/dev/null) &
+            (uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt --quiet 2>/dev/null) &
             install_pid=$!
             dots=0
             start_time=$(date +%s)
@@ -581,8 +581,8 @@ export MPLCONFIGDIR="/tmp/matplotlib-cache"
 # Create useful aliases
 alias nz="uv run python /app/run_analysis.py"
 alias eda="uv run python /app/scripts/eda_script.py"
-alias uv-install="uv sync"
-alias uv-update="uv sync --upgrade"
+alias uv-install="uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt"
+alias uv-update="uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt"
 alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
 alias uv-pytest="uv run pytest tests/ -n auto"
 
