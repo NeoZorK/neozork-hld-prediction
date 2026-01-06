@@ -89,8 +89,8 @@ Requires-Dist: requests>=2.32.4
 Requires-Dist: rfc3339-validator==0.1.4
 Requires-Dist: rfc3986-validator==0.1.1
 Requires-Dist: rpds-py>=0.24.0
-Requires-Dist: scikit-learn==1.6.1
 Requires-Dist: scipy>=1.16.0
+Requires-Dist: scikit-learn==1.6.1
 Requires-Dist: seaborn==0.13.2
 Requires-Dist: Send2Trash==1.8.3
 Requires-Dist: setuptools>=78.1.1
