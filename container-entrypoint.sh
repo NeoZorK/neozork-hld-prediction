@@ -102,7 +102,9 @@ install_system_dependencies() {
     export DEBIAN_FRONTEND=noninteractive
     
     # Update package list and install build dependencies with error handling
-    if apt-get update -qq 2>&1 | grep -v "^$" >/tmp/apt_update.log 2>&1; then
+    export DEBIAN_FRONTEND=noninteractive
+    
+    if apt-get update -qq >/dev/null 2>&1; then
         if apt-get install -y --no-install-recommends \
             build-essential \
             gcc \
@@ -110,25 +112,24 @@ install_system_dependencies() {
             libpq-dev \
             libpq5 \
             curl \
-            2>&1 | grep -v "^$" >/tmp/apt_install.log 2>&1; then
+            >/dev/null 2>&1; then
             apt-get clean >/dev/null 2>&1
             rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
             
             # Verify installation
             if command -v gcc &> /dev/null; then
                 echo -e "\033[1;32m✅ System dependencies installed successfully\033[0m"
-                rm -f /tmp/apt_update.log /tmp/apt_install.log 2>/dev/null
                 return 0
             else
                 echo -e "\033[1;33m⚠️  Installation completed but gcc not found in PATH\033[0m"
                 return 1
             fi
         else
-            echo -e "\033[1;33m⚠️  Failed to install packages - check /tmp/apt_install.log\033[0m"
+            echo -e "\033[1;33m⚠️  Failed to install packages - some packages may fail to build\033[0m"
             return 1
         fi
     else
-        echo -e "\033[1;33m⚠️  Failed to update package list - check /tmp/apt_update.log\033[0m"
+        echo -e "\033[1;33m⚠️  Failed to update package list\033[0m"
         return 1
     fi
 }

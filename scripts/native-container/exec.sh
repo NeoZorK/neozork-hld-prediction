@@ -211,17 +211,30 @@ else
     echo "Setting up environment (this may take 1-3 minutes on first run)..."
     echo ""
     
-    # Check if essential tools are already installed (skip if present)
+    # Check if essential tools and build tools are already installed (skip if present)
+    tools_needed=false
     if ! command -v curl >/dev/null 2>&1 || ! command -v wget >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then
-        echo -n "📦 Installing essential tools (10-30s) "
-        (apt-get update -qq -y >/dev/null 2>&1 && apt-get install -y -qq curl wget git >/dev/null 2>&1) &
+        tools_needed=true
+    fi
+    if ! command -v gcc >/dev/null 2>&1; then
+        tools_needed=true
+    fi
+    
+    if [ "$tools_needed" = true ]; then
+        echo -n "📦 Installing essential tools and build dependencies (15-45s) "
+        (apt-get update -qq -y >/dev/null 2>&1 && \
+         apt-get install -y --no-install-recommends \
+             curl wget git \
+             build-essential gcc g++ \
+             libpq-dev libpq5 \
+             >/dev/null 2>&1) &
         apt_pid=$!
         dots=0
         while kill -0 $apt_pid 2>/dev/null; do
             printf "."
             sleep 0.3
             dots=$((dots + 1))
-            if [ $dots -ge 30 ]; then
+            if [ $dots -ge 50 ]; then
                 echo -e "\033[1;33m⚠ Taking longer than expected...\033[0m"
                 dots=0
             fi
