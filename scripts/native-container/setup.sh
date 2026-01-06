@@ -202,49 +202,72 @@ validate_container_config() {
     
     # Basic YAML validation with automatic pyyaml installation
     if command_exists python3; then
+        local python_cmd="python3"
+        local temp_venv=""
+        
         # Check if pyyaml is available, install if not
         if ! python3 -c "import yaml" 2>/dev/null; then
             print_status "Installing PyYAML for YAML validation..."
+            temp_venv=$(mktemp -d)
             local pyyaml_installed=false
             
-            # Try using uv first (preferred method)
+            # Try using uv first (preferred method) with temporary venv
             if command_exists uv; then
-                if uv pip install --user pyyaml --quiet 2>/dev/null; then
-                    print_success "PyYAML installed successfully using UV"
+                if uv venv "$temp_venv" >/dev/null 2>&1 && \
+                   [ -f "$temp_venv/bin/python" ] && \
+                   "$temp_venv/bin/python" -m pip install pyyaml --quiet >/dev/null 2>&1; then
+                    print_success "PyYAML installed successfully using UV in temp venv"
                     pyyaml_installed=true
+                    python_cmd="$temp_venv/bin/python"
                 else
-                    print_warning "Failed to install PyYAML with UV, trying pip3 with --user flag"
+                    # Clean up failed venv attempt
+                    rm -rf "$temp_venv" 2>/dev/null
+                    temp_venv=$(mktemp -d)
+                    print_warning "Failed to install PyYAML with UV, trying python3 venv"
                 fi
             fi
             
-            # Fallback to pip3 with --user flag if UV failed or not available
-            if [ "$pyyaml_installed" = false ] && command_exists pip3; then
-                if python3 -m pip install --user pyyaml --quiet 2>/dev/null; then
-                    print_success "PyYAML installed successfully using pip3 --user"
+            # Fallback to python3 venv if UV failed or not available
+            if [ "$pyyaml_installed" = false ]; then
+                if python3 -m venv "$temp_venv" 2>/dev/null && \
+                   "$temp_venv/bin/python" -m pip install pyyaml --quiet 2>/dev/null; then
+                    print_success "PyYAML installed successfully using python3 venv"
                     pyyaml_installed=true
+                    python_cmd="$temp_venv/bin/python"
                 else
                     print_warning "Failed to install PyYAML, skipping YAML validation"
+                    rm -rf "$temp_venv" 2>/dev/null
                     return 0
                 fi
             fi
             
             # Verify installation worked
-            if [ "$pyyaml_installed" = true ]; then
-                if ! python3 -c "import yaml" 2>/dev/null; then
+            if [ "$pyyaml_installed" = true ] && [ -n "$python_cmd" ]; then
+                if ! "$python_cmd" -c "import yaml" 2>/dev/null; then
                     print_warning "PyYAML installed but not importable, skipping YAML validation"
+                    rm -rf "$temp_venv" 2>/dev/null
                     return 0
                 fi
-            elif ! command_exists uv && ! command_exists pip3; then
-                print_warning "Neither UV nor pip3 available, skipping YAML validation"
+            else
+                print_warning "Failed to set up PyYAML, skipping YAML validation"
+                rm -rf "$temp_venv" 2>/dev/null
                 return 0
             fi
         fi
         
         # Validate YAML syntax
-        if python3 -c "import yaml; yaml.safe_load(open('container.yaml'))" 2>/dev/null; then
+        if [ -n "$python_cmd" ] && "$python_cmd" -c "import yaml; yaml.safe_load(open('container.yaml'))" 2>/dev/null; then
             print_success "Container configuration is valid YAML"
+            # Clean up temporary venv if it was created
+            if [ -n "$temp_venv" ] && [ -d "$temp_venv" ]; then
+                rm -rf "$temp_venv" 2>/dev/null
+            fi
         else
             print_error "Container configuration has invalid YAML syntax"
+            # Clean up temporary venv if it was created
+            if [ -n "$temp_venv" ] && [ -d "$temp_venv" ]; then
+                rm -rf "$temp_venv" 2>/dev/null
+            fi
             return 1
         fi
     else
