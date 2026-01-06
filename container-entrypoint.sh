@@ -167,15 +167,25 @@ install_system_dependencies() {
             curl \
             zlib1g-dev \
             libjpeg-dev \
+            libjpeg62-turbo \
             libpng-dev \
+            libpng16-16 \
             libfreetype6-dev \
+            libfreetype6 \
             liblcms2-dev \
+            liblcms2-2 \
             libtiff-dev \
+            libtiff6 \
             libwebp-dev \
+            libwebp7 \
             libopenjp2-7-dev \
+            libopenjp2-7 \
             >/dev/null 2>&1; then
             apt-get clean >/dev/null 2>&1
             rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+            
+            # Update library cache after installation
+            ldconfig >/dev/null 2>&1 || true
             
             # Verify installation
             if command -v gcc &> /dev/null && \
@@ -551,15 +561,23 @@ apt-get install -y --no-install-recommends \
     libxslt1-dev \
     zlib1g-dev \
     libjpeg-dev \
+    libjpeg62-turbo \
     libpng-dev \
+    libpng16-16 \
     libfreetype6-dev \
+    libfreetype6 \
     liblcms2-dev \
+    liblcms2-2 \
     libtiff-dev \
+    libtiff6 \
     libwebp-dev \
+    libwebp7 \
     libopenjp2-7-dev \
+    libopenjp2-7 \
     >/dev/null 2>&1
 apt-get clean >/dev/null 2>&1
 rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+ldconfig >/dev/null 2>&1 || true
 echo "System dependencies installed successfully (including matplotlib and pandas build dependencies)"
 EOF
     chmod +x /tmp/bin/install-system-deps

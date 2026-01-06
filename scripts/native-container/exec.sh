@@ -562,9 +562,9 @@ if [ "$pandas_found" = true ]; then
     # Already set up, but ensure UV and gcc are available
     # Ensure PATH includes UV installation directory
     export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
-    # Check and install gcc if not available
-    if ! command -v gcc >/dev/null 2>&1; then
-        echo -n "📦 Installing build tools (gcc, build-essential) "
+    # Check and install gcc and image libraries if not available
+    if ! command -v gcc >/dev/null 2>&1 || ! ldconfig -p | grep -q libjpeg >/dev/null 2>&1; then
+        echo -n "📦 Installing build tools and image libraries (gcc, libjpeg, etc.) "
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y >/dev/null 2>&1 && \
         apt-get install -y --no-install-recommends \
@@ -574,7 +574,39 @@ if [ "$pandas_found" = true ]; then
             pkg-config \
             ninja-build \
             cmake \
+            libjpeg-dev \
+            libjpeg62-turbo \
+            libpng-dev \
+            libpng16-16 \
+            libfreetype6-dev \
+            libfreetype6 \
+            liblcms2-dev \
+            liblcms2-2 \
+            libtiff-dev \
+            libtiff6 \
+            libwebp-dev \
+            libwebp7 \
+            libopenjp2-7-dev \
+            libopenjp2-7 \
             >/dev/null 2>&1 && \
+        ldconfig >/dev/null 2>&1 && \
+        echo -e " \033[1;32m✓\033[0m" || echo -e " \033[1;33m⚠\033[0m"
+    fi
+    # Also ensure runtime libraries are available (check if libjpeg.so.62 exists)
+    if ! ldconfig -p 2>/dev/null | grep -q libjpeg && [ ! -f /usr/lib/aarch64-linux-gnu/libjpeg.so.62 ] && [ ! -f /usr/lib/arm-linux-gnueabihf/libjpeg.so.62 ]; then
+        echo -n "📦 Installing image runtime libraries "
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update -qq -y >/dev/null 2>&1 && \
+        apt-get install -y --no-install-recommends \
+            libjpeg62-turbo \
+            libpng16-16 \
+            libfreetype6 \
+            liblcms2-2 \
+            libtiff6 \
+            libwebp7 \
+            libopenjp2-7 \
+            >/dev/null 2>&1 && \
+        ldconfig >/dev/null 2>&1 && \
         echo -e " \033[1;32m✓\033[0m" || echo -e " \033[1;33m⚠\033[0m"
     fi
     # Check and install UV if not available
@@ -682,25 +714,55 @@ else
                     sleep 2
                 fi
                 if apt-get install -y --no-install-recommends \
-             curl wget git \
-            build-essential \
-            gcc \
-            g++ \
-            pkg-config \
+                    curl wget git \
+                    build-essential \
+                    gcc \
+                    g++ \
+                    pkg-config \
                     ninja-build \
                     cmake \
-            libpq-dev \
-            libpq5 \
-             libffi-dev \
-            libxml2-dev \
-            libxslt1-dev \
-            zlib1g-dev \
-            libjpeg-dev \
-            libpng-dev \
-            libfreetype6-dev \
+                    libpq-dev \
+                    libpq5 \
+                    libffi-dev \
+                    libxml2-dev \
+                    libxslt1-dev \
+                    zlib1g-dev \
+                    libjpeg-dev \
+                    libjpeg62-turbo \
+                    libpng-dev \
+                    libpng16-16 \
+                    libfreetype6-dev \
+                    libfreetype6 \
+                    liblcms2-dev \
+                    liblcms2-2 \
+                    libtiff-dev \
+                    libtiff6 \
+                    libwebp-dev \
+                    libwebp7 \
+                    libopenjp2-7-dev \
+                    libopenjp2-7 \
                     >"$error_log" 2>&1; then
+                    # Update library cache after installation
+                    ldconfig >/dev/null 2>&1 || true
                     install_success=true
                     break
+                fi
+                # Check if error is about missing runtime libraries
+                if grep -qi "unable to locate package\|package.*not found" "$error_log" 2>/dev/null; then
+                    # Try installing without specific version numbers
+                    if apt-get install -y --no-install-recommends \
+                        libjpeg62-turbo \
+                        libpng16-16 \
+                        libfreetype6 \
+                        liblcms2-2 \
+                        libtiff6 \
+                        libwebp7 \
+                        libopenjp2-7 \
+                        >"$error_log" 2>&1; then
+                        ldconfig >/dev/null 2>&1 || true
+                        install_success=true
+                        break
+                    fi
                 fi
                 # Check if error is lock-related - just skip and show message
                 if grep -qi "could not get lock\|unable to acquire.*lock\|is another process using it" "$error_log" 2>/dev/null; then
@@ -718,6 +780,8 @@ else
             done
             
             if [ "$install_success" = true ]; then
+                # Update library cache after installation
+                ldconfig >/dev/null 2>&1 || true
                 # Verify installation - check multiple tools including build tools for pandas
                 if command -v gcc >/dev/null 2>&1 && \
                    command -v g++ >/dev/null 2>&1 && \
@@ -726,9 +790,16 @@ else
                    command -v cmake >/dev/null 2>&1 && \
                    command -v curl >/dev/null 2>&1 && \
                    [ -f /usr/include/zlib.h ] && \
-                   [ -f /usr/include/png.h ]; then
-        echo -e " \033[1;32m✓\033[0m"
+                   [ -f /usr/include/png.h ] && \
+                   (ldconfig -p 2>/dev/null | grep -q libjpeg || [ -f /usr/lib/aarch64-linux-gnu/libjpeg.so.62 ] || [ -f /usr/lib/arm-linux-gnueabihf/libjpeg.so.62 ] || [ -f /usr/lib/libjpeg.so.62 ]); then
+                    echo -e " \033[1;32m✓\033[0m"
                     rm -f "$error_log"
+                    # Rebuild Pillow if it was installed before runtime libraries
+                    if python -c "import PIL" 2>/dev/null; then
+                        echo -n "📦 Rebuilding Pillow with image libraries "
+                        (uv pip install --no-build-isolation --force-reinstall --no-cache-dir pillow >/dev/null 2>&1) && \
+                        echo -e " \033[1;32m✓\033[0m" || echo -e " \033[1;33m⚠\033[0m"
+                    fi
                 else
                     echo -e " \033[1;33m⚠\033[0m (partial installation - some tools missing)"
                     echo "   Check: $error_log for details"
