@@ -139,8 +139,8 @@ export MPLCONFIGDIR="/tmp/matplotlib-cache"
 # Create useful aliases
 alias nz="python /app/run_analysis.py"
 alias eda="python /app/scripts/eda_script.py"
-alias uv-install="uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt"
-alias uv-update="uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt"
+alias uv-install="uv pip install --no-build-isolation --quiet -r /app/requirements.txt"
+alias uv-update="uv pip install --no-build-isolation --quiet --upgrade -r /app/requirements.txt"
 alias uv-test="uv run python -c 'import sys; print(f\"Python {sys.version}\"); import pandas, numpy, matplotlib; print(\"Core packages imported successfully\")'"
 alias uv-pytest="uv run pytest tests/ -n auto"
 
@@ -236,22 +236,18 @@ fi
 
 # Ensure setuptools and wheel are installed before running uv run commands
 # This is required for building packages in editable mode
-# uv run uses its own virtual environment, so we need to install setuptools there
+# uv run uses its own virtual environment, so we need to sync dependencies first
 if echo "$@" | grep -q "uv run"; then
-    # Check if setuptools is available in the current Python environment
-    if ! python -c "import setuptools" 2>/dev/null; then
-        echo "Installing setuptools and wheel for build..." >&2
-        # Try to install in current venv if activated
-        if [ -n "$VIRTUAL_ENV" ] && [ -f "$VIRTUAL_ENV/bin/activate" ]; then
-            uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
-        else
-            # If no venv activated, install globally or use uv sync first
-            # uv run will create its own venv, so we need to ensure setuptools is available
-            # Use uv sync to ensure all dependencies including setuptools are installed
-            echo "Ensuring dependencies are synced (including setuptools)..." >&2
-            uv sync --no-build-isolation >/dev/null 2>&1 || uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+    echo "Ensuring build dependencies are synced..." >&2
+    # Use uv sync to ensure all dependencies including build dependencies are installed
+    # This will install setuptools in the project's virtual environment
+    uv sync >/dev/null 2>&1 || {
+        # Fallback: try to install setuptools directly in venv
+        if [ -f /app/.venv/bin/activate ]; then
+            source /app/.venv/bin/activate
+            uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
         fi
-    fi
+    }
 fi
 
 # Execute the command passed as argument
@@ -342,12 +338,12 @@ CMD_WRAPPER_EOF
                     # Fallback: try to install setuptools directly in venv
                     if [ -f /app/.venv/bin/activate ]; then
                         source /app/.venv/bin/activate
-                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
                     else
                         # Create venv if it doesn't exist and install setuptools
                         uv venv /app/.venv >/dev/null 2>&1
                         source /app/.venv/bin/activate 2>/dev/null || true
-                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
                     fi
                 }
             fi
@@ -378,15 +374,15 @@ CMD_WRAPPER_EOF
             if echo \"$command\" | grep -q \"uv run\"; then
                 echo \"Ensuring build dependencies (setuptools, wheel) are available...\" >&2
                 # Use uv sync to ensure all dependencies including build dependencies are installed
-                uv sync --no-build-isolation >/dev/null 2>&1 || {
+                uv sync >/dev/null 2>&1 || {
                     # Fallback: try to install setuptools directly in venv
                     if [ -f /app/.venv/bin/activate ]; then
                         source /app/.venv/bin/activate
-                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
                     else
                         uv venv /app/.venv >/dev/null 2>&1
                         source /app/.venv/bin/activate 2>/dev/null || true
-                        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
                     fi
                 }
             fi
@@ -546,7 +542,7 @@ if ! command -v uv >/dev/null 2>&1; then
             # Ensure setuptools is installed before installing dependencies
             if ! python -c "import setuptools" 2>/dev/null; then
                 echo -n "📦 Installing build tools (setuptools, wheel) "
-                (uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1) &
+                (uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1) &
                 build_tools_pid=$!
                 dots=0
                 while kill -0 $build_tools_pid 2>/dev/null; do
@@ -561,7 +557,7 @@ if ! command -v uv >/dev/null 2>&1; then
                 echo -e " \033[1;32m✓\033[0m"
             fi
             echo -n "📦 Installing dependencies (30-120s) "
-            (uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt --quiet 2>/dev/null) &
+            (uv pip install --no-build-isolation --quiet -r /app/requirements.txt --quiet 2>/dev/null) &
             install_pid=$!
             dots=0
             start_time=$(date +%s)
@@ -643,7 +639,7 @@ if ! command -v uv >/dev/null 2>&1; then
     uv sync --no-build-isolation >/dev/null 2>&1 || {
         # Fallback: install setuptools directly if sync fails
         if ! python -c "import setuptools" 2>/dev/null; then
-            uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+            uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
         fi
     }
     echo -e "\033[1;32m✓\033[0m"
@@ -666,8 +662,8 @@ export MPLCONFIGDIR="/tmp/matplotlib-cache"
 # Create useful aliases
 alias nz="uv run python /app/run_analysis.py"
 alias eda="uv run python /app/scripts/eda_script.py"
-alias uv-install="uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt"
-alias uv-update="uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt"
+alias uv-install="uv pip install --no-build-isolation --quiet -r /app/requirements.txt"
+alias uv-update="uv pip install --no-build-isolation --quiet --upgrade -r /app/requirements.txt"
 alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
 alias uv-pytest="uv run pytest tests/ -n auto"
 
