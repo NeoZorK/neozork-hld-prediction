@@ -178,8 +178,8 @@ build-backend = "setuptools.build_meta"
 _ = ["setuptools>=78.1.1", "wheel"]
 # Build dependencies for neozork-hld-prediction
 neozork-hld-prediction = ["setuptools>=78.1.1", "wheel"]
-# Build dependencies for pandas (requires mesonpy)
-pandas = ["mesonpy"]
+# Build dependencies for pandas (requires mesonpy and related tools)
+pandas = ["mesonpy", "pyproject-metadata", "meson", "packaging", "cython", "versioneer", "pybind11", "setuptools-scm"]
 
 [tool.setuptools]
 packages = { find = { where = ["src"], exclude = ["tests"] } }

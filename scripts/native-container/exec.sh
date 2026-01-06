@@ -613,6 +613,8 @@ else
                     gcc \
                     g++ \
                     pkg-config \
+                    ninja-build \
+                    cmake \
                     libpq-dev \
                     libpq5 \
                     libffi-dev \
@@ -630,10 +632,12 @@ else
             done
             
             if [ "$install_success" = true ]; then
-                # Verify installation - check multiple tools
+                # Verify installation - check multiple tools including build tools for pandas
                 if command -v gcc >/dev/null 2>&1 && \
                    command -v g++ >/dev/null 2>&1 && \
                    command -v pkg-config >/dev/null 2>&1 && \
+                   command -v ninja >/dev/null 2>&1 && \
+                   command -v cmake >/dev/null 2>&1 && \
                    command -v curl >/dev/null 2>&1 && \
                    [ -f /usr/include/zlib.h ] && \
                    [ -f /usr/include/png.h ]; then
@@ -700,23 +704,30 @@ if ! command -v uv >/dev/null 2>&1; then
         if [ "$pandas_found" = true ]; then
             echo -e "\033[1;32m✓\033[0m Environment ready"
         else
-            # Ensure setuptools is installed before installing dependencies
-            if ! python -c "import setuptools" 2>/dev/null; then
-                echo -n "📦 Installing build tools (setuptools, wheel) "
-                (uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1) &
-                build_tools_pid=$!
-                dots=0
-                while kill -0 $build_tools_pid 2>/dev/null; do
-                    printf "."
-                    sleep 0.2
-                    dots=$((dots + 1))
-                    if [ $dots -ge 10 ]; then
-                        dots=0
-                    fi
-                done
-                wait $build_tools_pid 2>/dev/null
-                echo -e " \033[1;32m✓\033[0m"
-            fi
+            # Ensure all build dependencies are installed before installing main dependencies
+            echo -n "📦 Installing Python build dependencies (mesonpy, setuptools, etc.) "
+            (
+                # Install basic build tools first
+                uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                # Install mesonpy dependencies
+                uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
+                # Install mesonpy from git (required for pandas on Python 3.14)
+                uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+                # Install other build dependencies
+                uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+            ) &
+            build_deps_pid=$!
+            dots=0
+            while kill -0 $build_deps_pid 2>/dev/null; do
+                printf "."
+                sleep 0.3
+                dots=$((dots + 1))
+                if [ $dots -ge 15 ]; then
+                    dots=0
+                fi
+            done
+            wait $build_deps_pid 2>/dev/null
+            echo -e " \033[1;32m✓\033[0m"
             echo -n "📦 Installing dependencies (30-120s) "
             (uv pip install --no-build-isolation --quiet -r /app/requirements.txt --quiet 2>/dev/null) &
             install_pid=$!
@@ -757,6 +768,32 @@ if ! command -v uv >/dev/null 2>&1; then
             fi
         done
         wait $venv_pid
+        echo -e " \033[1;32m✓\033[0m"
+        
+        # Install build dependencies before main dependencies
+        echo -n "📦 Installing Python build dependencies (mesonpy, setuptools, etc.) "
+        (
+            source /app/.venv/bin/activate 2>/dev/null || true
+            # Install basic build tools first
+            uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+            # Install mesonpy dependencies
+            uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
+            # Install mesonpy from git (required for pandas on Python 3.14)
+            uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+            # Install other build dependencies
+            uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+        ) &
+        build_deps_pid=$!
+        dots=0
+        while kill -0 $build_deps_pid 2>/dev/null; do
+            printf "."
+            sleep 0.3
+            dots=$((dots + 1))
+            if [ $dots -ge 15 ]; then
+                dots=0
+            fi
+        done
+        wait $build_deps_pid 2>/dev/null
         echo -e " \033[1;32m✓\033[0m"
         
         echo -n "📦 Installing dependencies (30-120s) "

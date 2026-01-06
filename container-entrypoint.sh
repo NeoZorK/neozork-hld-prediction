@@ -157,6 +157,8 @@ install_system_dependencies() {
             gcc \
             g++ \
             pkg-config \
+            ninja-build \
+            cmake \
             libpq-dev \
             libpq5 \
             libffi-dev \
@@ -284,10 +286,23 @@ install_dependencies() {
     # Note: Using --prefer-binary flag instead of PIP_ONLY_BINARY=:all: to allow source builds if wheels unavailable
     export UV_NO_BUILD_ISOLATION=1
     
-    # First, ensure setuptools and wheel are installed (required for building packages)
-    echo -e "\033[1;33m📦 Installing build tools (setuptools, wheel)...\033[0m"
+    # First, ensure all build dependencies are installed (required for building packages like pandas)
+    echo -e "\033[1;33m📦 Installing build tools (setuptools, wheel, mesonpy, etc.)...\033[0m"
+    # Install basic build tools
     uv pip install --no-build-isolation --prefer-binary --upgrade setuptools>=78.1.1 wheel || {
         echo -e "\033[1;33m⚠️  Failed to install setuptools/wheel, continuing anyway\033[0m"
+    }
+    # Install mesonpy dependencies (required for pandas)
+    uv pip install --no-build-isolation --prefer-binary --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install mesonpy dependencies, continuing anyway\033[0m"
+    }
+    # Install mesonpy from git (required for pandas on Python 3.14)
+    uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install mesonpy, continuing anyway\033[0m"
+    }
+    # Install other build dependencies
+    uv pip install --no-build-isolation --prefer-binary --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install other build dependencies, continuing anyway\033[0m"
     }
     
     # Install dependencies with optimizations for speed
@@ -508,7 +523,7 @@ EOF
     # Create system dependencies installer wrapper
     cat > /tmp/bin/install-system-deps << 'EOF'
 #!/bin/bash
-echo "Installing system dependencies for building Python packages (including matplotlib)..."
+echo "Installing system dependencies for building Python packages (including matplotlib and pandas)..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq -y
 apt-get install -y --no-install-recommends \
@@ -516,6 +531,8 @@ apt-get install -y --no-install-recommends \
     gcc \
     g++ \
     pkg-config \
+    ninja-build \
+    cmake \
     libpq-dev \
     libpq5 \
     libffi-dev \
@@ -532,7 +549,7 @@ apt-get install -y --no-install-recommends \
     >/dev/null 2>&1
 apt-get clean >/dev/null 2>&1
 rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
-echo "System dependencies installed successfully (including matplotlib build dependencies)"
+echo "System dependencies installed successfully (including matplotlib and pandas build dependencies)"
 EOF
     chmod +x /tmp/bin/install-system-deps
 
