@@ -535,9 +535,10 @@ handle_eof() {
 # Set up EOF handler (using EXIT instead of EOF)
 trap handle_eof EXIT
 
-# IMPORTANT: Set PATH first to include UV installation directory
+# IMPORTANT: Set PATH first to include UV installation directory and system tools
 # UV installs to ~/.local/bin, so we need to add it to PATH immediately
-export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+# Also ensure system tools (gcc, etc.) are in PATH
+export PATH="/usr/bin:/usr/sbin:/bin:/sbin:$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
 
 # Set non-interactive mode for apt
 export DEBIAN_FRONTEND=noninteractive
@@ -558,14 +559,39 @@ if [ -d "/app/.venv" ] && [ -f "/app/.venv/pyvenv.cfg" ]; then
 fi
 
 if [ "$pandas_found" = true ]; then
-    # Already set up, just activate and continue
+    # Already set up, but ensure UV and gcc are available
     # Ensure PATH includes UV installation directory
     export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+    # Check and install gcc if not available
+    if ! command -v gcc >/dev/null 2>&1; then
+        echo -n "📦 Installing build tools (gcc, build-essential) "
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update -qq -y >/dev/null 2>&1 && \
+        apt-get install -y --no-install-recommends \
+            build-essential \
+            gcc \
+            g++ \
+            pkg-config \
+            ninja-build \
+            cmake \
+            >/dev/null 2>&1 && \
+        echo -e " \033[1;32m✓\033[0m" || echo -e " \033[1;33m⚠\033[0m"
+    fi
     # Check and install UV if not available
     if ! command -v uv >/dev/null 2>&1; then
+        echo -n "📦 Installing UV package manager "
         if command -v curl >/dev/null 2>&1; then
             curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
             export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+            echo -e " \033[1;32m✓\033[0m"
+        else
+            # Install curl first if needed
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq -y >/dev/null 2>&1 && \
+            apt-get install -y --no-install-recommends curl >/dev/null 2>&1 && \
+            curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1 && \
+            export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH" && \
+            echo -e " \033[1;32m✓\033[0m" || echo -e " \033[1;33m⚠\033[0m"
         fi
     fi
     echo -e "\033[1;32m✓\033[0m Environment ready"
@@ -945,6 +971,9 @@ export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin
 # Also ensure /usr/bin is in PATH for gcc and other system tools
 export PATH="/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
 # Also add PATH to .bashrc so it persists in new bash sessions
+if [ ! -f "$HOME/.bashrc" ]; then
+    touch "$HOME/.bashrc"
+fi
 if [ -f "$HOME/.bashrc" ]; then
     if ! grep -q "/root/.local/bin" "$HOME/.bashrc" 2>/dev/null; then
         echo 'export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"' >> "$HOME/.bashrc"
