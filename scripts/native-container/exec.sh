@@ -560,90 +560,113 @@ else
         # Create temp file for error output
         error_log=$(mktemp /tmp/apt-install-errors.XXXXXX)
         
-        # Check network connectivity first
-        if ! ping -c 1 -W 2 8.8.8.8 >/dev/null 2>&1 && ! ping -c 1 -W 2 deb.debian.org >/dev/null 2>&1; then
-            echo -e " \033[1;33m⚠\033[0m (no network connectivity)"
-            echo "   Cannot reach package repositories. Check network settings."
-            rm -f "$error_log"
-        else
-            # Update package list with retry
-            update_success=false
+        # Try to update package list directly (this is the best network connectivity test)
+        # Update package list with retry (up to 3 attempts)
+        update_success=false
+        for attempt in 1 2 3; do
+            if [ $attempt -gt 1 ]; then
+                echo -n " (retry $attempt) "
+            fi
+            # Use timeout if available, otherwise run directly
+            if command -v timeout >/dev/null 2>&1; then
+                apt_cmd="timeout 30 apt-get update -qq -y"
+            else
+                apt_cmd="apt-get update -qq -y"
+            fi
+            # Capture both stdout and stderr
+            if eval "$apt_cmd" >"$error_log" 2>&1; then
+                update_success=true
+                break
+            fi
+            # Check if error is network-related
+            if grep -qi "temporary failure\|could not resolve\|failed to fetch\|network\|connection" "$error_log" 2>/dev/null; then
+                if [ $attempt -lt 3 ]; then
+                    sleep 3
+                    continue
+                else
+                    echo -e " \033[1;33m⚠\033[0m (network connectivity issue)"
+                    echo "   Cannot reach package repositories."
+                    if [ -f "$error_log" ]; then
+                        echo "   Error details:"
+                        grep -i "temporary failure\|could not resolve\|failed to fetch" "$error_log" | head -n 3 | sed 's/^/   /'
+                    fi
+                    echo "   Possible solutions:"
+                    echo "   - Check container network settings"
+                    echo "   - Try: install-system-deps (may work if network is intermittent)"
+                    rm -f "$error_log"
+                    break
+                fi
+            fi
+            sleep 2
+        done
+        
+        if [ "$update_success" = true ]; then
+            # Install packages with retry (up to 2 attempts)
+            install_success=false
             for attempt in 1 2; do
                 if [ $attempt -gt 1 ]; then
                     echo -n " (retry $attempt) "
                 fi
-                if apt-get update -qq -y >"$error_log" 2>&1; then
-                    update_success=true
+                if apt-get install -y --no-install-recommends \
+                    curl wget git \
+                    build-essential \
+                    gcc \
+                    g++ \
+                    pkg-config \
+                    libpq-dev \
+                    libpq5 \
+                    libffi-dev \
+                    libxml2-dev \
+                    libxslt1-dev \
+                    zlib1g-dev \
+                    libjpeg-dev \
+                    libpng-dev \
+                    libfreetype6-dev \
+                    >"$error_log" 2>&1; then
+                    install_success=true
                     break
                 fi
                 sleep 2
             done
             
-            if [ "$update_success" = true ]; then
-                # Install packages with retry
-                install_success=false
-                for attempt in 1 2; do
-                    if [ $attempt -gt 1 ]; then
-                        echo -n " (retry $attempt) "
-                    fi
-                    if apt-get install -y --no-install-recommends \
-                        curl wget git \
-                        build-essential \
-                        gcc \
-                        g++ \
-                        pkg-config \
-                        libpq-dev \
-                        libpq5 \
-                        libffi-dev \
-                        libxml2-dev \
-                        libxslt1-dev \
-                        zlib1g-dev \
-                        libjpeg-dev \
-                        libpng-dev \
-                        libfreetype6-dev \
-                        >"$error_log" 2>&1; then
-                        install_success=true
-                        break
-                    fi
-                    sleep 2
-                done
-                
-                if [ "$install_success" = true ]; then
-                    # Verify installation - check multiple tools
-                    if command -v gcc >/dev/null 2>&1 && \
-                       command -v g++ >/dev/null 2>&1 && \
-                       command -v pkg-config >/dev/null 2>&1 && \
-                       command -v curl >/dev/null 2>&1 && \
-                       [ -f /usr/include/zlib.h ] && \
-                       [ -f /usr/include/png.h ]; then
-                        echo -e " \033[1;32m✓\033[0m"
-                        rm -f "$error_log"
-                    else
-                        echo -e " \033[1;33m⚠\033[0m (partial installation - some tools missing)"
-                        echo "   Check: $error_log for details"
-                        echo "   You can try: install-system-deps"
-                    fi
+            if [ "$install_success" = true ]; then
+                # Verify installation - check multiple tools
+                if command -v gcc >/dev/null 2>&1 && \
+                   command -v g++ >/dev/null 2>&1 && \
+                   command -v pkg-config >/dev/null 2>&1 && \
+                   command -v curl >/dev/null 2>&1 && \
+                   [ -f /usr/include/zlib.h ] && \
+                   [ -f /usr/include/png.h ]; then
+                    echo -e " \033[1;32m✓\033[0m"
+                    rm -f "$error_log"
                 else
-                    echo -e " \033[1;33m⚠\033[0m (package installation failed)"
-                    echo "   Error log: $error_log"
-                    # Try to show last few lines of error
-                    if [ -f "$error_log" ]; then
-                        echo "   Last errors:"
-                        tail -n 5 "$error_log" | sed 's/^/   /'
-                    fi
-                    echo "   You can try manually: install-system-deps"
+                    echo -e " \033[1;33m⚠\033[0m (partial installation - some tools missing)"
+                    echo "   Check: $error_log for details"
+                    echo "   You can try: install-system-deps"
                 fi
             else
-                echo -e " \033[1;33m⚠\033[0m (package list update failed)"
+                echo -e " \033[1;33m⚠\033[0m (package installation failed)"
                 echo "   Error log: $error_log"
                 # Try to show last few lines of error
                 if [ -f "$error_log" ]; then
                     echo "   Last errors:"
                     tail -n 5 "$error_log" | sed 's/^/   /'
                 fi
-                echo "   Possible causes: network issues, repository problems, or permissions"
                 echo "   You can try manually: install-system-deps"
             fi
+        elif [ "$update_success" = false ] && [ ! -f "$error_log" ]; then
+            # Network error was already handled above
+            :
+        else
+            echo -e " \033[1;33m⚠\033[0m (package list update failed)"
+            echo "   Error log: $error_log"
+            # Try to show last few lines of error
+            if [ -f "$error_log" ]; then
+                echo "   Last errors:"
+                tail -n 5 "$error_log" | sed 's/^/   /'
+            fi
+            echo "   Possible causes: network issues, repository problems, or permissions"
+            echo "   You can try manually: install-system-deps"
         fi
     fi
 
