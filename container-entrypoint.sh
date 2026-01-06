@@ -4,7 +4,8 @@
 # This script handles initialization and startup of the NeoZork HLD Prediction container
 # Full feature parity with Docker container
 
-set -e
+# Don't exit on error - we want container to keep running even if some steps fail
+set +e
 
 # UV-only mode enforcement
 export USE_UV=true
@@ -839,11 +840,15 @@ main() {
             # Default behavior - full container initialization
             log_message "=== Full Container Initialization ==="
             
-            # Step 1: Create directories
-            create_directories
+            # Step 1: Create directories (don't fail on error)
+            create_directories || {
+                echo -e "\033[1;33m⚠️  Directory creation had issues - continuing anyway\033[0m"
+            }
             
-            # Step 2: Verify UV
-            verify_uv
+            # Step 2: Verify UV (don't fail on error)
+            verify_uv || {
+                echo -e "\033[1;33m⚠️  UV verification had issues - continuing anyway\033[0m"
+            }
             
             # Step 3: Setup UV environment and install dependencies
             # Don't fail if setup fails - allow manual installation later
@@ -852,39 +857,53 @@ main() {
                 echo -e "\033[1;33m💡 Run 'uv-install' inside the container to install dependencies\033[0m"
             }
             
-            # Step 4: Setup bash environment
-            setup_bash_environment
+            # Step 4: Setup bash environment (don't fail on error)
+            setup_bash_environment || {
+                echo -e "\033[1;33m⚠️  Bash environment setup had issues - continuing anyway\033[0m"
+            }
             
-            # Step 5: Create command wrappers
-            create_command_wrappers
+            # Step 5: Create command wrappers (don't fail on error)
+            create_command_wrappers || {
+                echo -e "\033[1;33m⚠️  Command wrapper creation had issues - continuing anyway\033[0m"
+            }
             
-            # Step 6: Initialize bash history
-            init_bash_history
+            # Step 6: Initialize bash history (don't fail on error)
+            init_bash_history || {
+                echo -e "\033[1;33m⚠️  Bash history initialization had issues - continuing anyway\033[0m"
+            }
             
-            # Step 7: Create commands file
-            create_commands_file
+            # Step 7: Create commands file (don't fail on error)
+            create_commands_file || {
+                echo -e "\033[1;33m⚠️  Commands file creation had issues - continuing anyway\033[0m"
+            }
             
-            # Step 8: Show usage guide
-            show_usage_guide
+            # Step 8: Show usage guide (don't fail on error)
+            show_usage_guide || {
+                echo -e "\033[1;33m⚠️  Usage guide display had issues - continuing anyway\033[0m"
+            }
             
-            # Step 9: Run data feed tests (interactive)
-            run_data_feed_tests
+            # Step 9: Run data feed tests (interactive) - skip if not interactive
+            if [ -t 0 ]; then
+                run_data_feed_tests || {
+                    echo -e "\033[1;33m⚠️  Data feed tests had issues - continuing anyway\033[0m"
+                }
+            fi
             
-            # Step 10: Start MCP server (interactive)
-            start_mcp_server
+            # Step 10: Start MCP server (interactive) - skip if not interactive
+            if [ -t 0 ]; then
+                start_mcp_server || {
+                    echo -e "\033[1;33m⚠️  MCP server startup had issues - continuing anyway\033[0m"
+                }
+            fi
             
             log_message "=== Container initialization completed ==="
             
-            # Check if running in interactive mode
-            if [ -t 0 ]; then
-                log_message "Container is ready for use. Entering interactive mode..."
-                # Start interactive bash shell
-                exec bash
-            else
-                log_message "Container is ready for use. Running in non-interactive mode..."
-                # Keep container running in background
-                tail -f /dev/null
-            fi
+            # Always start interactive bash shell to keep container running
+            # This ensures container stays alive even if initialization had issues
+            log_message "Container is ready for use. Starting interactive shell..."
+            # Start interactive bash shell
+            # Use exec to replace current process with bash
+            exec bash
             ;;
     esac
 }
