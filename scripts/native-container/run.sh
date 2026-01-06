@@ -159,11 +159,42 @@ start_container() {
             sleep 2
         fi
         
+        # Start container and immediately launch keep-alive process
+        # The entrypoint runs interactive bash which exits in non-interactive mode
+        # We need to start a keep-alive process very quickly after container starts
         if container start neozork-hld-prediction 2>&1; then
             print_success "Container start command completed"
             
+            # Start keep-alive process immediately in background
+            # This must happen before the entrypoint bash exits
+            (
+                # Wait just a moment for container to be ready
+                sleep 1
+                # Try multiple times to start keep-alive process
+                for i in 1 2 3; do
+                    if container exec neozork-hld-prediction bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null; then
+                        break
+                    fi
+                    sleep 1
+                done
+            ) &
+            local keep_alive_pid=$!
+            
             # Wait a moment for container to fully start
-            sleep 3
+            sleep 4
+            
+            # Wait for keep-alive process to complete
+            wait $keep_alive_pid 2>/dev/null || true
+            
+            # Verify keep-alive process is running
+            sleep 1
+            if container exec neozork-hld-prediction bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
+                print_status "Keep-alive process is running"
+            else
+                print_warning "Keep-alive process may not be running, trying again..."
+                container exec neozork-hld-prediction bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
+                sleep 2
+            fi
             
             # Check if container is now running
             if check_container_running; then

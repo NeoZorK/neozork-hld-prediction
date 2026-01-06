@@ -674,69 +674,81 @@ install_container_dependencies() {
                 
                 # Try to start by name
                 if container start "$container_name" >/dev/null 2>&1; then
-                    print_status "Container start command succeeded, waiting for container to be ready..."
-                    sleep 8  # Give container more time to start and initialize
+                    print_status "Container start command succeeded, starting keep-alive process immediately..."
                     
+                    # Start keep-alive process immediately in background
+                    # This must happen before the entrypoint bash exits
+                    (
+                        sleep 1
+                        for i in 1 2 3 4 5; do
+                            if container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null; then
+                                break
+                            fi
+                            sleep 0.5
+                        done
+                    ) &
+                    local keep_alive_pid=$!
+                    
+                    sleep 5  # Give container time to start
+                    
+                    # Wait for keep-alive process
+                    wait $keep_alive_pid 2>/dev/null || true
+                    
+                    # Verify keep-alive process is running
+                    sleep 1
+                    if container exec "$container_name" bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
+                        print_status "Keep-alive process verified"
+                    else
+                        print_warning "Keep-alive process not found, trying again..."
+                        container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
+        sleep 2
+    fi
+    
                     # Check if container is now running
                     container_status=$(container list 2>/dev/null | grep "$container_name" | awk '{print $2}' || echo "not_running")
                     print_status "Container status after start: $container_status"
                     
-                    # Try to start keep-alive process multiple times
-                    local keep_alive_attempts=3
-                    local keep_alive_success=false
-                    
-                    for i in $(seq 1 $keep_alive_attempts); do
-                        print_status "Starting keep-alive process (attempt $i/$keep_alive_attempts)..."
-                        
-                        # Start keep-alive process and verify it's running
-                        if container exec "$container_name" bash -c "
-                            nohup sleep infinity >/dev/null 2>&1 &
-                            sleep 1
-                            if pgrep -f 'sleep infinity' >/dev/null 2>&1; then
-                                echo 'KEEP_ALIVE_SUCCESS'
-                            else
-                                echo 'KEEP_ALIVE_FAILED'
-                            fi
-                        " 2>&1 | grep -q "KEEP_ALIVE_SUCCESS"; then
-                            keep_alive_success=true
-                            print_status "Keep-alive process started successfully"
-                            break
-                        fi
-                        
-        sleep 2
-                    done
-                    
                     # Verify container is accessible
-                    sleep 2
+                    sleep 1
                     if container exec "$container_name" echo "test" >/dev/null 2>&1; then
                         container_to_use="$container_name"
                         print_success "Container is now accessible by name"
                         return 0
                     else
                         print_warning "Container started but still not accessible by name"
-                    fi
-                else
+        fi
+    else
                     print_warning "Failed to start container by name"
                 fi
                 
                 # Try to start by ID
                 if [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
-                    print_status "Container start command succeeded (by ID), waiting..."
-                    sleep 8
+                    print_status "Container start command succeeded (by ID), starting keep-alive process immediately..."
                     
-                    # Start keep-alive process
-                    for i in $(seq 1 $keep_alive_attempts); do
-    if container exec "$container_id" bash -c "
-                            nohup sleep infinity >/dev/null 2>&1 &
-                            sleep 1
-                            pgrep -f 'sleep infinity' >/dev/null 2>&1 && echo 'KEEP_ALIVE_SUCCESS' || echo 'KEEP_ALIVE_FAILED'
-                        " 2>&1 | grep -q "KEEP_ALIVE_SUCCESS"; then
-                            break
-                        fi
+                    # Start keep-alive process immediately in background
+                    (
+                        sleep 1
+                        for i in 1 2 3 4 5; do
+                            if container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null; then
+                                break
+                            fi
+                            sleep 0.5
+                        done
+                    ) &
+                    local keep_alive_pid=$!
+                    
+                    sleep 5
+                    
+                    # Wait for keep-alive process
+                    wait $keep_alive_pid 2>/dev/null || true
+                    
+                    # Verify keep-alive process
+                    sleep 1
+                    if ! container exec "$container_id" bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
+                        container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
                         sleep 2
-                    done
+                    fi
                     
-                    sleep 2
                     if container exec "$container_id" echo "test" >/dev/null 2>&1; then
                         container_to_use="$container_id"
                         print_success "Container is now accessible by ID"
@@ -918,24 +930,66 @@ install_container_dependencies() {
     else
         print_status "Container is not running, starting it..."
         
-        # Start container
+        # Start container and immediately launch keep-alive process
         if container start "$container_name" >/dev/null 2>&1; then
-            print_status "Container started by name, waiting for it to be ready..."
+            print_status "Container started by name, launching keep-alive process immediately..."
+            
+            # Start keep-alive process immediately in background
+            (
+                sleep 1
+                for i in 1 2 3 4 5; do
+                    if container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null; then
+                        break
+                    fi
+                    sleep 0.5
+                done
+            ) &
+            local keep_alive_pid=$!
+            
             sleep 5  # Wait for container to start
             
-            # Start keep-alive process to prevent container from stopping
-            if container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
+            # Wait for keep-alive process
+            wait $keep_alive_pid 2>/dev/null || true
+            
+            # Verify keep-alive process
+            sleep 1
+            if container exec "$container_name" bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
+                print_status "Keep-alive process verified"
+                container_to_use="$container_name"
+            else
+                print_warning "Keep-alive process not found, trying again..."
+                container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
                 sleep 2
-                print_status "Keep-alive process started"
                 container_to_use="$container_name"
             fi
         elif [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
-            print_status "Container started by ID, waiting for it to be ready..."
+            print_status "Container started by ID, launching keep-alive process immediately..."
+            
+            # Start keep-alive process immediately in background
+            (
+                sleep 1
+                for i in 1 2 3 4 5; do
+                    if container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null; then
+                        break
+                    fi
+                    sleep 0.5
+                done
+            ) &
+            local keep_alive_pid=$!
+            
             sleep 5
             
-            if container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
+            # Wait for keep-alive process
+            wait $keep_alive_pid 2>/dev/null || true
+            
+            # Verify keep-alive process
+            sleep 1
+            if container exec "$container_id" bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
+                print_status "Keep-alive process verified"
+                container_to_use="$container_id"
+            else
+                container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
                 sleep 2
-                print_status "Keep-alive process started"
                 container_to_use="$container_id"
         fi
     else
@@ -974,30 +1028,54 @@ install_container_dependencies() {
     " >/dev/null 2>&1
     
     # Ensure container remains running after installation
-    print_status "Ensuring container remains running..."
-    if ! ensure_container_accessible; then
-        print_warning "Container is not accessible after installation, starting it..."
+    print_status "Ensuring container remains running with keep-alive process..."
+    
+    # Check if container is running
+    if ! container list | grep -q "$container_name"; then
+        print_status "Container is not running, starting it..."
         if container start "$container_name" >/dev/null 2>&1 || \
            ([ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1); then
-            sleep 3
-            # Start keep-alive process
-            container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1 || \
-            ([ -n "$container_id" ] && container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1) || true
-            sleep 1
+            # Start keep-alive process immediately
+            (
+                sleep 1
+                for i in 1 2 3 4 5; do
+                    if container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || \
+                       ([ -n "$container_id" ] && container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null); then
+                        break
+                    fi
+                    sleep 0.5
+                done
+            ) &
+            local keep_alive_pid=$!
+            sleep 4
+            wait $keep_alive_pid 2>/dev/null || true
         fi
     else
-        # Ensure keep-alive process is running
-        container exec "$container_to_use" bash -c "
+        # Container is running, ensure keep-alive process is running
+        print_status "Container is running, ensuring keep-alive process is active..."
+        container exec "$container_name" bash -c "
             if ! pgrep -f 'sleep infinity' >/dev/null 2>&1; then
                 nohup sleep infinity >/dev/null 2>&1 &
+                sleep 1
             fi
-        " >/dev/null 2>&1 || true
+        " >/dev/null 2>&1 || \
+        ([ -n "$container_id" ] && container exec "$container_id" bash -c "
+            if ! pgrep -f 'sleep infinity' >/dev/null 2>&1; then
+                nohup sleep infinity >/dev/null 2>&1 &
+                sleep 1
+            fi
+        " >/dev/null 2>&1) || true
     fi
     
-    # Verify container is still accessible
-    if container exec "$container_name" echo "test" >/dev/null 2>&1 || \
-       ([ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1); then
-        print_success "Container is running and ready for use"
+    # Verify container is still running and accessible
+    sleep 1
+    if container list | grep -q "$container_name.*running"; then
+        if container exec "$container_name" echo "test" >/dev/null 2>&1 || \
+           ([ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1); then
+            print_success "Container is running and ready for use"
+        else
+            print_warning "Container is running but not immediately accessible"
+        fi
     else
         print_warning "Container may have stopped, but setup completed successfully"
     fi
