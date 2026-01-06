@@ -62,6 +62,8 @@ create_directories() {
 verify_uv() {
     log_message "=== UV Package Manager Status ==="
     if command -v uv &> /dev/null; then
+        # Save the real uv path before creating wrappers
+        export REAL_UV_PATH=$(command -v uv)
         echo -e "\033[1;32m✅ UV is available: $(uv --version)\033[0m"
     else
         echo -e "\033[1;33m⚠️  UV is not available - installing UV...\033[0m"
@@ -70,13 +72,24 @@ verify_uv() {
         pip install uv
         
         if command -v uv &> /dev/null; then
+            # Save the real uv path
+            export REAL_UV_PATH=$(command -v uv)
             echo -e "\033[1;32m✅ UV installed successfully: $(uv --version)\033[0m"
         else
             echo -e "\033[1;31m❌ Failed to install UV - this is required for UV-only mode\033[0m"
             echo -e "\033[1;33m⚠️  Container will continue without UV-only mode\033[0m"
             export UV_ONLY=false
+            # Try to find uv in common locations
+            if [ -f "/root/.cargo/bin/uv" ]; then
+                export REAL_UV_PATH="/root/.cargo/bin/uv"
+            elif [ -f "/usr/local/bin/uv" ]; then
+                export REAL_UV_PATH="/usr/local/bin/uv"
+            else
+                export REAL_UV_PATH="uv"
+            fi
         fi
     fi
+}
 
     # Test UV environment
     if [ -f "/app/scripts/utilities/test_uv_docker.py" ]; then
@@ -226,6 +239,19 @@ setup_uv_environment() {
 install_dependencies() {
     echo -e "\033[1;33m📦 Installing dependencies from requirements.txt...\033[0m"
     
+    # First, ensure system dependencies are installed (required for building C extensions)
+    echo -e "\033[1;33m📦 Checking system dependencies (gcc, build tools)...\033[0m"
+    if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+        echo -e "\033[1;33m📦 Installing system dependencies...\033[0m"
+        install_system_dependencies || {
+            echo -e "\033[1;31m❌ Failed to install system dependencies\033[0m"
+            echo -e "\033[1;33m⚠️  Some packages may fail to build without system dependencies\033[0m"
+            echo -e "\033[1;33m💡 You can install them manually: install-system-deps\033[0m"
+        }
+    else
+        echo -e "\033[1;32m✅ System dependencies are available\033[0m"
+    fi
+    
     # Set environment variables to limit parallel compilation
     # Use single job to minimize memory usage for packages like lxml
     export MAX_JOBS=1
@@ -337,6 +363,16 @@ fi
 # Add /tmp/bin to PATH for command wrappers
 export PATH="/tmp/bin:\$PATH"
 
+# Check system dependencies on shell startup (only once per session)
+if [ -z "\$SYSTEM_DEPS_CHECKED" ]; then
+    if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+        echo -e "\033[1;33m⚠️  System dependencies (gcc, pkg-config) not found\033[0m"
+        echo -e "\033[1;33m💡 Run 'install-system-deps' to install build tools\033[0m"
+        echo -e "\033[1;33m💡 Or run 'uv-install' which will install them automatically\033[0m"
+    fi
+    export SYSTEM_DEPS_CHECKED=1
+fi
+
 # Show available commands
 if [ -f "/tmp/neozork_commands.txt" ]; then
     echo -e "\033[1;36m💡 Available commands: cat /tmp/neozork_commands.txt\033[0m"
@@ -374,9 +410,17 @@ EOF
 #!/bin/bash
 echo "Installing dependencies using UV..."
 source /app/.venv/bin/activate
+
+# First, ensure system dependencies are installed
+if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+    echo "Installing system dependencies..."
+    install-system-deps
+fi
+
 # Ensure setuptools and wheel are installed first (required for Python 3.14)
 echo "Installing build tools (setuptools, wheel)..."
 uv pip install --upgrade setuptools>=78.1.1 wheel
+
 # Install all dependencies
 uv pip install -r /app/requirements.txt
 EOF
@@ -466,6 +510,43 @@ rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
 echo "System dependencies installed successfully (including matplotlib build dependencies)"
 EOF
     chmod +x /tmp/bin/install-system-deps
+
+    # Create uv run wrapper that checks system dependencies
+    # Use the saved real uv path, or try to find it
+    if [ -z "$REAL_UV_PATH" ]; then
+        REAL_UV_PATH=$(command -v uv 2>/dev/null || echo "")
+        if [ -z "$REAL_UV_PATH" ]; then
+            # Try common locations
+            if [ -f "/root/.cargo/bin/uv" ]; then
+                REAL_UV_PATH="/root/.cargo/bin/uv"
+            elif [ -f "/usr/local/bin/uv" ]; then
+                REAL_UV_PATH="/usr/local/bin/uv"
+            else
+                REAL_UV_PATH="uv"  # Fallback to PATH lookup
+            fi
+        fi
+    fi
+    
+    cat > /tmp/bin/uv << EOF
+#!/bin/bash
+# Wrapper for uv command that ensures system dependencies are installed
+if [ "\$1" = "run" ]; then
+    # Check if system dependencies are installed
+    if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+        echo "⚠️  System dependencies (gcc, pkg-config) not found"
+        echo "💡 Installing system dependencies..."
+        install-system-deps || {
+            echo "❌ Failed to install system dependencies"
+            echo "💡 You can install them manually: install-system-deps"
+            echo "⚠️  Continuing anyway, but some packages may fail to build"
+        }
+    fi
+fi
+
+# Call the real uv command
+$REAL_UV_PATH "\$@"
+EOF
+    chmod +x /tmp/bin/uv
 
     export PATH="/tmp/bin:$PATH"
 }
