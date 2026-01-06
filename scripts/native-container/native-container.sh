@@ -95,8 +95,10 @@ start_container_sequence() {
             read -p "Press Enter to continue to shell..." 2>/dev/null || true
         fi
         
-        # Execute shell and exit immediately to prevent restart
+        # Execute shell - always use exec.sh which handles interactive mode
+        # exec.sh will force interactive mode internally
         ./scripts/native-container/exec.sh --shell
+        
         # If we reach here, it means exec.sh exited, so we should also exit
         print_success "Container session completed"
         exit 0

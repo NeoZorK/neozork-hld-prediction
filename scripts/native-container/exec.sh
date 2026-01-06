@@ -3,7 +3,8 @@
 # Native Container Exec Script for NeoZork HLD Prediction
 # This script executes commands inside the running native Apple Silicon container
 
-set -e
+# Don't exit on error - we want to handle errors gracefully
+set +e
 
 # Colors for output
 RED='\033[0;31m'
@@ -425,29 +426,27 @@ EOF'
     # Execute the enhanced shell script with proper signal handling
     print_status "Executing enhanced shell script..."
     
-    # Use a wrapper to handle Ctrl+D properly
-    if [ -t 0 ]; then
-        # Interactive mode
-        container exec --interactive --tty "$container_id" bash -c '
-            # Set up signal handlers for the wrapper
-            trap "echo \"Container shell wrapper exiting...\"; exit 0" EXIT
-            trap "echo \"Received interrupt in wrapper, exiting...\"; exit 0" INT TERM
-            
-            # Execute the enhanced shell
-            /tmp/enhanced_shell.sh
-            
-            # Cleanup after shell exits
-            rm -f /tmp/enhanced_shell.sh
-        '
+    # Always try interactive mode for shell first
+    # This ensures shell works when called from menu scripts or directly
+    print_status "Starting interactive shell..."
+    
+    # Try interactive mode - it should work even when called from menu
+    # because the menu script itself is interactive
+    if container exec --interactive --tty "$container_id" bash -c '
+        trap "echo \"Container shell wrapper exiting...\"; exit 0" EXIT INT TERM
+        /tmp/enhanced_shell.sh
+        rm -f /tmp/enhanced_shell.sh
+    ' 2>&1; then
+        # Interactive mode succeeded
+        return 0
     else
-        # Non-interactive mode
+        # Interactive mode failed, try non-interactive as fallback
+        print_warning "Interactive mode failed, trying non-interactive fallback..."
         container exec "$container_id" bash -c '
-            # Execute the enhanced shell
             /tmp/enhanced_shell.sh
-            
-            # Cleanup after shell exits
             rm -f /tmp/enhanced_shell.sh
-        '
+        ' 2>&1
+        return $?
     fi
     
     # Additional cleanup
