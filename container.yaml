@@ -58,7 +58,6 @@ spec:
     - MAKEFLAGS=-j1
     - CFLAGS="-O2 -pipe"
     - CXXFLAGS="-O2 -pipe"
-    - SETUPTOOLS_USE_DISTUTILS=stdlib
     - NEOZORK_TEST=1
   ports:
     - containerPort: 8000

@@ -354,7 +354,6 @@ create_container() {
         --env MAKEFLAGS=-j1 \
         --env "CFLAGS=-O2 -pipe" \
         --env "CXXFLAGS=-O2 -pipe" \
-        --env SETUPTOOLS_USE_DISTUTILS=stdlib \
         --volume "$project_root:/app" \
         --volume "$project_root/data:/app/data" \
         --volume "$project_root/logs:/app/logs" \

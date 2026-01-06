@@ -28,8 +28,6 @@ export NINJA_STATUS="[%f/%t] "
 # Limit memory usage for gcc compiler
 export CFLAGS="-O2 -pipe"
 export CXXFLAGS="-O2 -pipe"
-# Disable parallel compilation in setuptools
-export SETUPTOOLS_USE_DISTUTILS=stdlib
 
 # Function to log messages with timestamps
 log_message() {
@@ -235,7 +233,12 @@ install_dependencies() {
     export MAKEFLAGS=-j1
     export CFLAGS="-O2 -pipe"
     export CXXFLAGS="-O2 -pipe"
-    export SETUPTOOLS_USE_DISTUTILS=stdlib
+    
+    # First, ensure setuptools and wheel are installed (required for building packages)
+    echo -e "\033[1;33m📦 Installing build tools (setuptools, wheel)...\033[0m"
+    uv pip install --upgrade setuptools>=78.1.1 wheel || {
+        echo -e "\033[1;33m⚠️  Failed to install setuptools/wheel, continuing anyway\033[0m"
+    }
     
     # Install dependencies (don't fail on error)
     if uv pip install -r /app/requirements.txt; then
@@ -371,6 +374,10 @@ EOF
 #!/bin/bash
 echo "Installing dependencies using UV..."
 source /app/.venv/bin/activate
+# Ensure setuptools and wheel are installed first (required for Python 3.14)
+echo "Installing build tools (setuptools, wheel)..."
+uv pip install --upgrade setuptools>=78.1.1 wheel
+# Install all dependencies
 uv pip install -r /app/requirements.txt
 EOF
     chmod +x /tmp/bin/uv-install
