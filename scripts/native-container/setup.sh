@@ -643,33 +643,59 @@ install_container_dependencies() {
     
     # Helper function to ensure container is accessible before executing commands
     ensure_container_accessible() {
-        # Check if container_to_use is set and accessible
-        if [ -z "$container_to_use" ]; then
-            return 1
-        fi
+        local max_attempts=3
+        local attempt=0
         
-        # Try to verify container is accessible
-        if container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
-            return 0
-        fi
-        
-        # Try to start container if not accessible
-        print_status "Container not accessible, starting it..."
-        if container start "$container_name" >/dev/null 2>&1; then
-            sleep 3
+        while [ $attempt -lt $max_attempts ]; do
+            # Check if container_to_use is set and accessible
+            if [ -n "$container_to_use" ] && container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
+                return 0
+            fi
+            
+            # Try with container name
             if container exec "$container_name" echo "test" >/dev/null 2>&1; then
                 container_to_use="$container_name"
                 return 0
             fi
-        fi
-        
-        if [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
-            sleep 3
-            if container exec "$container_id" echo "test" >/dev/null 2>&1; then
+            
+            # Try with container ID
+            if [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
                 container_to_use="$container_id"
                 return 0
             fi
-        fi
+            
+            # Container is not accessible, try to start it
+            if [ $attempt -lt $((max_attempts - 1)) ]; then
+                print_status "Container not accessible, starting it (attempt $((attempt + 1))/$max_attempts)..."
+                
+                # Try to start by name
+                if container start "$container_name" >/dev/null 2>&1; then
+                    sleep 5  # Give container more time to start
+                    # Start a keep-alive process to prevent container from stopping
+                    if container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
+                        sleep 2
+                        if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+                            container_to_use="$container_name"
+                            return 0
+                        fi
+                    fi
+                fi
+                
+                # Try to start by ID
+                if [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
+                    sleep 5
+                    if container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
+                        sleep 2
+                        if container exec "$container_id" echo "test" >/dev/null 2>&1; then
+                            container_to_use="$container_id"
+                            return 0
+                        fi
+                    fi
+                fi
+            fi
+            
+            attempt=$((attempt + 1))
+        done
         
         return 1
     }
@@ -724,42 +750,66 @@ install_container_dependencies() {
         local cmd="$1"
         local exit_code=0
         local output=""
+        local max_retries=2
+        local retry=0
         
-        # Ensure container is accessible first
-        if ! ensure_container_accessible; then
-            print_error "Container is not accessible, cannot execute command"
-            return 1
-        fi
-        
-        # Try to execute command with container_to_use first
-        output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
-        exit_code=$?
-        
-        if [ $exit_code -eq 0 ]; then
-            echo "$output"
-            return 0
-        fi
-        
-        # If exec failed, try with container name or ID
-        if [ "$container_to_use" != "$container_name" ]; then
-            output=$(container exec "$container_name" bash -c "$cmd" 2>&1)
+        while [ $retry -lt $max_retries ]; do
+            # Ensure container is accessible first
+            if ! ensure_container_accessible; then
+                if [ $retry -eq $((max_retries - 1)) ]; then
+                    print_error "Container is not accessible after $max_retries attempts, cannot execute command"
+                    print_status "Container status:"
+                    container list --all | grep "$container_name" || echo "Container not in list"
+                    return 1
+                fi
+                print_warning "Container not accessible, retrying (attempt $((retry + 1))/$max_retries)..."
+                sleep 3
+                retry=$((retry + 1))
+                continue
+            fi
+            
+            # Try to execute command with container_to_use first
+            output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
             exit_code=$?
+            
             if [ $exit_code -eq 0 ]; then
-                container_to_use="$container_name"
                 echo "$output"
                 return 0
             fi
-        fi
-        
-        if [ -n "$container_id" ] && [ "$container_to_use" != "$container_id" ]; then
-            output=$(container exec "$container_id" bash -c "$cmd" 2>&1)
-            exit_code=$?
-            if [ $exit_code -eq 0 ]; then
-                container_to_use="$container_id"
-                echo "$output"
-                return 0
+            
+            # If exec failed, try with container name or ID
+            if [ "$container_to_use" != "$container_name" ]; then
+                output=$(container exec "$container_name" bash -c "$cmd" 2>&1)
+                exit_code=$?
+                if [ $exit_code -eq 0 ]; then
+                    container_to_use="$container_name"
+                    echo "$output"
+                    return 0
+                fi
             fi
-        fi
+            
+            if [ -n "$container_id" ] && [ "$container_to_use" != "$container_id" ]; then
+                output=$(container exec "$container_id" bash -c "$cmd" 2>&1)
+                exit_code=$?
+                if [ $exit_code -eq 0 ]; then
+                    container_to_use="$container_id"
+                    echo "$output"
+                    return 0
+                fi
+            fi
+            
+            # If we get here, exec failed - check if container is still accessible
+            if ! container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
+                print_warning "Container became inaccessible during command execution, will retry..."
+                container_to_use=""  # Reset to force re-detection
+                retry=$((retry + 1))
+                sleep 3
+                continue
+            fi
+            
+            # Command failed but container is accessible - return error
+            break
+        done
         
         # Return error output for debugging
         echo "$output" >&2
@@ -769,10 +819,67 @@ install_container_dependencies() {
     # Step 1: Install system dependencies (gcc, build-essential, etc.)
     print_status "Installing system dependencies (gcc, build-essential, curl)..."
     
+    # Diagnostic: Show container status
+    print_status "Checking container status..."
+    print_status "Container name: $container_name"
+    print_status "Container ID: $container_id"
+    
+    # Check if container exists in list
+    if ! container list --all | grep -q "$container_name"; then
+        print_error "Container '$container_name' not found in container list"
+        print_status "Available containers:"
+        container list --all || true
+        return 1
+    fi
+    
     # Ensure container is accessible before proceeding
-    print_status "Ensuring container is accessible..."
+    print_status "Ensuring container is accessible and running..."
+    
+    # First, try to start container and keep it alive
+    local container_was_running=false
+    if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+        container_was_running=true
+        container_to_use="$container_name"
+        print_status "Container is already running and accessible by name"
+    elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+        container_was_running=true
+        container_to_use="$container_id"
+        print_status "Container is already running and accessible by ID"
+    else
+        print_status "Container is not running, starting it..."
+        
+        # Start container
+        if container start "$container_name" >/dev/null 2>&1; then
+            print_status "Container started by name, waiting for it to be ready..."
+            sleep 5  # Wait for container to start
+            
+            # Start keep-alive process to prevent container from stopping
+            if container exec "$container_name" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
+                sleep 2
+                print_status "Keep-alive process started"
+                container_to_use="$container_name"
+            fi
+        elif [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
+            print_status "Container started by ID, waiting for it to be ready..."
+            sleep 5
+            
+            if container exec "$container_id" bash -c "nohup sleep infinity >/dev/null 2>&1 &" >/dev/null 2>&1; then
+                sleep 2
+                print_status "Keep-alive process started"
+                container_to_use="$container_id"
+            fi
+        else
+            print_warning "Failed to start container, will try ensure_container_accessible..."
+        fi
+    fi
+    
+    # Now ensure container is accessible (this will retry if needed)
     if ! ensure_container_accessible; then
-        print_error "Container is not accessible, cannot install dependencies"
+        print_error "Container is not accessible after startup attempts, cannot install dependencies"
+        print_status "Container status:"
+        container list --all | grep "$container_name" || true
+        print_status "Trying to get more information..."
+        container list || true
         return 1
     fi
     
