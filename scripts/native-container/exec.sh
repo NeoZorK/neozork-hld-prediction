@@ -234,6 +234,15 @@ if [ -f /app/.venv/bin/activate ]; then
     source /app/.venv/bin/activate
 fi
 
+# Ensure setuptools and wheel are installed before running uv run commands
+# This is required for building packages in editable mode
+if echo "$@" | grep -q "uv run"; then
+    if ! python -c "import setuptools" 2>/dev/null; then
+        echo "Installing setuptools and wheel for build..." >&2
+        uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+    fi
+fi
+
 # Execute the command passed as argument
 # Use eval to properly handle commands with multiple arguments
 eval "$@"
@@ -312,7 +321,15 @@ CMD_WRAPPER_EOF
                 fi
             fi
             
-            # Step 5: Execute the command
+            # Step 5: Ensure setuptools is installed before uv run commands
+            if echo \"$command\" | grep -q \"uv run\"; then
+                if ! python -c \"import setuptools\" 2>/dev/null; then
+                    echo \"Installing setuptools and wheel for build...\" >&2
+                    uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                fi
+            fi
+            
+            # Step 6: Execute the command
             cd /app
             $command
         '"
@@ -333,6 +350,12 @@ CMD_WRAPPER_EOF
                 export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
             fi
             export PYTHONPATH=\"/app:\$PYTHONPATH\"
+            # Ensure setuptools is installed before uv run commands
+            if echo \"$command\" | grep -q \"uv run\"; then
+                if ! python -c \"import setuptools\" 2>/dev/null; then
+                    uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                fi
+            fi
             cd /app
             $command
         '"
@@ -486,6 +509,23 @@ if ! command -v uv >/dev/null 2>&1; then
         if [ "$pandas_found" = true ]; then
             echo -e "\033[1;32m✓\033[0m Environment ready"
         else
+            # Ensure setuptools is installed before installing dependencies
+            if ! python -c "import setuptools" 2>/dev/null; then
+                echo -n "📦 Installing build tools (setuptools, wheel) "
+                (uv pip install --no-build-isolation --prefer-binary --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1) &
+                build_tools_pid=$!
+                dots=0
+                while kill -0 $build_tools_pid 2>/dev/null; do
+                    printf "."
+                    sleep 0.2
+                    dots=$((dots + 1))
+                    if [ $dots -ge 10 ]; then
+                        dots=0
+                    fi
+                done
+                wait $build_tools_pid 2>/dev/null
+                echo -e " \033[1;32m✓\033[0m"
+            fi
             echo -n "📦 Installing dependencies (30-120s) "
             (uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt --quiet 2>/dev/null) &
             install_pid=$!
