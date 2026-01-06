@@ -90,8 +90,8 @@ dependencies = [
     "rfc3339-validator==0.1.4",
     "rfc3986-validator==0.1.1",
     "rpds-py>=0.24.0",
-    "scikit-learn==1.6.1",
     "scipy>=1.16.0",
+    "scikit-learn==1.6.1",
     "seaborn==0.13.2",
     "Send2Trash==1.8.3",
     "setuptools>=78.1.1",
@@ -180,6 +180,8 @@ _ = ["setuptools>=78.1.1", "wheel"]
 neozork-hld-prediction = ["setuptools>=78.1.1", "wheel"]
 # Build dependencies for pandas (requires mesonpy and related tools)
 pandas = ["mesonpy", "pyproject-metadata", "meson", "packaging", "cython", "versioneer", "pybind11", "setuptools-scm"]
+# Build dependencies for scikit-learn (requires scipy to be installed before build)
+scikit-learn = ["scipy>=1.16.0", "numpy", "mesonpy", "pyproject-metadata", "meson", "packaging", "cython"]
 
 [tool.setuptools]
 packages = { find = { where = ["src"], exclude = ["tests"] } }
