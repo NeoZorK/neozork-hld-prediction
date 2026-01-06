@@ -95,13 +95,17 @@ start_container_sequence() {
             read -p "Press Enter to continue to shell..." 2>/dev/null || true
         fi
         
-        # Execute shell - always use exec.sh which handles interactive mode
-        # exec.sh will force interactive mode internally
+        # Execute shell - exec.sh will handle TTY detection internally
         ./scripts/native-container/exec.sh --shell
         
-        # If we reach here, it means exec.sh exited, so we should also exit
-        print_success "Container session completed"
-        exit 0
+        # Check exit code
+        exit_code=$?
+        if [ $exit_code -eq 0 ]; then
+            print_success "Container session completed"
+        else
+            print_warning "Container session exited with code $exit_code"
+        fi
+        exit $exit_code
     fi
     
     # Check if container exists but is stopped

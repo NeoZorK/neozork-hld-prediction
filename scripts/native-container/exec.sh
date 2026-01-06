@@ -417,7 +417,13 @@ echo ""
 fi
 
 # Start interactive bash shell with simple configuration
-exec bash
+# Use exec only if we're in interactive mode, otherwise just start bash
+if [ -t 0 ]; then
+    exec bash -i
+else
+    # Non-interactive mode - start bash without exec to allow script to continue
+    bash -i
+fi
 EOF'
 
     # Make the script executable
@@ -426,28 +432,43 @@ EOF'
     # Execute the enhanced shell script with proper signal handling
     print_status "Executing enhanced shell script..."
     
-    # Always try interactive mode for shell first
-    # This ensures shell works when called from menu scripts or directly
+    # Start interactive shell
     print_status "Starting interactive shell..."
     
-    # Try interactive mode - it should work even when called from menu
-    # because the menu script itself is interactive
+    # Method 1: Try interactive mode with enhanced shell (works when called directly)
+    # Suppress stderr to avoid "fd is not a pty" errors when TTY is not available
+    print_status "Attempting interactive mode with enhanced shell..."
     if container exec --interactive --tty "$container_id" bash -c '
-        trap "echo \"Container shell wrapper exiting...\"; exit 0" EXIT INT TERM
+        trap "exit 0" EXIT INT TERM
         /tmp/enhanced_shell.sh
         rm -f /tmp/enhanced_shell.sh
-    ' 2>&1; then
-        # Interactive mode succeeded
+    ' 2>/dev/null; then
         return 0
-    else
-        # Interactive mode failed, try non-interactive as fallback
-        print_warning "Interactive mode failed, trying non-interactive fallback..."
-        container exec "$container_id" bash -c '
-            /tmp/enhanced_shell.sh
-            rm -f /tmp/enhanced_shell.sh
-        ' 2>&1
-        return $?
     fi
+    
+    # Method 2: Try simple bash in interactive mode (more reliable)
+    print_status "Trying simple interactive bash..."
+    if container exec --interactive --tty "$container_id" /bin/bash -i 2>/dev/null; then
+        return 0
+    fi
+    
+    # Method 3: Use script command to create pseudo-TTY (works from menu)
+    if command -v script >/dev/null 2>&1; then
+        print_status "Using script command to create pseudo-TTY..."
+        script -q /dev/null container exec --interactive --tty "$container_id" /bin/bash -i 2>&1 && return 0
+    fi
+    
+    # Method 4: Last resort - non-interactive bash with setup
+    print_warning "All interactive methods failed, using non-interactive fallback..."
+    print_warning "Note: You can still use commands, but some interactive features may be limited"
+    container exec "$container_id" bash -c '
+        cd /app
+        [ -f .venv/bin/activate ] && source .venv/bin/activate 2>/dev/null || true
+        export PYTHONPATH=/app
+        echo "Environment setup complete. Type commands or 'exit' to leave."
+        /bin/bash
+    ' 2>&1
+    return $?
     
     # Additional cleanup
     container exec "$container_id" rm -f /tmp/enhanced_shell.sh 2>/dev/null || true
