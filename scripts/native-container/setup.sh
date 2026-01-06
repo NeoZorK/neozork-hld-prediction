@@ -726,7 +726,7 @@ install_container_dependencies() {
                     
                     # Start keep-alive process
                     for i in $(seq 1 $keep_alive_attempts); do
-                        if container exec "$container_id" bash -c "
+    if container exec "$container_id" bash -c "
                             nohup sleep infinity >/dev/null 2>&1 &
                             sleep 1
                             pgrep -f 'sleep infinity' >/dev/null 2>&1 && echo 'KEEP_ALIVE_SUCCESS' || echo 'KEEP_ALIVE_FAILED'
@@ -937,8 +937,8 @@ install_container_dependencies() {
                 sleep 2
                 print_status "Keep-alive process started"
                 container_to_use="$container_id"
-            fi
-        else
+        fi
+    else
             print_warning "Failed to start container, will try ensure_container_accessible..."
         fi
     fi
@@ -955,184 +955,9 @@ install_container_dependencies() {
     
     print_success "Container is accessible: $container_to_use"
     
-    # Wait for any existing apt-get processes to finish
-    print_status "Waiting for any existing apt-get processes to finish..."
-    if wait_for_apt_lock; then
-        print_status "Apt locks cleared, proceeding with installation..."
-    else
-        print_warning "Apt locks still present after waiting, but proceeding anyway..."
-    fi
-    
-    # Install system dependencies with better error handling
-    local deps_installed=false
-    local install_output=""
-    
-    print_status "Running apt-get update and installing packages..."
-    install_output=$(exec_in_container "
-        # Wait for any remaining apt-get processes
-        while pgrep -f 'apt-get|dpkg' >/dev/null 2>&1; do
-            sleep 1
-        done
-        # Wait a bit more to ensure locks are released
-        sleep 2
-        # Remove any stale lock files
-        rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/cache/apt/archives/lock 2>/dev/null || true
-        # Now proceed with installation
-        export DEBIAN_FRONTEND=noninteractive
-        apt-get update -qq -y && \
-        apt-get install -y --no-install-recommends \
-            build-essential \
-            gcc \
-            g++ \
-            pkg-config \
-            curl \
-            wget \
-            git \
-            libpq-dev \
-            libpq5 \
-            libffi-dev \
-            libxml2-dev \
-            libxslt1-dev \
-            zlib1g-dev \
-            libjpeg-dev \
-            libpng-dev \
-            libfreetype6-dev && \
-        apt-get clean && \
-        rm -rf /var/lib/apt/lists/* && \
-        echo 'INSTALL_SUCCESS'
-    " 2>&1)
-    
-    local install_exit_code=$?
-    
-    if [ $install_exit_code -eq 0 ] && echo "$install_output" | grep -q "INSTALL_SUCCESS"; then
-        deps_installed=true
-        print_status "Package installation command completed successfully"
-    else
-        # Show error output for debugging
-        print_warning "Package installation command failed (exit code: $install_exit_code)"
-        if echo "$install_output" | grep -qi "error\|failed\|cannot"; then
-            print_warning "Installation errors detected:"
-            echo "$install_output" | grep -i "error\|failed\|cannot" | head -5 | while read line; do
-                print_warning "  $line"
-            done
-        else
-            # Show last few lines of output for debugging
-            print_warning "Last lines of output:"
-            echo "$install_output" | tail -5 | while read line; do
-                print_warning "  $line"
-            done
-        fi
-    fi
-    
-    # Verify installation by checking if tools are available
-    print_status "Verifying installed dependencies..."
-    local gcc_ok=false
-    local curl_ok=false
-    
-    if exec_in_container "command -v gcc >/dev/null 2>&1" >/dev/null 2>&1; then
-        gcc_ok=true
-        print_status "✓ gcc found"
-    else
-        print_warning "✗ gcc not found"
-    fi
-    
-    if exec_in_container "command -v curl >/dev/null 2>&1" >/dev/null 2>&1; then
-        curl_ok=true
-        print_status "✓ curl found"
-    else
-        print_warning "✗ curl not found"
-    fi
-    
-    if [ "$gcc_ok" = true ] && [ "$curl_ok" = true ]; then
-        print_success "System dependencies installed successfully (gcc and curl verified)"
-        deps_installed=true
-    elif [ "$deps_installed" = true ]; then
-        # Installation command succeeded but verification failed - this is unusual
-        print_warning "Installation completed but verification failed:"
-        [ "$gcc_ok" = false ] && print_warning "  - gcc not found"
-        [ "$curl_ok" = false ] && print_warning "  - curl not found"
-        deps_installed=false
-    else
-        print_warning "Failed to install system dependencies (will be installed on first use)"
-    fi
-    
-    # Step 2: Install UV package manager (only if curl is available)
-    if [ "$deps_installed" = true ]; then
-    print_status "Installing UV package manager..."
-        
-        # Check if curl is available before trying to install UV
-        print_status "Checking for curl..."
-        local curl_available=false
-        local curl_check_output=""
-        local curl_check_exit=0
-        
-        curl_check_output=$(exec_in_container "command -v curl 2>&1" 2>&1)
-        curl_check_exit=$?
-        
-        if [ $curl_check_exit -eq 0 ] && [ -n "$curl_check_output" ]; then
-            curl_available=true
-            print_status "✓ curl found at: $curl_check_output"
-        else
-            print_warning "✗ curl not found in container (exit code: $curl_check_exit)"
-            if [ -n "$curl_check_output" ]; then
-                print_warning "Output: $curl_check_output"
-            fi
-        fi
-        
-        if [ "$curl_available" = true ]; then
-            print_status "Downloading and installing UV..."
-            local uv_install_output=""
-            local uv_install_exit=0
-            
-            uv_install_output=$(exec_in_container "
-                curl -LsSf https://astral.sh/uv/install.sh | sh 2>&1 && \
-        export PATH=\"/root/.local/bin:\$PATH\" && \
-                uv --version 2>&1 && \
-                echo 'UV_INSTALL_SUCCESS'
-            " 2>&1)
-            uv_install_exit=$?
-            
-            if [ $uv_install_exit -eq 0 ] && echo "$uv_install_output" | grep -q "UV_INSTALL_SUCCESS"; then
-        # Verify UV installation
-                print_status "Verifying UV installation..."
-                local uv_verify_output=""
-                local uv_verify_exit=0
-                
-                uv_verify_output=$(exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>&1" 2>&1)
-                uv_verify_exit=$?
-                
-                if [ $uv_verify_exit -eq 0 ] && [ -n "$uv_verify_output" ]; then
-                    uv_version=$(echo "$uv_verify_output" | head -1)
-            print_success "UV installed successfully: $uv_version"
-        else
-                    print_warning "UV installation completed but verification failed (exit code: $uv_verify_exit)"
-                    if [ -n "$uv_verify_output" ]; then
-                        print_warning "Output: $uv_verify_output"
-                    fi
-        fi
-    else
-                print_warning "Failed to install UV (exit code: $uv_install_exit)"
-                # Show error details if available
-                if echo "$uv_install_output" | grep -qi "error\|failed\|cannot"; then
-                    print_warning "Installation errors:"
-                    echo "$uv_install_output" | grep -i "error\|failed\|cannot" | head -3 | while read line; do
-                        print_warning "  $line"
-                    done
-                else
-                    # Show last few lines for debugging
-                    print_warning "Last lines of output:"
-                    echo "$uv_install_output" | tail -5 | while read line; do
-                        print_warning "  $line"
-                    done
-                fi
-                print_warning "UV will be installed on first use"
-            fi
-        else
-            print_warning "curl not available, skipping UV installation (will be installed on first use)"
-        fi
-    else
-        print_warning "System dependencies not installed, skipping UV installation (will be installed on first use)"
-    fi
+    # Skip apt-get installation - dependencies will be installed on first use
+    print_status "Skipping system dependencies installation (will be installed on first use)"
+    print_status "Skipping UV installation (will be installed on first use)"
     
     # Step 3: Set up PATH in .bashrc for persistence
     print_status "Setting up PATH in .bashrc..."
