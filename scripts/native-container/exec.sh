@@ -557,28 +557,93 @@ else
         echo -n "📦 Installing essential tools and build dependencies (15-45s) "
         # Install synchronously and wait for completion
         export DEBIAN_FRONTEND=noninteractive
-        apt-get update -qq -y >/dev/null 2>&1 && \
-         apt-get install -y --no-install-recommends \
-             curl wget git \
-            build-essential \
-            gcc \
-            g++ \
-            pkg-config \
-            libpq-dev \
-            libpq5 \
-             libffi-dev \
-            libxml2-dev \
-            libxslt1-dev \
-            zlib1g-dev \
-            libjpeg-dev \
-            libpng-dev \
-            libfreetype6-dev \
-            >/dev/null 2>&1
-        # Verify installation
-        if command -v gcc >/dev/null 2>&1 && command -v g++ >/dev/null 2>&1; then
-        echo -e " \033[1;32m✓\033[0m"
+        # Create temp file for error output
+        error_log=$(mktemp /tmp/apt-install-errors.XXXXXX)
+        
+        # Check network connectivity first
+        if ! ping -c 1 -W 2 8.8.8.8 >/dev/null 2>&1 && ! ping -c 1 -W 2 deb.debian.org >/dev/null 2>&1; then
+            echo -e " \033[1;33m⚠\033[0m (no network connectivity)"
+            echo "   Cannot reach package repositories. Check network settings."
+            rm -f "$error_log"
         else
-            echo -e " \033[1;33m⚠\033[0m (installation may have failed)"
+            # Update package list with retry
+            update_success=false
+            for attempt in 1 2; do
+                if [ $attempt -gt 1 ]; then
+                    echo -n " (retry $attempt) "
+                fi
+                if apt-get update -qq -y >"$error_log" 2>&1; then
+                    update_success=true
+                    break
+                fi
+                sleep 2
+            done
+            
+            if [ "$update_success" = true ]; then
+                # Install packages with retry
+                install_success=false
+                for attempt in 1 2; do
+                    if [ $attempt -gt 1 ]; then
+                        echo -n " (retry $attempt) "
+                    fi
+                    if apt-get install -y --no-install-recommends \
+                        curl wget git \
+                        build-essential \
+                        gcc \
+                        g++ \
+                        pkg-config \
+                        libpq-dev \
+                        libpq5 \
+                        libffi-dev \
+                        libxml2-dev \
+                        libxslt1-dev \
+                        zlib1g-dev \
+                        libjpeg-dev \
+                        libpng-dev \
+                        libfreetype6-dev \
+                        >"$error_log" 2>&1; then
+                        install_success=true
+                        break
+                    fi
+                    sleep 2
+                done
+                
+                if [ "$install_success" = true ]; then
+                    # Verify installation - check multiple tools
+                    if command -v gcc >/dev/null 2>&1 && \
+                       command -v g++ >/dev/null 2>&1 && \
+                       command -v pkg-config >/dev/null 2>&1 && \
+                       command -v curl >/dev/null 2>&1 && \
+                       [ -f /usr/include/zlib.h ] && \
+                       [ -f /usr/include/png.h ]; then
+                        echo -e " \033[1;32m✓\033[0m"
+                        rm -f "$error_log"
+                    else
+                        echo -e " \033[1;33m⚠\033[0m (partial installation - some tools missing)"
+                        echo "   Check: $error_log for details"
+                        echo "   You can try: install-system-deps"
+                    fi
+                else
+                    echo -e " \033[1;33m⚠\033[0m (package installation failed)"
+                    echo "   Error log: $error_log"
+                    # Try to show last few lines of error
+                    if [ -f "$error_log" ]; then
+                        echo "   Last errors:"
+                        tail -n 5 "$error_log" | sed 's/^/   /'
+                    fi
+                    echo "   You can try manually: install-system-deps"
+                fi
+            else
+                echo -e " \033[1;33m⚠\033[0m (package list update failed)"
+                echo "   Error log: $error_log"
+                # Try to show last few lines of error
+                if [ -f "$error_log" ]; then
+                    echo "   Last errors:"
+                    tail -n 5 "$error_log" | sed 's/^/   /'
+                fi
+                echo "   Possible causes: network issues, repository problems, or permissions"
+                echo "   You can try manually: install-system-deps"
+            fi
         fi
     fi
 
