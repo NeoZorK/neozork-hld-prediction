@@ -214,16 +214,23 @@ validate_container_config() {
             # Try using uv first (preferred method) with temporary venv
             if command_exists uv; then
                 if uv venv "$temp_venv" >/dev/null 2>&1 && \
-                   [ -f "$temp_venv/bin/python" ] && \
-                   "$temp_venv/bin/python" -m pip install pyyaml --quiet >/dev/null 2>&1; then
-                    print_success "PyYAML installed successfully using UV in temp venv"
-                    pyyaml_installed=true
-                    python_cmd="$temp_venv/bin/python"
+                   [ -e "$temp_venv/bin/python" ]; then
+                    # UV venv doesn't include pip by default, use uv pip install directly
+                    if uv pip install --python "$temp_venv/bin/python" pyyaml --quiet >/dev/null 2>&1; then
+                        print_success "PyYAML installed successfully using UV in temp venv"
+                        pyyaml_installed=true
+                        python_cmd="$temp_venv/bin/python"
+                    else
+                        # Clean up failed venv attempt
+                        rm -rf "$temp_venv" 2>/dev/null
+                        temp_venv=$(mktemp -d)
+                        print_warning "Failed to install PyYAML with UV, trying python3 venv"
+                    fi
                 else
                     # Clean up failed venv attempt
                     rm -rf "$temp_venv" 2>/dev/null
                     temp_venv=$(mktemp -d)
-                    print_warning "Failed to install PyYAML with UV, trying python3 venv"
+                    print_warning "Failed to create venv with UV, trying python3 venv"
                 fi
             fi
             
@@ -283,11 +290,10 @@ check_and_remove_existing_container() {
     
     # Check if container exists in container list (including stopped containers)
     if container list --all | grep -q "neozork-hld-prediction"; then
-        print_warning "Container 'neozork-hld-prediction' already exists"
-        print_status "Removing existing container..."
+        print_status "Found existing container 'neozork-hld-prediction', removing it..."
         
         container_id=$(container list --all | grep "neozork-hld-prediction" | awk '{print $1}')
-        if container rm "$container_id"; then
+        if container rm "$container_id" >/dev/null 2>&1; then
             print_success "Existing container removed"
         else
             print_error "Failed to remove existing container"
@@ -297,10 +303,9 @@ check_and_remove_existing_container() {
     
     # Check if container directory exists in filesystem
     if [ -d "$HOME/Library/Application Support/com.apple.container/containers/neozork-hld-prediction" ]; then
-        print_warning "Container directory exists in filesystem"
-        print_status "Removing container directory..."
+        print_status "Found existing container directory, removing it..."
         
-        if rm -rf "$HOME/Library/Application Support/com.apple.container/containers/neozork-hld-prediction"; then
+        if rm -rf "$HOME/Library/Application Support/com.apple.container/containers/neozork-hld-prediction" 2>/dev/null; then
             print_success "Container directory removed"
         else
             print_error "Failed to remove container directory"
