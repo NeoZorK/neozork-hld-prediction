@@ -573,35 +573,116 @@ install_container_dependencies() {
     
     # Get container name/ID
     local container_name="neozork-hld-prediction"
-    local container_id=$(container list --all | grep "$container_name" | awk '{print $1}')
     
-    if [ -z "$container_id" ]; then
-        print_error "Container not found after creation"
+    # Verify container exists
+    print_status "Checking if container exists..."
+    if ! container list --all | grep -q "$container_name"; then
+        print_error "Container '$container_name' not found in container list"
+        print_status "Available containers:"
+        container list --all || true
         return 1
     fi
     
-    print_status "Using container: $container_name (ID: $container_id)"
+    local container_id=$(container list --all | grep "$container_name" | awk '{print $1}')
+    
+    if [ -z "$container_id" ]; then
+        print_error "Could not get container ID for '$container_name'"
+        print_status "Container list output:"
+        container list --all || true
+        return 1
+    fi
+    
+    print_status "Found container: $container_name (ID: $container_id)"
     
     # Ensure container is running - this is critical for installation
     print_status "Ensuring container is running before installation..."
     if ! ensure_container_running; then
-        print_warning "Could not ensure container is running, but will try to install dependencies anyway..."
-    fi
-    
-    # Determine which container identifier to use
-    local container_to_use="$container_name"
-    if ! container exec "$container_name" echo "test" >/dev/null 2>&1; then
-        if [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
-            container_to_use="$container_id"
-            print_status "Using container ID instead of name: $container_to_use"
+        print_warning "Could not ensure container is running via ensure_container_running, trying direct start..."
+        # Try to start container directly
+        if container start "$container_name" >/dev/null 2>&1; then
+            print_status "Container started successfully by name"
+            sleep 5
+        elif [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
+            print_status "Container started successfully by ID"
+            sleep 5
         else
-            print_warning "Container is not accessible, will try to start it for each command..."
+            print_error "Failed to start container"
+            return 1
         fi
     fi
+    
+    # Determine which container identifier to use and verify it's accessible
+    local container_to_use=""
+    print_status "Verifying container accessibility..."
+    
+    if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+        container_to_use="$container_name"
+        print_success "Container accessible by name: $container_to_use"
+    elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+        container_to_use="$container_id"
+        print_success "Container accessible by ID: $container_to_use"
+    else
+        print_error "Container is not accessible by name or ID"
+        print_status "Trying to start container again..."
+        container start "$container_name" >/dev/null 2>&1 || \
+        container start "$container_id" >/dev/null 2>&1 || true
+        sleep 5
+        
+        # Try again
+        if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+            container_to_use="$container_name"
+            print_success "Container accessible by name after restart: $container_to_use"
+        elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+            container_to_use="$container_id"
+            print_success "Container accessible by ID after restart: $container_to_use"
+        else
+            print_error "Container is still not accessible after restart"
+            return 1
+        fi
+    fi
+    
+    # Helper function to ensure container is accessible before executing commands
+    ensure_container_accessible() {
+        # Check if container_to_use is set and accessible
+        if [ -z "$container_to_use" ]; then
+            return 1
+        fi
+        
+        # Try to verify container is accessible
+        if container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
+            return 0
+        fi
+        
+        # Try to start container if not accessible
+        print_status "Container not accessible, starting it..."
+        if container start "$container_name" >/dev/null 2>&1; then
+            sleep 3
+            if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+                container_to_use="$container_name"
+                return 0
+            fi
+        fi
+        
+        if [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
+            sleep 3
+            if container exec "$container_id" echo "test" >/dev/null 2>&1; then
+                container_to_use="$container_id"
+                return 0
+            fi
+        fi
+        
+        return 1
+    }
     
     # Silent version of exec_in_container for checking status
     exec_in_container_silent() {
         local cmd="$1"
+        
+        # Ensure container is accessible first
+        if ! ensure_container_accessible; then
+            return 1
+        fi
+        
         container exec "$container_to_use" bash -c "$cmd" 2>/dev/null || \
         container exec "$container_name" bash -c "$cmd" 2>/dev/null || \
         container exec "$container_id" bash -c "$cmd" 2>/dev/null || true
@@ -611,6 +692,12 @@ install_container_dependencies() {
     wait_for_apt_lock() {
         local max_wait=60
         local wait_count=0
+        
+        # Ensure container is accessible first
+        if ! ensure_container_accessible; then
+            print_warning "Container not accessible, skipping apt lock check"
+            return 1
+        fi
         
         while [ $wait_count -lt $max_wait ]; do
             # Check if apt-get or dpkg processes are running
@@ -638,7 +725,13 @@ install_container_dependencies() {
         local exit_code=0
         local output=""
         
-        # Try to execute command first (container should already be running)
+        # Ensure container is accessible first
+        if ! ensure_container_accessible; then
+            print_error "Container is not accessible, cannot execute command"
+            return 1
+        fi
+        
+        # Try to execute command with container_to_use first
         output=$(container exec "$container_to_use" bash -c "$cmd" 2>&1)
         exit_code=$?
         
@@ -676,23 +769,14 @@ install_container_dependencies() {
     # Step 1: Install system dependencies (gcc, build-essential, etc.)
     print_status "Installing system dependencies (gcc, build-essential, curl)..."
     
-    # Ensure container is running and wait for any existing apt-get processes to finish
-    print_status "Ensuring container is running and waiting for apt locks..."
-    
-    # Start container if not running
-    if ! container exec "$container_to_use" echo "test" >/dev/null 2>&1; then
-        print_status "Starting container..."
-        container start "$container_name" >/dev/null 2>&1 || \
-        container start "$container_id" >/dev/null 2>&1 || true
-        sleep 5  # Give container time to fully start
-        
-        # Update container_to_use
-        if container exec "$container_name" echo "test" >/dev/null 2>&1; then
-            container_to_use="$container_name"
-        elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
-            container_to_use="$container_id"
-        fi
+    # Ensure container is accessible before proceeding
+    print_status "Ensuring container is accessible..."
+    if ! ensure_container_accessible; then
+        print_error "Container is not accessible, cannot install dependencies"
+        return 1
     fi
+    
+    print_success "Container is accessible: $container_to_use"
     
     # Wait for any existing apt-get processes to finish
     print_status "Waiting for any existing apt-get processes to finish..."
