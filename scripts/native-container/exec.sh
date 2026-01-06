@@ -189,8 +189,18 @@ export DEBIAN_FRONTEND=noninteractive
 cd /app
 
 # Quick check: if venv exists and has packages, skip most setup
-if [ -d "/app/.venv" ] && [ -f "/app/.venv/pyvenv.cfg" ] && \
-   [ -f "/app/.venv/lib/python3.14/site-packages/pandas/__init__.py" ] 2>/dev/null; then
+pandas_found=false
+if [ -d "/app/.venv" ] && [ -f "/app/.venv/pyvenv.cfg" ]; then
+    # Try to find pandas in site-packages (check common Python versions)
+    for pyver in python3.14 python3.13 python3.12 python3.11 python3.10; do
+        if [ -f "/app/.venv/lib/${pyver}/site-packages/pandas/__init__.py" ] 2>/dev/null; then
+            pandas_found=true
+            break
+        fi
+    done
+fi
+
+if [ "$pandas_found" = true ]; then
     # Already set up, just activate and continue
     echo -e "\033[1;32m✓\033[0m Environment ready"
     source .venv/bin/activate 2>/dev/null || true
@@ -205,8 +215,8 @@ else
     if ! command -v curl >/dev/null 2>&1 || ! command -v wget >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then
         echo -n "📦 Installing essential tools (10-30s) "
         (apt-get update -qq -y >/dev/null 2>&1 && apt-get install -y -qq curl wget git >/dev/null 2>&1) &
-        local apt_pid=$!
-        local dots=0
+        apt_pid=$!
+        dots=0
         while kill -0 $apt_pid 2>/dev/null; do
             printf "."
             sleep 0.3
@@ -230,10 +240,10 @@ else
     if ! command -v uv >/dev/null 2>&1; then
         echo -n "📦 Installing UV package manager (5-15s) "
         (curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1) &
-        local uv_pid=$!
+        uv_pid=$!
         export PATH="$HOME/.cargo/bin:$PATH"
         export PATH="/root/.cargo/bin:$PATH"
-        local dots=0
+        dots=0
         while kill -0 $uv_pid 2>/dev/null; do
             printf "."
             sleep 0.3
@@ -249,18 +259,25 @@ else
     
     # Check if virtual environment exists and has packages installed
     if [ -d "/app/.venv" ] && [ -f "/app/.venv/pyvenv.cfg" ] && [ -d "/app/.venv/lib" ]; then
-        # Check if key packages are installed
-        if [ -d "/app/.venv/lib/python3.14/site-packages" ] && \
-           [ -f "/app/.venv/lib/python3.14/site-packages/pandas/__init__.py" ] 2>/dev/null; then
+        # Check if key packages are installed (check common Python versions)
+        pandas_found=false
+        for pyver in python3.14 python3.13 python3.12 python3.11 python3.10; do
+            if [ -f "/app/.venv/lib/${pyver}/site-packages/pandas/__init__.py" ] 2>/dev/null; then
+                pandas_found=true
+                break
+            fi
+        done
+        
+        if [ "$pandas_found" = true ]; then
             echo -e "\033[1;32m✓\033[0m Environment ready"
         else
             echo -n "📦 Installing dependencies (30-120s) "
             (uv pip install -r /app/requirements.txt --quiet 2>/dev/null) &
-            local install_pid=$!
-            local dots=0
-            local start_time=$(date +%s)
+            install_pid=$!
+            dots=0
+            start_time=$(date +%s)
             while kill -0 $install_pid 2>/dev/null; do
-                local elapsed=$(($(date +%s) - start_time))
+                elapsed=$(($(date +%s) - start_time))
                 if [ $elapsed -ge 180 ]; then
                     kill $install_pid 2>/dev/null
                     echo -e "\033[1;33m⚠ Timeout after 180s - dependencies may be partially installed\033[0m"
@@ -276,14 +293,14 @@ else
                 fi
             done
             wait $install_pid 2>/dev/null
-            local elapsed=$(($(date +%s) - start_time))
+            elapsed=$(($(date +%s) - start_time))
             echo -e " \033[1;32m✓\033[0m (${elapsed}s)"
         fi
     else
         echo -n "📦 Creating virtual environment (2-5s) "
         (uv venv /app/.venv >/dev/null 2>&1) &
-        local venv_pid=$!
-        local dots=0
+        venv_pid=$!
+        dots=0
         while kill -0 $venv_pid 2>/dev/null; do
             printf "."
             sleep 0.2
@@ -298,11 +315,11 @@ else
         
         echo -n "📦 Installing dependencies (30-120s) "
         (uv pip install -r /app/requirements.txt --quiet 2>/dev/null) &
-        local install_pid=$!
-        local dots=0
-        local start_time=$(date +%s)
+        install_pid=$!
+        dots=0
+        start_time=$(date +%s)
         while kill -0 $install_pid 2>/dev/null; do
-            local elapsed=$(($(date +%s) - start_time))
+            elapsed=$(($(date +%s) - start_time))
             if [ $elapsed -ge 180 ]; then
                 kill $install_pid 2>/dev/null
                 echo -e "\033[1;33m⚠ Timeout after 180s - dependencies may be partially installed\033[0m"
@@ -318,7 +335,7 @@ else
             fi
         done
         wait $install_pid 2>/dev/null
-        local elapsed=$(($(date +%s) - start_time))
+        elapsed=$(($(date +%s) - start_time))
         echo -e " \033[1;32m✓\033[0m (${elapsed}s)"
     fi
     
