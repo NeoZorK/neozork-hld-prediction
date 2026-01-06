@@ -90,20 +90,21 @@ install_system_dependencies() {
         return 1
     fi
     
-    # Check if gcc is already installed
-    if command -v gcc &> /dev/null; then
-        echo -e "\033[1;32m✅ Build tools already installed\033[0m"
+    # Check if gcc and Pillow dependencies are already installed
+    if command -v gcc &> /dev/null && \
+       [ -f /usr/include/zlib.h ] && \
+       [ -f /usr/include/jpeglib.h ] && \
+       [ -f /usr/include/png.h ]; then
+        echo -e "\033[1;32m✅ Build tools and Pillow dependencies already installed\033[0m"
         return 0
     fi
     
-    echo -e "\033[1;33m📦 Installing build tools and PostgreSQL libraries...\033[0m"
+    echo -e "\033[1;33m📦 Installing build tools, PostgreSQL libraries, and Pillow dependencies...\033[0m"
     
     # Set non-interactive mode
     export DEBIAN_FRONTEND=noninteractive
     
     # Update package list and install build dependencies with error handling
-    export DEBIAN_FRONTEND=noninteractive
-    
     if apt-get update -qq >/dev/null 2>&1; then
         if apt-get install -y --no-install-recommends \
             build-essential \
@@ -115,16 +116,27 @@ install_system_dependencies() {
             libxml2-dev \
             libxslt1-dev \
             curl \
+            zlib1g-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libfreetype6-dev \
+            liblcms2-dev \
+            libtiff-dev \
+            libwebp-dev \
+            libopenjp2-7-dev \
             >/dev/null 2>&1; then
             apt-get clean >/dev/null 2>&1
             rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
             
             # Verify installation
-            if command -v gcc &> /dev/null; then
-                echo -e "\033[1;32m✅ System dependencies installed successfully\033[0m"
+            if command -v gcc &> /dev/null && \
+               [ -f /usr/include/zlib.h ] && \
+               [ -f /usr/include/jpeglib.h ] && \
+               [ -f /usr/include/png.h ]; then
+                echo -e "\033[1;32m✅ System dependencies installed successfully (including Pillow dependencies)\033[0m"
                 return 0
             else
-                echo -e "\033[1;33m⚠️  Installation completed but gcc not found in PATH\033[0m"
+                echo -e "\033[1;33m⚠️  Installation completed but some dependencies may be missing\033[0m"
                 return 1
             fi
         else
@@ -144,7 +156,7 @@ setup_uv_environment() {
     # Install system dependencies first (don't fail if it doesn't work)
     install_system_dependencies || {
         echo -e "\033[1;33m⚠️  System dependencies installation failed - some packages may fail to build\033[0m"
-        echo -e "\033[1;33m💡 You can install them manually: apt-get update && apt-get install -y build-essential gcc g++ libpq-dev libpq5\033[0m"
+        echo -e "\033[1;33m💡 You can install them manually: apt-get update && apt-get install -y build-essential gcc g++ libpq-dev libpq5 zlib1g-dev libjpeg-dev libpng-dev libfreetype6-dev liblcms2-dev libtiff-dev libwebp-dev libopenjp2-7-dev\033[0m"
     }
     
     # Check if virtual environment exists
