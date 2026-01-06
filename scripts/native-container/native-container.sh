@@ -91,18 +91,14 @@ start_container_sequence() {
         print_status "Skipping setup and start steps..."
         print_status "Opening interactive shell directly..."
         echo
-        if [ -t 0 ]; then
-            read -p "Press Enter to continue to shell..." 2>/dev/null || true
-        fi
         
-        # Execute shell - use exec.sh which handles TTY detection
-        # When called from menu, exec.sh will use script command for pseudo-TTY
+        # Don't use read here - it can interfere with stdin for exec.sh
+        # Just launch shell directly
         print_status "Launching shell..."
-        if ./scripts/native-container/exec.sh --shell; then
-            exit_code=0
-        else
-            exit_code=$?
-        fi
+        
+        # Execute shell - exec.sh now uses temp file approach, so stdin state doesn't matter
+        ./scripts/native-container/exec.sh --shell
+        exit_code=$?
         
         # Check exit code
         if [ $exit_code -eq 0 ]; then

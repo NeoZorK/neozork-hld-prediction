@@ -181,9 +181,11 @@ execute_enhanced_shell() {
     print_status "Starting enhanced shell with automatic venv activation and UV setup..."
     
     # Create temporary script file in container using heredoc
+    # Use a temporary file approach to avoid stdin issues when called from menu
     print_status "Creating enhanced shell script in container..."
-    container exec "$container_id" bash << 'HEREDOC_EOF'
-cat > /tmp/enhanced_shell.sh << 'ENHANCED_SHELL_EOF'
+    # Create script on host first, then copy to container
+    local temp_script=$(mktemp)
+    cat > "$temp_script" << 'ENHANCED_SHELL_EOF'
 #!/bin/bash
 
 # Enhanced shell startup for NeoZork HLD Prediction container
@@ -426,8 +428,22 @@ else
     bash -i
 fi
 ENHANCED_SHELL_EOF
-HEREDOC_EOF
-
+    
+    # Copy script to container using container cp or exec with cat
+    if command -v container >/dev/null 2>&1 && container cp --help >/dev/null 2>&1; then
+        # Use container cp if available
+        container cp "$temp_script" "$container_id:/tmp/enhanced_shell.sh" 2>/dev/null || {
+            # Fallback: use exec with cat
+            container exec -i "$container_id" bash -c "cat > /tmp/enhanced_shell.sh" < "$temp_script"
+        }
+    else
+        # Use exec with cat
+        container exec -i "$container_id" bash -c "cat > /tmp/enhanced_shell.sh" < "$temp_script"
+    fi
+    
+    # Clean up temp file
+    rm -f "$temp_script"
+    
     # Make the script executable
     container exec "$container_id" chmod +x /tmp/enhanced_shell.sh
     
