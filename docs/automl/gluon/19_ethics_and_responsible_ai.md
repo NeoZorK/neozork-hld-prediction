@@ -1,63 +1,63 @@
-# Этика и ответственный AI
+# Ethics and Responsible AI
 
-**Автор:** Shcherbyna Rostyslav  
-**Дата:** 2024  
+**Author:** Shcherbyna Rostyslav
+**Date:** 2024
 
-## Почему этика AI критически важна
+## Whoy ethics AI is critical
 
-**Почему 90% ML-моделей в продакшене нарушают этические принципы?** Потому что команды фокусируются на технических метриках, игнорируя этические последствия. Это как создание оружия без понимания, как его будут использовать.
+**Why 90 percent of ML models in sales violate ethical principles?** Because team focuses on technical metrics, ignoring ethical consequences. It's like a creative weapon without understanding how it's going to be used.
 
-### Катастрофические последствия неэтичного AI
-- **Дискриминация**: Модели могут принимать несправедливые решения
-- **Регулятивные штрафы**: GDPR штрафы до 4% от оборота компании
-- **Потеря репутации**: Публичные скандалы из-за предвзятости
-- **Юридические проблемы**: Судебные иски за дискриминацию
+### Catastrophic Consequences Unethical AI
+- ** Discrimination**: Models can make unfair decisions
+- ** Regulatory fines**: GDPR fines to 4% from company turnover
+- ** Loss of reputation**: Public scandals due to bias
+- **Legal issues**: Judicial actions for discrimination
 
-### Преимущества этичного AI
-- **Доверие пользователей**: Справедливые и понятные решения
-- **Соответствие законам**: GDPR, AI Act, другие регулятивные требования
-- **Лучшая репутация**: Компания воспринимается как ответственная
-- **Долгосрочный успех**: Устойчивое развитие бизнеса
+### The benefits of ethical AI #
+- ** User confidence**: Fair and understandable solutions
+- ** Compliance with laws**: GDPR, AI Act, other regulatory requirements
+- ** Best reputation**: The company is perceived as responsible
+- ** Long-term success**: Sustainable business development
 
-## Введение в этику AI
+## Introduction in AI Ethics
 
-<img src="images/optimized/ai_ethics_overview.png" alt="Этика и ответственный AI" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.1: Принципы этичного и ответственного использования искусственного интеллекта - основные категории и принципы*
+<img src="images/optimized/ai_ethics_overView.png" alt="Ethics and Responsible AI" style="max-width: 100%; height: auto; display: block; marguin: 20px auto;">
+*Picture 19.1: Principles of ethical and responsible use of artificial intelligence - basic categories and principles*
 
-**Почему этика AI - это не просто "хорошо быть хорошим"?** Потому что неэтичные AI-системы могут причинить реальный вред людям и привести к серьезным юридическим и репутационным проблемам.
+Why is ethics AI simply "good to be good"?
 
-**Основные принципы этичного AI:**
-- **Fairness & Non-discrimination**: Справедливость и отсутствие дискриминации
-- **Transparency & Explainability**: Прозрачность и объяснимость решений
-- **Privacy & Data Protection**: Приватность и защита персональных данных
-- **Legal Compliance**: Соответствие правовым требованиям (GDPR, AI Act)
-- **Bias Detection & Mitigation**: Обнаружение и снижение смещений
-- **Accountability & Responsibility**: Ответственность и подотчетность
+** Basic Principles of Ethics AI:**
+**Fairness & Non-discrimination**: Justice and non-discrimination
+- **Transparency & Exploinability**: Transparent and understandable decisions
+- **Privacy & data Protection**: privacy and personal data protection
+- ** Legal Compliance**: Compliance with legal requirements (GDPR, AI Act)
+- **Bias Design & Mitigation**: Detecting and reducing displacements
+- ** Accountability & Responsibility**: Responsibility and sub-Reportability
 
-Разработка и использование ML-моделей несут значительную ответственность. Этот раздел охватывает этические принципы, правовые требования и лучшие практики для создания ответственных AI-систем.
+The development and use of ML models have considerable responsibilities, and this section covers ethical principles, legal requirements and best practices for the establishment of responsible AI systems.
 
-## Основные принципы этичного AI
+♪ Basic Principles of Ethics AI
 
-### 1. Справедливость и отсутствие дискриминации
+###1: Justice and non-discrimination
 
-<img src="images/optimized/fairness_metrics.png" alt="Метрики справедливости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.2: Метрики справедливости в ML - различные подходы к измерению справедливости*
+<img src="images/optimized/fairness_metrics.png" alt="metrics justice" style="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+*Picture 19.2: metrics of justice in ML - different approaches to measuring justice*
 
-**Почему справедливость - это основа этичного AI?** Потому что несправедливые модели могут дискриминировать людей по полу, расе, возрасту и другим признакам, что недопустимо в современном обществе.
+Because unjust models can discriminate against people on the basis of sex, race, age, and other importance, which is unacceptable in modern society.
 
-**Типы метрик справедливости:**
-- **Statistical Parity**: Равные доли положительных исходов для всех групп
-- **Equalized Odds**: Равные TPR и FPR для всех групп
-- **Demographic Parity**: Демографический паритет в предсказаниях
-- **Individual Fairness**: Справедливость на индивидуальном уровне
-- **Counterfactual Fairness**: Контрфактическая справедливость
-- **Calibration**: Калибровка предсказаний для разных групп
+**Tips of justice metric:**
+- **Statistical Parity**: Equal shares of positive outcomes for all groups
+**Equated Odds**: Equivalent TPR and FPR for all groups
+- **Demographic Parity**: Demographic parity in predictions
+- **Individual Fairness**: Equity on an individual level
+- **Counterfactual Fairness**: Counterfactual justice
+- **Calibration**: Calibration of preferences for different groups
 
-**Почему модели могут быть несправедливыми?**
-- **Предвзятые данные**: Исторические данные содержат дискриминацию
-- **Неправильные признаки**: Использование чувствительных атрибутов
-- **Неравномерное качество**: Модель работает хуже для некоторых групп
-- **Скрытые смещения**: Неочевидные паттерны дискриминации
+# Why can models be unfair? #
+- ** Unprejudiced data**: Historical data contain discrimination
+- ** Wrong features**: Use of sensitive attributes
+- ** Unequal quality**: The Working Model is worse for some groups
+- **Hidden displacement**: Unobvious patterns of discrimination
 
 ```python
 import pandas as pd
@@ -66,173 +66,173 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
 def check_fairness(model, X_test, y_test, sensitive_attributes):
-    """Проверка справедливости модели - критически важно для этичного AI"""
-    
-    predictions = model.predict(X_test)
-    
-    fairness_metrics = {}
-    
-    for attr in sensitive_attributes:
-        # Разделение по чувствительным атрибутам - проверка каждой группы
-        groups = X_test[attr].unique()
-        
-        group_metrics = {}
-        for group in groups:
-            mask = X_test[attr] == group
-            group_predictions = predictions[mask]
-            group_actual = y_test[mask]
-            
-            # Метрики для каждой группы - сравнение производительности
-            accuracy = (group_predictions == group_actual).mean()
-            precision = calculate_precision(group_predictions, group_actual)
-            recall = calculate_recall(group_predictions, group_actual)
-            
-            group_metrics[group] = {
-                'accuracy': accuracy,
-                'precision': precision,
-                'recall': recall
-            }
-        
-        # Проверка различий между группами
-        accuracies = [metrics['accuracy'] for metrics in group_metrics.values()]
-        max_diff = max(accuracies) - min(accuracies)
-        
-        fairness_metrics[attr] = {
-            'group_metrics': group_metrics,
-            'max_accuracy_difference': max_diff,
-            'is_fair': max_diff < 0.1  # Порог справедливости
-        }
-    
-    return fairness_metrics
+""Check of model fairness is critical for ethical AI""
+
+ predictions = model.predict(X_test)
+
+ fairness_metrics = {}
+
+ for attr in sensitive_attributes:
+# Segregation on sensitive attributes - check each group
+ groups = X_test[attr].unique()
+
+ group_metrics = {}
+ for group in groups:
+ mask = X_test[attr] == group
+ group_predictions = predictions[mask]
+ group_actual = y_test[mask]
+
+# metrics for each group - Comparson performance
+ accuracy = (group_predictions == group_actual).mean()
+ precision = calculate_precision(group_predictions, group_actual)
+ recall = calculate_recall(group_predictions, group_actual)
+
+ group_metrics[group] = {
+ 'accuracy': accuracy,
+ 'precision': precision,
+ 'recall': recall
+ }
+
+# Check differences between groups
+ accuracies = [metrics['accuracy'] for metrics in group_metrics.values()]
+ max_diff = max(accuracies) - min(accuracies)
+
+ fairness_metrics[attr] = {
+ 'group_metrics': group_metrics,
+ 'max_accuracy_difference': max_diff,
+'is_fire': max_diff < 0.1 # The threshold of justice
+ }
+
+ return fairness_metrics
 
 def calculate_precision(predictions, actual):
-    """Расчет точности"""
-    tp = ((predictions == 1) & (actual == 1)).sum()
-    fp = ((predictions == 1) & (actual == 0)).sum()
-    return tp / (tp + fp) if (tp + fp) > 0 else 0
+""The calculation of accuracy."
+ tp = ((predictions == 1) & (actual == 1)).sum()
+ fp = ((predictions == 1) & (actual == 0)).sum()
+ return tp / (tp + fp) if (tp + fp) > 0 else 0
 
 def calculate_recall(predictions, actual):
-    """Расчет полноты"""
-    tp = ((predictions == 1) & (actual == 1)).sum()
-    fn = ((predictions == 0) & (actual == 1)).sum()
-    return tp / (tp + fn) if (tp + fn) > 0 else 0
+""""" "The calculation of completeness."
+ tp = ((predictions == 1) & (actual == 1)).sum()
+ fn = ((predictions == 0) & (actual == 1)).sum()
+ return tp / (tp + fn) if (tp + fn) > 0 else 0
 ```
 
-**Детальные описания параметров проверки справедливости:**
+** Detailed descriptions of equity verification parameters:**
 
-- **`model`**: Обученная ML модель для проверки
-  - Тип: sklearn model, pytorch model, tensorflow model
-  - Требования: должен поддерживать predict() метод
-  - Применение: любая модель для классификации или регрессии
-  - Примеры: RandomForest, LogisticRegression, Neural Network
+- ** `model'**: ML-trained model for verification
+- Type: sclearn model, pytorch model, tensorflow model
+- Requirements: shall support predict() method
+- Application: Any model for classification or regression
+ - examples: RandomForest, LogisticRegression, Neural network
 
-- **`X_test`**: Тестовые данные для проверки
-  - Тип: pandas DataFrame или numpy array
-  - Содержит: признаки для предсказания
-  - Требования: должны включать чувствительные атрибуты
-  - Размер: обычно 20% от общего датасета
+- ** `X_test'**: test data for verification
+- Type: pandas dataFrame or numpy array
+- Contains: signs for prediction
+Requirements: shall include sensitive attributes
+Size: usually 20 per cent from total dateset
 
-- **`y_test`**: Истинные метки для тестовых данных
-  - Тип: pandas Series или numpy array
-  - Содержит: истинные значения целевой переменной
-  - Требования: должны соответствовать X_test
-  - Формат: бинарные (0/1) или мультиклассовые метки
+- **'y_test'**: True tags for test data
+- Type: pandas Series or numpy array
+- Contains: true value of target variable
+- Requirements: shall comply with X_test
+- Format: binary (0/1) or multiclass labels
 
-- **`sensitive_attributes`**: Список чувствительных атрибутов
-  - Тип: List[str]
-  - Содержит: названия колонок с чувствительными признаками
-  - Примеры: ['gender', 'race', 'age_group', 'religion']
-  - Применение: проверка справедливости по этим атрибутам
+- ** `sensitive_attributes'**: List of sensitive attributes
+- Type: List[str]
+- Contains: names columns with sensitive signature
+ - examples: ['gender', 'race', 'age_group', 'religion']
+Application: check justice on these attributes
 
-- **`predictions = model.predict(X_test)`**: Предсказания модели
-  - Результат: массив предсказаний для всех тестовых образцов
-  - Формат: бинарные (0/1) или вероятности
-  - Применение: основа для расчета метрик справедливости
+- **'predications = model.predict(X_test)'**: Model predictions
+- Result: A range of preferences for all test samples
+- Format: Binary (0/1) or probability
+Application: basis for calculating the measurement of equity
 
-- **`groups = X_test[attr].unique()`**: Уникальные значения атрибута
-  - Результат: список уникальных значений чувствительного атрибута
-  - Примеры: ['male', 'female'] для gender
-  - Применение: разделение данных на группы для сравнения
+- **'groups = X_test[attr].unique()'**: Unique attribute values
+- Result: List of unique values of a sensitive attribute
+ - examples: ['male', 'female'] for gender
+- Application: division of data on group for comparison
 
-- **`mask = X_test[attr] == group`**: Маска для конкретной группы
-  - Результат: булевый массив для выбора образцов группы
-  - Применение: фильтрация данных по группе
-  - Размер: соответствует размеру X_test
+- **'mask = X_test[attr] ==group'**: Mask for a particular group
+- Result: Bould array for group sample selection
+- Application: group filtering
+- Size: corresponding to the size of X_test
 
-- **`group_predictions = predictions[mask]`**: Предсказания для группы
-  - Результат: предсказания только для образцов данной группы
-  - Применение: расчет метрик для группы
-  - Размер: количество образцов в группе
+- **'group_predations = preferences[Mask]'**: Projections for the group
+Outcome: Forecasts only for samples of this group
+Application: Calculation of metrics for the group
+- Size: number of samples in group
 
-- **`group_actual = y_test[mask]`**: Истинные метки для группы
-  - Результат: истинные метки только для образцов данной группы
-  - Применение: расчет метрик для группы
-  - Размер: соответствует group_predictions
+- **'group_actual = y_test[mask]'**: True tags for group
+Outcome: True tags only for samples of this group
+Application: Calculation of metrics for the group
+- Size: corresponds to group_predations
 
-- **`accuracy = (group_predictions == group_actual).mean()`**: Точность для группы
-  - Формула: (правильные предсказания) / (общее количество)
-  - Диапазон: от 0 до 1
-  - Применение: основная метрика производительности
-  - Интерпретация: доля правильных предсказаний
+- **'accuracy = (group_predations ==group_actual).mean()'**: Accuracy for group
+- Formula: (right predictions) / (total)
+- Range: from 0 to 1
+- Application: basic metrics of performance
+- Interpretation: proportion of correct preferences
 
-- **`precision = calculate_precision(group_predictions, group_actual)`**: Точность для группы
-  - Формула: TP / (TP + FP)
-  - Диапазон: от 0 до 1
-  - Применение: метрика для положительного класса
-  - Интерпретация: доля истинных положительных среди предсказанных положительных
+- **'preception = calculate_precision(group_predictions, group_actual)'**: Accuracy for group
+- Formula: TP / (TP + FP)
+- Range: from 0 to 1
+- Application: metrics for positive class
+- Interpretation: share of true positive among the predicted positive
 
-- **`recall = calculate_recall(group_predictions, group_actual)`**: Полнота для группы
-  - Формула: TP / (TP + FN)
-  - Диапазон: от 0 до 1
-  - Применение: метрика для положительного класса
-  - Интерпретация: доля найденных истинных положительных
+- **/recall = calculate_recall(group_predations, group_actual)**: Complete for group
+- Formula: TP / (TP + FN)
+- Range: from 0 to 1
+- Application: metrics for positive class
+- Interpretation: share of true positives
 
-- **`max_diff = max(accuracies) - min(accuracies)`**: Максимальная разность точности
-  - Результат: разность между лучшей и худшей точностью
-  - Диапазон: от 0 до 1
-  - Применение: мера справедливости
-  - Интерпретация: чем меньше, тем справедливее
+- ** `max_diff = max(accuracies) - min(accuracies) `**: Maximum difference in accuracy
+Outcome: The difference between best and worst accuracy
+- Range: from 0 to 1
+Application: a measure of equity
+- Interpretation: the less, the more fair
 
-- **`is_fair': max_diff < 0.1`**: Проверка справедливости
-  - Порог: 0.1 (10% разности)
-  - Логика: если разность < 10%, то справедливо
-  - Применение: бинарная оценка справедливости
-  - Рекомендация: можно настроить порог
+- **'is_fire': max_diff < 0.1'**: check justice
+- Threshold: 0.1 (10% difference)
+- Logs: if the difference < 10%, it is true
+Application: Binary assessment of equity
+- Recommendation: Can set the threshold
 
-**Метрики справедливости:**
+**Metrics justice:**
 
-- **Statistical Parity**: Равные доли положительных исходов
-  - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b) для всех групп
-  - Применение: проверка равных возможностей
-  - Ограничения: может конфликтовать с точностью
+- **Statistical Parity**: Equal shares of positive outcomes
+- Formula: P(x=1\A=a) = P(x=1\A=b) for all groups
+- Application: check of equal opportunities
+- Limitations: may conflict with accuracy
 
-- **Equalized Odds**: Равные TPR и FPR
-  - Формула: TPR_A = TPR_B и FPR_A = FPR_B
-  - Применение: проверка равной производительности
-  - Преимущества: учитывает истинные метки
+**Equated Odds**: Equivalent TPR and FPR
+- Formula: TPR_A = TPR_B and FPR_A = FPR_B
+Application: check equal performance
+- Benefits: takes into account true labels
 
-- **Demographic Parity**: Демографический паритет
-  - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b)
-  - Применение: равное распределение предсказаний
-  - Ограничения: может быть несправедливым
+- **Demographic Parity**: Demographic parity
+- Formula: P(~=1\A=a) = P(~=1\A=b)
+Application: Equal distribution of preferences
+Limitations: may be unfair
 
-- **Individual Fairness**: Справедливость на индивидуальном уровне
-  - Принцип: похожие люди должны получать похожие предсказания
-  - Применение: защита от индивидуальной дискриминации
-  - Сложность: требует определения "похожести"
+- **Individual Fairness**: Equity on an individual level
+- Principle: Similar people should receive similar predictions.
+Application: protection from individual discrimination
+- Complexity: requires a definition of "likeness"
 
-- **Counterfactual Fairness**: Контрфактическая справедливость
-  - Принцип: предсказание не должно зависеть от чувствительных атрибутов
-  - Применение: проверка причинной справедливости
-  - Сложность: требует контрфактического анализа
+- **Counterfactual Fairness**: Counterfactual justice
+- Principle: The application not must depend from the sensitive attributes
+- Application: check causal fairness
+- Complexity: requires a counter-factual Analysis
 
-- **Calibration**: Калибровка предсказаний
-  - Принцип: предсказанные вероятности должны соответствовать истинным
-  - Применение: проверка надежности предсказаний
-  - Метрика: Brier Score, Reliability Diagram
+- **Calibration**: Calibration of preferences
+- Principle: The predicted probability must be consistent with the true
+- Application: check reliability preferences
+- Meter: Brier Score, Reliability Diagram
 ```
 
-### 2. Прозрачность и объяснимость
+♪##2 ♪ Transparency and explanation ♪
 
 ```python
 import shap
@@ -240,970 +240,970 @@ import lime
 import lime.lime_tabular
 
 class EthicalModelWrapper:
-    """Обертка для обеспечения этичности модели"""
-    
-    def __init__(self, model, feature_names, sensitive_attributes):
-        self.model = model
-        self.feature_names = feature_names
-        self.sensitive_attributes = sensitive_attributes
-        self.explainer = None
-        
-    def create_explainer(self, X_train):
-        """Создание объяснителя для модели"""
-        
-        # SHAP explainer
-        self.shap_explainer = shap.TreeExplainer(self.model)
-        
-        # LIME explainer
-        self.lime_explainer = lime.lime_tabular.LimeTabularExplainer(
-            X_train.values,
-            feature_names=self.feature_names,
-            class_names=['Class 0', 'Class 1'],
-            mode='classification'
-        )
-    
-    def explain_prediction(self, instance, method='shap'):
-        """Объяснение конкретного предсказания"""
-        
-        if method == 'shap':
-            shap_values = self.shap_explainer.shap_values(instance)
-            return shap_values
-        elif method == 'lime':
-            explanation = self.lime_explainer.explain_instance(
-                instance.values,
-                self.model.predict_proba,
-                num_features=10
-            )
-            return explanation
-        else:
-            raise ValueError("Method must be 'shap' or 'lime'")
-    
-    def check_bias_in_explanation(self, instance):
-        """Проверка наличия смещений в объяснении"""
-        
-        explanation = self.explain_prediction(instance, method='lime')
-        
-        # Проверка важности чувствительных атрибутов
-        sensitive_importance = 0
-        for attr in self.sensitive_attributes:
-            if attr in explanation.as_list():
-                sensitive_importance += abs(explanation.as_list()[attr][1])
-        
-        # Если чувствительные атрибуты имеют высокую важность - возможное смещение
-        bias_detected = sensitive_importance > 0.5
-        
-        return {
-            'bias_detected': bias_detected,
-            'sensitive_importance': sensitive_importance,
-            'explanation': explanation
-        }
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+ def __init__(self, model, feature_names, sensitive_attributes):
+ self.model = model
+ self.feature_names = feature_names
+ self.sensitive_attributes = sensitive_attributes
+ self.explainer = None
+
+ def create_explainer(self, X_train):
+""create explainr for model""
+
+ # SHAP explainer
+ self.shap_explainer = shap.TreeExplainer(self.model)
+
+ # LIME explainer
+ self.lime_explainer = lime.lime_tabular.LimeTabularExplainer(
+ X_train.values,
+ feature_names=self.feature_names,
+ class_names=['Class 0', 'Class 1'],
+ mode='classification'
+ )
+
+ def explain_Prediction(self, instance, method='shap'):
+"Explanation of a specific prediction."
+
+ if method == 'shap':
+ shap_values = self.shap_explainer.shap_values(instance)
+ return shap_values
+ elif method == 'lime':
+ exPlanation = self.lime_explainer.explain_instance(
+ instance.values,
+ self.model.predict_proba,
+ num_features=10
+ )
+ return exPlanation
+ else:
+ raise ValueError("Method must be 'shap' or 'lime'")
+
+ def check_bias_in_exPlanation(self, instance):
+"Check of displacements in explanation."
+
+ exPlanation = self.explain_Prediction(instance, method='lime')
+
+# Check the importance of sensitive attributes
+ sensitive_importance = 0
+ for attr in self.sensitive_attributes:
+ if attr in exPlanation.as_List():
+ sensitive_importance += abs(exPlanation.as_List()[attr][1])
+
+# If sensitive attributes are of high importance - possible displacement
+ bias_detected = sensitive_importance > 0.5
+
+ return {
+ 'bias_detected': bias_detected,
+ 'sensitive_importance': sensitive_importance,
+ 'exPlanation': exPlanation
+ }
 ```
 
-**Детальные описания параметров EthicalModelWrapper:**
+** Detailed descriptions of the EthicalModelWrapper parameters:**
 
-- **`model`**: ML модель для обертывания
-  - Тип: sklearn model, pytorch model, tensorflow model
-  - Требования: должен поддерживать predict() и predict_proba()
-  - Применение: любая модель для классификации
-  - Примеры: RandomForest, LogisticRegression, Neural Network
+- **'model'**: ML model for wrapping
+- Type: sclearn model, pytorch model, tensorflow model
+- Requirements: shall support predict() and predict_proba()
+- Application: Any model for classification
+ - examples: RandomForest, LogisticRegression, Neural network
 
-- **`feature_names`**: Названия признаков модели
-  - Тип: List[str]
-  - Содержит: названия всех признаков в том же порядке, что и в данных
-  - Требования: должны соответствовать X_train.columns
-  - Применение: для интерпретации объяснений
+- **'feature_names'**: Names of model features
+- Type: List[str]
+- Contains: all topics in the same order as in data
+- Requirements: shall be in accordance with X_training.columns
+Application: for interpretation of explanations
 
-- **`sensitive_attributes`**: Список чувствительных атрибутов
-  - Тип: List[str]
-  - Содержит: названия чувствительных признаков
-  - Примеры: ['gender', 'race', 'age_group']
-  - Применение: проверка смещений в объяснениях
+- ** `sensitive_attributes'**: List of sensitive attributes
+- Type: List[str]
+- Contains: names of sensitive features
+ - examples: ['gender', 'race', 'age_group']
+Application: check shifts in explanations
 
-- **`self.explainer = None`**: Инициализация объяснителя
-  - Тип: None (изначально)
-  - Применение: будет создан в create_explainer()
-  - Результат: SHAP или LIME объяснитель
+- **'self.explaner = None'**: Initiating an explanatory person
+- Type: None (initially)
+- Application: to be created in cut_explaner()
+- Result: SHAP or LIME explainr
 
-- **`X_train`**: Обучающие данные для создания объяснителя
-  - Тип: pandas DataFrame или numpy array
-  - Содержит: данные для обучения объяснителя
-  - Требования: должны включать все признаки
-  - Размер: обычно 70% от общего датасета
+- ** `X_training'**: Training data for the creation of an explanatoryist
+- Type: pandas dataFrame or numpy array
+- Contains: data for the training of an explanatoryist
+- Requirements: must include all features
+Size: usually 70 per cent from total dateset
 
-- **`shap.TreeExplainer(self.model)`**: SHAP объяснитель для деревьев
-  - Применение: для tree-based моделей (RandomForest, XGBoost)
-  - Преимущества: быстрый и точный
-  - Ограничения: только для tree-based моделей
-  - Результат: объяснитель SHAP
+- **'shap.TreeExplaner(self.model)'**: SHAP Explainer for Trees
+- Application: fortre-based models (RandomForest, XGBost)
+- Benefits: rapid and accurate
+- Limitations: only for free-based models
+Result: SHAP explainr
 
-- **`lime.lime_tabular.LimeTabularExplainer(...)`**: LIME объяснитель для табличных данных
-  - `X_train.values`: Данные в numpy формате
-  - `feature_names`: Названия признаков
-  - `class_names`: Названия классов
-  - `mode='classification'`: Режим классификации
-  - Применение: для любых моделей
+- **'lime.lime_tabular.LimeTabularExplaner(...)'**: LIME explains for table data
+== sync, corrected by elderman == @elder_man
+- `feature_names': Names of topics
+- `class_names': Class names
+- `mode='Classification': Classification mode
+- Application: for any models
 
-- **`instance`**: Образец для объяснения
-  - Тип: pandas Series или numpy array
-  - Содержит: один образец для объяснения
-  - Требования: должен соответствовать feature_names
-  - Применение: получение объяснения для конкретного предсказания
+- **'instance'**: Model for explanation
+- Type: pandas Series or numpy array
+- Contains: One sample for explanation
+- Requirements: shall be consistent with Feature_names
+- Application: To obtain an explanation for a specific prediction
 
-- **`method='shap'`**: Метод объяснения
-  - `'shap'`: SHAP объяснения (рекомендуется)
-  - `'lime'`: LIME объяснения
-  - Применение: выбор метода объяснения
-  - Рекомендация: SHAP для tree-based, LIME для других
+- **'method='shap'**: Method of explanation
+- ``scap'': SHAP explanations (recommended)
+- ``lime'': LIME explanations
+- Application: choice of explanation method
+- Recommendation: SHAP for treaty-based, LIME for others
 
-- **`shap_values = self.shap_explainer.shap_values(instance)`**: SHAP значения
-  - Результат: массив SHAP значений для каждого признака
-  - Интерпретация: вклад каждого признака в предсказание
-  - Диапазон: от -∞ до +∞
-  - Применение: объяснение важности признаков
+- ** `schap_valutes = Self.schap_explainer.scap_valutes(instance)'**: SHAP values
+- Result: SHAP array of values for each signature
+- Interpretation: the contribution of each input in Prevention
+- Range: from - to +
+Application: explanation of the importance of the topics
 
-- **`explanation = self.lime_explainer.explain_instance(...)`**: LIME объяснение
-  - `instance.values`: Данные образца в numpy формате
-  - `self.model.predict_proba`: Функция предсказания вероятностей
-  - `num_features=10`: Количество признаков для объяснения
-  - Результат: LIME объяснение
+- **'explanation = Self.lime_explaner.explan_instance(...)'**: LIME explanation
+- `instance.valutes': data sample in numpy format
+== sync, corrected by elderman == @elder_man
+- `num_features=10': Number of topics for explanation
+- Result: LIME explanation
 
-- **`num_features=10`**: Количество признаков для объяснения
-  - Диапазон: от 1 до общего количества признаков
-  - Рекомендация: 10-20 для большинства случаев
-  - Применение: ограничение сложности объяснения
-  - Баланс: между простотой и полнотой
+- **'num_features=10'**: Number of topics for explanation
+- Range: from 1 to total number of topics
+- Recommendation: 10-20 for most cases
+Application: limiting the complexity of the explanation
+Balance between simplicity and completeness
 
-- **`explanation.as_list()`**: Список важности признаков
-  - Результат: список (признак, важность) в порядке убывания
-  - Формат: [('feature1', 0.3), ('feature2', 0.2), ...]
-  - Применение: анализ важности признаков
+- **'explanation.as_List()'**: List of the importance of signs
+- Result: List (remark, importance) in descending order
+- Format: [('feature1', 0.3), ('feature2', 0.2), ...]
+Application: analysis of the importance of the topics
 
-- **`sensitive_importance += abs(explanation.as_list()[attr][1])`**: Накопление важности чувствительных атрибутов
-  - `abs()`: Абсолютное значение важности
-  - `[attr][1]`: Важность признака attr
-  - Результат: суммарная важность чувствительных атрибутов
-  - Применение: оценка смещений
+- **/sensitive_importance += abs(explanation.as_list()[attr][1]**: Accumulation of the importance of sensitive attributes
+- `abs()': Absolute importance
+- `[attr][1] &apos; : Importance attached attr
+Outcome: Total importance of sensitive attributes
+- Application: displacement assessment
 
-- **`bias_detected = sensitive_importance > 0.5`**: Проверка смещений
-  - Порог: 0.5 (50% важности)
-  - Логика: если чувствительные атрибуты составляют >50% важности
-  - Результат: булево значение наличия смещений
-  - Рекомендация: можно настроить порог
+- **'bias_detected = sensive_importance > 0.5'**: heck displacements
+- Threshold: 0.5 (50% importance)
+- Logs: if sensitive attributes are >50 % importance
+- Result: boolean displacement value
+- Recommendation: Can set the threshold
 
-**Методы объяснения:**
+**methods explanation:**
 
 - **SHAP (SHapley Additive exPlanations)**:
-  - Принцип: игровая теория для объяснения
-  - Преимущества: теоретически обоснован, согласован
-  - Ограничения: может быть медленным для больших моделей
-  - Применение: глобальные и локальные объяснения
+- Principle: game theory for explanation
+- Benefits: theoretically sound, agreed
+- Limitations: may be slow for large models
+- Application: global and local explanations
 
-- **LIME (Local Interpretable Model-agnostic Explanations)**:
-  - Принцип: локальная аппроксимация модели
-  - Преимущества: работает с любыми моделями, быстрый
-  - Ограничения: может быть нестабильным
-  - Применение: локальные объяснения
+- **LIME (Local Interpretable Model-agnostic ExPlanations)**:
+- Principle: local approximation of the model
+- Benefits: Working with any models, fast
+- Limitations: may be unstable
+- Application: local explanations
 
-**Проверка смещений в объяснениях:**
+**check shifts in explanations:**
 
-- **Высокая важность чувствительных атрибутов**: Признак дискриминации
-- **Низкая важность чувствительных атрибутов**: Признак справедливости
-- **Порог 0.5**: Эвристический порог для обнаружения смещений
-- **Абсолютные значения**: Учитывают как положительную, так и отрицательную важность
+- ** High importance of sensitive attributes**: Sign of discrimination
+- ** Low importance of sensitive attributes**: Sign of fairness
+- **/ Threshold 0.5**: Euristic threshold for detection of displacements
+**Absolute values**: Consider both positive and negative importance
 ```
 
-### 3. Приватность и защита данных
+###3: Data privacy and protection
 
-<img src="images/optimized/privacy_protection.png" alt="Защита приватности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.4: Защита приватности в ML - методы и принципы*
+<img src="images/optimized/privatity_protection.png" alt="Protective privacy" style="max-width: 100 per cent; exercise: auto; display: block; marguin: 20px auto;">
+*Picture 19.4: Protection of privacy in ML - methods and principles*
 
-**Методы защиты приватности:**
-- **Differential Privacy**: Математическая гарантия приватности с контролируемым шумом
-- **k-Anonymity**: Минимум k записей в группе для защиты от идентификации
-- **l-Diversity**: Разнообразие чувствительных значений в группах
-- **Federated Learning**: Обучение без централизации данных
-- **Homomorphic Encryption**: Вычисления на зашифрованных данных
-- **Secure Multi-party**: Безопасные вычисления между сторонами
+**methods privacy protection:**
+**Differential PRIVACY**: Mathematical privacy with controlled noise
+- **k-Anonymity**: Minimum k records in group for protection from identification
+- **l-Diversity**: Diversity of sensitive values in groups
+- **Federated Learning**: Training without centralization
+- **Homomorphic Innovation**: Calculations on encrypted data
+- **Secure Multi-party**: Safe Calculations between Parties
 
-**Принципы защиты приватности:**
-- **Минимизация данных**: Сбор только необходимых данных
-- **Ограничение цели**: Использование данных только для заявленных целей
-- **Прозрачность**: Информирование о сборе и использовании данных
-- **Контроль**: Право пользователей на свои данные
+** Principles for privacy protection:**
+- ** Data Minimization**: Data collection only required
+- ** Limiting objective**: Use of data only for stated purposes
+- ** Transparency**: Information on data collection and use
+** Control**: User &apos; s right on their data
 
 ```python
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 class PrivacyPreservingML:
-    """ML с сохранением приватности"""
-    
-    def __init__(self, epsilon=1.0, delta=1e-5):
-        self.epsilon = epsilon
-        self.delta = delta
-    
-    def add_differential_privacy_noise(self, data, sensitivity=1.0):
-        """Добавление дифференциальной приватности"""
-        
-        # Вычисление стандартного отклонения шума
-        sigma = np.sqrt(2 * np.log(1.25 / self.delta)) * sensitivity / self.epsilon
-        
-        # Добавление гауссовского шума
-        noise = np.random.normal(0, sigma, data.shape)
-        noisy_data = data + noise
-        
-        return noisy_data
-    
-    def k_anonymity_check(self, data, quasi_identifiers, k=5):
-        """Проверка k-анонимности"""
-        
-        # Группировка по квази-идентификаторам
-        groups = data.groupby(quasi_identifiers).size()
-        
-        # Проверка минимального размера группы
-        min_group_size = groups.min()
-        
-        return {
-            'k_anonymity_satisfied': min_group_size >= k,
-            'min_group_size': min_group_size,
-            'groups_below_k': (groups < k).sum()
-        }
-    
-    def l_diversity_check(self, data, quasi_identifiers, sensitive_attribute, l=2):
-        """Проверка l-разнообразия"""
-        
-        # Группировка по квази-идентификаторам
-        groups = data.groupby(quasi_identifiers)
-        
-        l_diversity_satisfied = True
-        groups_below_l = 0
-        
-        for name, group in groups:
-            unique_sensitive_values = group[sensitive_attribute].nunique()
-            if unique_sensitive_values < l:
-                l_diversity_satisfied = False
-                groups_below_l += 1
-        
-        return {
-            'l_diversity_satisfied': l_diversity_satisfied,
-            'groups_below_l': groups_below_l
-        }
+"ML with privacy."
+
+ def __init__(self, epsilon=1.0, delta=1e-5):
+ self.epsilon = epsilon
+ self.delta = delta
+
+ def add_differential_privacy_noise(self, data, sensitivity=1.0):
+""""dd differential privacy."
+
+# Calculation of standard noise deviation
+ sigma = np.sqrt(2 * np.log(1.25 / self.delta)) * sensitivity / self.epsilon
+
+# add haussian noise
+ noise = np.random.normal(0, sigma, data.shape)
+ noisy_data = data + noise
+
+ return noisy_data
+
+ def k_anonymity_check(self, data, quasi_identifiers, k=5):
+"Check k-Anonymity."
+
+# Group on quasi identifiers
+ groups = data.groupby(quasi_identifiers).size()
+
+# Check minimum group size
+ min_group_size = groups.min()
+
+ return {
+ 'k_anonymity_satisfied': min_group_size >= k,
+ 'min_group_size': min_group_size,
+ 'groups_below_k': (groups < k).sum()
+ }
+
+ def l_diversity_check(self, data, quasi_identifiers, sensitive_attribute, l=2):
+"Check l-diverse."
+
+# Group on quasi identifiers
+ groups = data.groupby(quasi_identifiers)
+
+ l_diversity_satisfied = True
+ groups_below_l = 0
+
+ for name, group in groups:
+ unique_sensitive_values = group[sensitive_attribute].nunique()
+ if unique_sensitive_values < l:
+ l_diversity_satisfied = False
+ groups_below_l += 1
+
+ return {
+ 'l_diversity_satisfied': l_diversity_satisfied,
+ 'groups_below_l': groups_below_l
+ }
 ```
 
-**Детальные описания параметров PrivacyPreservingML:**
+** Detailed descriptions of PrivatePreservingML parameters:**
 
-- **`epsilon=1.0`**: Параметр приватности (ε)
-  - Диапазон: от 0.1 до 10.0
-  - `0.1`: Высокая приватность (больше шума)
-  - `1.0`: Стандартная приватность (рекомендуется)
-  - `10.0`: Низкая приватность (меньше шума)
-  - Применение: контроль уровня приватности
+- **'epsilon=1.0'**: privacy parameter ( &gt; )
+- Range: from 0.1 to 1.0
+`0.1': High privacy (more noise)
+`1.0': Standard privacy (recommended)
+`10.0': Low privacy (less noise)
+Application: privacy control
 
-- **`delta=1e-5`**: Параметр вероятности нарушения приватности (δ)
-  - Диапазон: от 1e-9 до 1e-3
-  - `1e-9`: Очень низкая вероятность нарушения
-  - `1e-5`: Стандартная вероятность (рекомендуется)
-  - `1e-3`: Высокая вероятность нарушения
-  - Применение: контроль вероятности утечки данных
+- **'delta=1e-5'**: parameter of probability of privacy disruption ( &lt; )
+- Range: from 1e-9 to 1e-3
+- `1e-9': Very low probability of violation
+`1e-5': Standard probability (recommended)
+`1e-3': High probability of violation
+- Application: control of the likelihood of data leakage
 
-- **`data`**: Данные для добавления шума
-  - Тип: pandas DataFrame или numpy array
-  - Содержит: данные для защиты приватности
-  - Требования: должны быть числовыми
-  - Применение: исходные данные для анонимизации
+- **'data'**: data for noise added
+- Type: pandas dataFrame or numpy array
+- Contains: data for privacy protection
+- Requirements: must be numerical
+- Application: reference data for anonymousization
 
-- **`sensitivity=1.0`**: Чувствительность функции
-  - Диапазон: от 0.1 до 10.0
-  - `0.1`: Низкая чувствительность (меньше шума)
-  - `1.0`: Стандартная чувствительность (рекомендуется)
-  - `10.0`: Высокая чувствительность (больше шума)
-  - Применение: контроль количества добавляемого шума
+- ** `sensity=1.0'**: Functions Sensitivity
+- Range: from 0.1 to 1.0
+`0.1': Low sensitivity (less noise)
+`1.0': Standard sensitivity (recommended)
+`10.0': High sensitivity (more noise)
+- Application: control of the quantity of noise added
 
-- **`sigma = np.sqrt(2 * np.log(1.25 / self.delta)) * sensitivity / self.epsilon`**: Стандартное отклонение шума
-  - Формула: σ = √(2 * ln(1.25/δ)) * Δf / ε
-  - Результат: стандартное отклонение для гауссовского шума
-  - Применение: расчет параметров шума
-  - Зависимость: от ε, δ и чувствительности
+- **'sigma = np.sqrt(2 *np.log(1.25 / elf.delta)) *sensity / Self.epsilon'**: Standard noise deviation
+- Formula: . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+- Result: Standard deviation for Gaussian noise
+Application: Calculation of noise parameters
+-Dependency: from , , , and sensitivity
 
-- **`noise = np.random.normal(0, sigma, data.shape)`**: Генерация гауссовского шума
-  - `0`: Среднее значение (центрированный шум)
-  - `sigma`: Стандартное отклонение
-  - `data.shape`: Размер данных
-  - Результат: массив шума той же формы, что и данные
+- **'noise = np.random.normaal(0, sigma, Data.chape)'**: Gaussian noise generation
+- `0': Mean value (centralised noise)
+- `sigma': Standard deviation
+- `data.chape': Data size
+- Result: A mass of noise of the same shape as data
 
-- **`noisy_data = data + noise`**: Добавление шума к данным
-  - Результат: данные с добавленным шумом
-  - Применение: защита приватности
-  - Баланс: между приватностью и полезностью данных
+- **'noisy_data = data + noise'**: add data noise
+- Result: Data with added noise
+Application: protection of privacy
+- Balance between privacy and usefulness of data
 
-- **`quasi_identifiers`**: Квази-идентификаторы для k-анонимности
-  - Тип: List[str]
-  - Содержит: названия колонок-квази-идентификаторов
-  - Примеры: ['age', 'zipcode', 'gender']
-  - Применение: группировка для анонимизации
+** `quaasi_identifiers'**: Quasi identifiers for k-anonymity
+- Type: List[str]
+- Contains: names of columns-quasi identifiers
+ - examples: ['age', 'zipcode', 'gender']
+- Application: Group for Anonymization
 
-- **`k=5`**: Параметр k-анонимности
-  - Диапазон: от 2 до 100
-  - `2`: Минимальная анонимность
-  - `5`: Стандартная анонимность (рекомендуется)
-  - `10`: Высокая анонимность
-  - Применение: минимальный размер группы
+- **'k=5'**: parameter k-anonymity
+- Range: from 2 to 100
+- `2': Minimum anonymity
+`5': Standard anonymity (recommended)
+`10': High anonymity
+- Application: minimum size of group
 
-- **`groups = data.groupby(quasi_identifiers).size()`**: Группировка по квази-идентификаторам
-  - Результат: размеры групп
-  - Применение: проверка k-анонимности
-  - Формат: Series с размерами групп
+- **'groups = data.groupby(quaasi_identifiers).size()'**: Group on quasi identifiers
+- Result: Group size
+Application: check k-anonymity
+- Format: Series with group sizes
 
-- **`min_group_size = groups.min()`**: Минимальный размер группы
-  - Результат: размер самой маленькой группы
-  - Применение: проверка соответствия k-анонимности
-  - Критерий: min_group_size >= k
+- **'min_group_size = group.min()'**: Minimum group size
+- Result: size of the smallest group
+- Application: check compliance k-anonymity
+- Criterion: min_group_size >=k
 
-- **`sensitive_attribute`**: Чувствительный атрибут для l-разнообразия
-  - Тип: str
-  - Содержит: название чувствительного признака
-  - Примеры: 'disease', 'salary', 'religion'
-  - Применение: проверка разнообразия в группах
+** `sensitive_attribute'**: Sensitious attribute for l-diverse
+- Type: str
+- Contains: Name of sensitive signature
+ - examples: 'disease', 'salary', 'religion'
+- Application: check diversity in groups
 
-- **`l=2`**: Параметр l-разнообразия
-  - Диапазон: от 2 до 10
-  - `2`: Минимальное разнообразие
-  - `3`: Стандартное разнообразие (рекомендуется)
-  - `5`: Высокое разнообразие
-  - Применение: минимальное количество уникальных значений
+- **'l'=2'**: parameter l-diverse
+- Range: from 2 to 10
+- `2': Minimum diversity
+`3': Standard diversity (recommended)
+`5': High diversity
+- Application: Minimum number of unique values
 
-- **`unique_sensitive_values = group[sensitive_attribute].nunique()`**: Количество уникальных значений
-  - Результат: количество уникальных значений чувствительного атрибута в группе
-  - Применение: проверка l-разнообразия
-  - Критерий: unique_sensitive_values >= l
+- **'unique_sensitive_valutes = group[sensitive_attribute].nunique()'**: Number of unique values
+- Result: Number of unique values of a sensitive attribute in group
+- Application: check l diversity
+- Criterion: unique_sensitive_valuses >=l
 
-**Методы защиты приватности:**
+**methods privacy protection:**
 
 - **Differential Privacy (ε, δ)**:
-  - Принцип: математическая гарантия приватности
-  - Параметры: ε (приватность), δ (вероятность нарушения)
-  - Преимущества: теоретически обоснован
-  - Ограничения: может снижать точность
+Principle: Mathematical privacy guarantee
+- Parameters: (privateity), (probability of violation)
+Benefits: Theoretically sound
+Limitations: may reduce accuracy
 
 - **k-Anonymity**:
-  - Принцип: минимум k записей в группе
-  - Применение: защита от идентификации
-  - Ограничения: не защищает от атрибутных атак
-  - Требования: квази-идентификаторы
+- Principle: minimum k of entries in group
+- Application: protection from identification
+- Limitations: nnot protects from attribute attacks
+- Requirements: quasi identifiers
 
 - **l-Diversity**:
-  - Принцип: разнообразие чувствительных значений
-  - Применение: защита от атрибутных атак
-  - Требования: l уникальных значений в группе
-  - Ограничения: может быть сложно достичь
+- Principle: Diversity of sensitive values
+- Application: protection from attribute attacks
+Requirements: l unique values in group
+Limitations: may be difficult to achieve
 
-**Практические рекомендации:**
+** Practical recommendations:**
 
-- **Выбор ε**: 0.1-1.0 для высокой приватности, 1.0-10.0 для баланса
-- **Выбор δ**: 1e-5 для большинства случаев
-- **Выбор k**: 5-10 для k-анонимности
-- **Выбор l**: 2-5 для l-разнообразия
-- **Баланс**: между приватностью и полезностью данных
+- **choice : 0.1-1.0 for high privacy, 1.0-1.0 for balance sheet
+- **choice : 1e-5 for most cases
+- **choice k**: 5-10 for k-anonymity
+- **choice l**: 2-5 for l-diverse
+**Balance**: between privacy and usefulness of data
 ```
 
-## Правовые требования
+## Legal requirements
 
-<img src="images/optimized/legal_compliance.png" alt="Правовое соответствие" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.5: Правовое соответствие AI систем - требования и стандарты*
+<img src="images/optimized/legal_compliance.png" alt="Legal conformity" style="max-width: 100%; exercise: auto; display: block; marguin: 20px auto;">
+*Figure 19.5: Legal compliance of AI systems - requirements and standards*
 
-**Основные правовые требования:**
-- **GDPR Compliance**: Соответствие Общему регламенту по защите данных ЕС
-- **AI Act Compliance**: Соответствие Закону об искусственном интеллекте ЕС
-- **Data Protection**: Защита персональных данных и приватности
-- **Consent Management**: Управление согласием на обработку данных
-- **Right to Erasure**: Право на удаление данных (право быть забытым)
-- **Transparency Obligations**: Обязательства по прозрачности
+** Basic legal requirements:**
+**GDPR Compliance**: Compliance with the EU General Regulation on Data Protection
+- **AI Act Competition**: Compliance with the EU Law on Artificial Intelligence
+- **data Protection**: Protection of personal data and privacy
+- **Consent Management**: Management consent on data processing
+**Right to Erasure**: Right to remove data (right to be forgotten)
+- **Transparency Agreements**: Obligations on transparency
 
-**GDPR требования:**
-- **Право на информацию**: Информирование о сборе и использовании данных
-- **Право на доступ**: Доступ к своим персональным данным
-- **Право на исправление**: Исправление неточных данных
-- **Право на удаление**: Удаление данных по запросу
-- **Право на портативность**: Перенос данных между сервисами
-- **Право на возражение**: Возражение против обработки данных
+**GDPR requirements:**
+- ** Law on Information**: Information on data collection and use
+- ** Right of access**: Access to personal data
+- ** Law on fix**: fix inaccurate data
+** Law on request: remove data
+- ** Law on Portability**: Transport of data between services
+- ** Right on objection**: Objection to data processing
 
 ### 1. GDPR Compliance
 
 ```python
 class GDPRCompliance:
-    """Обеспечение соответствия GDPR"""
-    
-    def __init__(self):
-        self.data_subjects = {}
-        self.processing_purposes = {}
-        self.consent_records = {}
-    
-    def record_consent(self, subject_id, purpose, consent_given, timestamp):
-        """Запись согласия субъекта данных"""
-        
-        if subject_id not in self.consent_records:
-            self.consent_records[subject_id] = []
-        
-        self.consent_records[subject_id].append({
-            'purpose': purpose,
-            'consent_given': consent_given,
-            'timestamp': timestamp
-        })
-    
-    def check_consent(self, subject_id, purpose):
-        """Проверка согласия для конкретной цели"""
-        
-        if subject_id not in self.consent_records:
-            return False
-        
-        # Поиск последнего согласия для данной цели
-        relevant_consents = [
-            record for record in self.consent_records[subject_id]
-            if record['purpose'] == purpose
-        ]
-        
-        if not relevant_consents:
-            return False
-        
-        # Возврат последнего согласия
-        latest_consent = max(relevant_consents, key=lambda x: x['timestamp'])
-        return latest_consent['consent_given']
-    
-    def right_to_erasure(self, subject_id):
-        """Право на удаление (право быть забытым)"""
-        
-        if subject_id in self.consent_records:
-            del self.consent_records[subject_id]
-        
-        # Здесь должна быть логика удаления данных субъекта
-        return True
-    
-    def data_portability(self, subject_id):
-        """Право на портативность данных"""
-        
-        # Возврат всех данных субъекта в структурированном формате
-        subject_data = {
-            'personal_data': self.get_subject_data(subject_id),
-            'consent_records': self.consent_records.get(subject_id, []),
-            'processing_history': self.get_processing_history(subject_id)
-        }
-        
-        return subject_data
+""Ensure GDPR""
+
+ def __init__(self):
+ self.data_subjects = {}
+ self.processing_purposes = {}
+ self.consent_records = {}
+
+ def record_consent(self, subject_id, purpose, consent_given, timestamp):
+""Note of consent of the data subject""
+
+ if subject_id not in self.consent_records:
+ self.consent_records[subject_id] = []
+
+ self.consent_records[subject_id].append({
+ 'purpose': purpose,
+ 'consent_given': consent_given,
+ 'timestamp': timestamp
+ })
+
+ def check_consent(self, subject_id, purpose):
+"Check consent for a specific purpose."
+
+ if subject_id not in self.consent_records:
+ return False
+
+# Searching for final agreement for this goal
+ relevant_consents = [
+ record for record in self.consent_records[subject_id]
+ if record['purpose'] == purpose
+ ]
+
+ if not relevant_consents:
+ return False
+
+# Return of last consent
+ latest_consent = max(relevant_consents, key=lambda x: x['timestamp'])
+ return latest_consent['consent_given']
+
+ def right_to_erasure(self, subject_id):
+"Right on remove (right to be forgotten)"
+
+ if subject_id in self.consent_records:
+ del self.consent_records[subject_id]
+
+# There's got to be a Logsk of unsub data removal
+ return True
+
+ def data_portability(self, subject_id):
+"Law on Portability of Data"
+
+# Return all entity data in structured format
+ subject_data = {
+ 'personal_data': self.get_subject_data(subject_id),
+ 'consent_records': self.consent_records.get(subject_id, []),
+ 'processing_history': self.get_processing_history(subject_id)
+ }
+
+ return subject_data
 ```
 
 ### 2. AI Act Compliance
 
 ```python
 class AIActCompliance:
-    """Соответствие AI Act (ЕС)"""
-    
-    def __init__(self):
-        self.risk_categories = {
-            'unacceptable': [],
-            'high': [],
-            'limited': [],
-            'minimal': []
-        }
-    
-    def classify_ai_system(self, system_description):
-        """Классификация AI системы по уровню риска"""
-        
-        # Критерии для классификации
-        if self.is_biometric_identification(system_description):
-            return 'unacceptable'
-        elif self.is_high_risk_application(system_description):
-            return 'high'
-        elif self.is_limited_risk_application(system_description):
-            return 'limited'
-        else:
-            return 'minimal'
-    
-    def is_biometric_identification(self, description):
-        """Проверка на биометрическую идентификацию"""
-        biometric_keywords = ['face recognition', 'fingerprint', 'iris', 'voice']
-        return any(keyword in description.lower() for keyword in biometric_keywords)
-    
-    def is_high_risk_application(self, description):
-        """Проверка на высокорисковые приложения"""
-        high_risk_keywords = [
-            'medical diagnosis', 'credit scoring', 'recruitment',
-            'law enforcement', 'education', 'transport'
-        ]
-        return any(keyword in description.lower() for keyword in high_risk_keywords)
-    
-    def is_limited_risk_application(self, description):
-        """Проверка на ограниченно рисковые приложения"""
-        limited_risk_keywords = ['chatbot', 'recommendation', 'content moderation']
-        return any(keyword in description.lower() for keyword in limited_risk_keywords)
-    
-    def get_compliance_requirements(self, risk_level):
-        """Получение требований соответствия для уровня риска"""
-        
-        requirements = {
-            'unacceptable': [
-                'System is prohibited under AI Act'
-            ],
-            'high': [
-                'Conformity assessment required',
-                'Risk management system',
-                'Data governance',
-                'Technical documentation',
-                'Record keeping',
-                'Transparency and user information',
-                'Human oversight',
-                'Accuracy, robustness and cybersecurity'
-            ],
-            'limited': [
-                'Transparency obligations',
-                'User information requirements'
-            ],
-            'minimal': [
-                'No specific requirements'
-            ]
-        }
-        
-        return requirements.get(risk_level, [])
+"According AI Act (EU)"
+
+ def __init__(self):
+ self.risk_categories = {
+ 'unacceptable': [],
+ 'high': [],
+ 'limited': [],
+ 'minimal': []
+ }
+
+ def classify_ai_system(self, system_describe):
+""" Classification AI of the System on Risk Level""
+
+# Criteria for classification
+ if self.is_biometric_identification(system_describe):
+ return 'unacceptable'
+ elif self.is_high_risk_application(system_describe):
+ return 'high'
+ elif self.is_limited_risk_application(system_describe):
+ return 'limited'
+ else:
+ return 'minimal'
+
+ def is_biometric_identification(self, describe):
+"Check on biometric identification."
+ biometric_keywords = ['face recognition', 'fingerprint', 'iris', 'voice']
+ return any(keyword in describe.lower() for keyword in biometric_keywords)
+
+ def is_high_risk_application(self, describe):
+"Check on High Risk Applications."
+ high_risk_keywords = [
+ 'medical diagnosis', 'credit scoring', 'recruitment',
+ 'law enforcement', 'education', 'transport'
+ ]
+ return any(keyword in describe.lower() for keyword in high_risk_keywords)
+
+ def is_limited_risk_application(self, describe):
+"Check on limited risk applications."
+ limited_risk_keywords = ['chatbot', 'recommendation', 'content moderation']
+ return any(keyword in describe.lower() for keyword in limited_risk_keywords)
+
+ def get_compliance_requirements(self, risk_level):
+"To obtain conformity requirements for risk level""
+
+ requirements = {
+ 'unacceptable': [
+ 'system is prohibited under AI Act'
+ ],
+ 'high': [
+ 'Conformity assessment required',
+ 'Risk Management system',
+ 'data governance',
+ 'Technical documentation',
+ 'Record keeping',
+ 'Transparency and User information',
+ 'Human oversight',
+ 'Accuracy, robustness and cybersecurity'
+ ],
+ 'limited': [
+ 'Transparency obligations',
+ 'User information requirements'
+ ],
+ 'minimal': [
+ 'No specific requirements'
+ ]
+ }
+
+ return requirements.get(risk_level, [])
 ```
 
 ## Bias Detection and Mitigation
 
-<img src="images/optimized/bias_detection.png" alt="Обнаружение и снижение смещений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.3: Обнаружение и снижение смещений в ML - этапы и методы*
+<img src="images/optimized/bias_detection.png" alt="Detect and reduce displacements" style="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+*Picture 19.3: Detection and reduction of displacements in ML - phases and methhods*
 
-**Этапы обнаружения смещений:**
-- **Data Bias**: Смещения в данных (исторические предрассудки, неравномерное представление)
-- **Algorithm Bias**: Смещения в алгоритмах (неправильные признаки, скрытые корреляции)
-- **Evaluation Bias**: Смещения в оценке (неравномерные метрики, предвзятые тесты)
+**Demove detection units:**
+- **data Bias**: In-data shifts (historical prejudice, uneven presentation)
+- **Algorithm Bias**: Algorithms in algorithms (incorrect, hidden correlations)
+- **Evalution Bias**: In-assessment shifts (uneven metrics, biased tests)
 
-**Методы снижения смещений:**
-- **Preprocessing Mitigation**: Удаление чувствительных признаков, балансировка данных
+**methods reduction of displacements:**
+- **Pre-processing Mitigation**: remove sensitive features, balancing data
 - **In-processing Mitigation**: Fairness constraints, adversarial training, regularization
-- **Post-processing Mitigation**: Калибровка порогов, адаптивные решения
+- **Post-processing Mitigation**: Calibration of thresholds, adaptive solutions
 
 ### 1. Bias Detection
 
 ```python
 class BiasDetector:
-    """Детектор смещений в ML моделях"""
-    
-    def __init__(self):
-        self.bias_metrics = {}
-    
-    def statistical_parity_difference(self, predictions, sensitive_attribute):
-        """Статистическая разность паритета"""
-        
-        groups = sensitive_attribute.unique()
-        spd_values = []
-        
-        for group in groups:
-            group_mask = sensitive_attribute == group
-            group_positive_rate = predictions[group_mask].mean()
-            spd_values.append(group_positive_rate)
-        
-        # Разность между максимальной и минимальной долей положительных исходов
-        spd = max(spd_values) - min(spd_values)
-        
-        return {
-            'statistical_parity_difference': spd,
-            'is_fair': spd < 0.1,  # Порог справедливости
-            'group_rates': dict(zip(groups, spd_values))
-        }
-    
-    def equalized_odds_difference(self, predictions, actual, sensitive_attribute):
-        """Разность уравненных шансов"""
-        
-        groups = sensitive_attribute.unique()
-        tpr_values = []
-        fpr_values = []
-        
-        for group in groups:
-            group_mask = sensitive_attribute == group
-            group_predictions = predictions[group_mask]
-            group_actual = actual[group_mask]
-            
-            # True Positive Rate
-            tpr = ((group_predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()
-            tpr_values.append(tpr)
-            
-            # False Positive Rate
-            fpr = ((group_predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()
-            fpr_values.append(fpr)
-        
-        # Разности TPR и FPR
-        tpr_diff = max(tpr_values) - min(tpr_values)
-        fpr_diff = max(fpr_values) - min(fpr_values)
-        
-        return {
-            'equalized_odds_difference': max(tpr_diff, fpr_diff),
-            'tpr_difference': tpr_diff,
-            'fpr_difference': fpr_diff,
-            'is_fair': max(tpr_diff, fpr_diff) < 0.1
-        }
-    
-    def demographic_parity_difference(self, predictions, sensitive_attribute):
-        """Разность демографического паритета"""
-        
-        groups = sensitive_attribute.unique()
-        positive_rates = []
-        
-        for group in groups:
-            group_mask = sensitive_attribute == group
-            positive_rate = predictions[group_mask].mean()
-            positive_rates.append(positive_rate)
-        
-        dpd = max(positive_rates) - min(positive_rates)
-        
-        return {
-            'demographic_parity_difference': dpd,
-            'is_fair': dpd < 0.1,
-            'group_positive_rates': dict(zip(groups, positive_rates))
-        }
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+ def __init__(self):
+ self.bias_metrics = {}
+
+ def statistical_parity_difference(self, predictions, sensitive_attribute):
+"Statistical difference of parity."
+
+ groups = sensitive_attribute.unique()
+ spd_values = []
+
+ for group in groups:
+ group_mask = sensitive_attribute == group
+ group_positive_rate = predictions[group_mask].mean()
+ spd_values.append(group_positive_rate)
+
+# The difference between the maximum and minimum shares of positive outcomes
+ spd = max(spd_values) - min(spd_values)
+
+ return {
+ 'statistical_parity_difference': spd,
+'is_fire': spd < 0.1 # The threshold of justice
+ 'group_rates': dict(zip(groups, spd_values))
+ }
+
+ def equalized_odds_difference(self, predictions, actual, sensitive_attribute):
+"The difference of equal chances."
+
+ groups = sensitive_attribute.unique()
+ tpr_values = []
+ fpr_values = []
+
+ for group in groups:
+ group_mask = sensitive_attribute == group
+ group_predictions = predictions[group_mask]
+ group_actual = actual[group_mask]
+
+ # True Positive Rate
+ tpr = ((group_predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()
+ tpr_values.append(tpr)
+
+ # False Positive Rate
+ fpr = ((group_predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()
+ fpr_values.append(fpr)
+
+# Differentials TPR and FPR
+ tpr_diff = max(tpr_values) - min(tpr_values)
+ fpr_diff = max(fpr_values) - min(fpr_values)
+
+ return {
+ 'equalized_odds_difference': max(tpr_diff, fpr_diff),
+ 'tpr_difference': tpr_diff,
+ 'fpr_difference': fpr_diff,
+ 'is_fair': max(tpr_diff, fpr_diff) < 0.1
+ }
+
+ def demographic_parity_difference(self, predictions, sensitive_attribute):
+"Difference of demographic parity."
+
+ groups = sensitive_attribute.unique()
+ positive_rates = []
+
+ for group in groups:
+ group_mask = sensitive_attribute == group
+ positive_rate = predictions[group_mask].mean()
+ positive_rates.append(positive_rate)
+
+ dpd = max(positive_rates) - min(positive_rates)
+
+ return {
+ 'demographic_parity_difference': dpd,
+ 'is_fair': dpd < 0.1,
+ 'group_positive_rates': dict(zip(groups, positive_rates))
+ }
 ```
 
-**Детальные описания параметров BiasDetector:**
+**BiasDetector Detailed Descriptions:**
 
-- **`predictions`**: Предсказания модели
-  - Тип: numpy array или pandas Series
-  - Содержит: предсказания модели для всех образцов
-  - Формат: бинарные (0/1) или вероятности
-  - Применение: основа для расчета метрик смещений
+- **'predications'**: Model predictions
+- Type: numpy array or pandas Series
+- Contains: model predictions for all samples
+- Format: Binary (0/1) or probability
+- Application: basis for the calculation of displacement metrics
 
-- **`sensitive_attribute`**: Чувствительный атрибут
-  - Тип: pandas Series или numpy array
-  - Содержит: значения чувствительного признака для каждого образца
-  - Примеры: ['male', 'female'] для gender
-  - Применение: разделение данных на группы
+- ** `sensitive_attribute'**: Sensitious attribute
+- Type: pandas Series or numpy array
+- Contains: sensitive signature values for each sample
+ - examples: ['male', 'female'] for gender
+- Application: Segregation of data on group
 
-- **`actual`**: Истинные метки
-  - Тип: numpy array или pandas Series
-  - Содержит: истинные значения целевой переменной
-  - Формат: бинарные (0/1) или мультиклассовые
-  - Применение: расчет TPR и FPR для equalized odds
+- ** `actual'**: True labels
+- Type: numpy array or pandas Series
+- Contains: true value of target variable
+- Format: Binary (0/1) or multiclass
+- Application: Calculation of TPR and FPR for equated odds
 
-- **`groups = sensitive_attribute.unique()`**: Уникальные группы
-  - Результат: список уникальных значений чувствительного атрибута
-  - Примеры: ['male', 'female'] для gender
-  - Применение: итерация по группам для расчета метрик
+- **'groups = sensitive_attribute.unique()'**: Unique groups
+- Result: List of unique values of a sensitive attribute
+ - examples: ['male', 'female'] for gender
+- Application: Iteration on groups for the calculation of metrics
 
-- **`group_mask = sensitive_attribute == group`**: Маска для группы
-  - Результат: булевый массив для выбора образцов группы
-  - Применение: фильтрация данных по группе
-  - Размер: соответствует размеру predictions
+- **'group_mask = sensitive_attribute ==group'**: Mask for group
+- Result: Bould array for group sample selection
+- Application: group filtering
+- Size: corresponds to the size of the productions
 
-- **`group_positive_rate = predictions[group_mask].mean()`**: Доля положительных исходов для группы
-  - Формула: (количество положительных предсказаний) / (общее количество)
-  - Диапазон: от 0 до 1
-  - Применение: расчет статистического паритета
-  - Интерпретация: доля положительных предсказаний в группе
+- **'group_positive_rate = preferences[group_max].mean()'**: Percentage of positive outcomes for group
+- Formula: (number of positive measures) / (total number)
+- Range: from 0 to 1
+- Application: Calculation of statistical parity
+- Interpretation: percentage of positive preferences in group
 
-- **`spd = max(spd_values) - min(spd_values)`**: Статистическая разность паритета
-  - Результат: разность между максимальной и минимальной долей положительных исходов
-  - Диапазон: от 0 до 1
-  - Применение: мера справедливости
-  - Интерпретация: чем меньше, тем справедливее
+- **'spd = max(spd_valutes) - min(spd_valutes)'**: Statistical difference in parity
+Outcome: The difference between the maximum and the minimum percentage of positive outcomes
+- Range: from 0 to 1
+Application: a measure of equity
+- Interpretation: the less, the more fair
 
-- **`is_fair': spd < 0.1`**: Проверка справедливости
-  - Порог: 0.1 (10% разности)
-  - Логика: если разность < 10%, то справедливо
-  - Применение: бинарная оценка справедливости
-  - Рекомендация: можно настроить порог
+- **'is_fire': spd < 0.1'**: check justice
+- Threshold: 0.1 (10% difference)
+- Logs: if the difference < 10%, it is true
+Application: Binary assessment of equity
+- Recommendation: Can set the threshold
 
 - **`tpr = ((group_predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()`**: True Positive Rate
-  - Формула: TP / (TP + FN)
-  - Диапазон: от 0 до 1
-  - Применение: метрика для положительного класса
-  - Интерпретация: доля найденных истинных положительных
+- Formula: TP / (TP + FN)
+- Range: from 0 to 1
+- Application: metrics for positive class
+- Interpretation: share of true positives
 
 - **`fpr = ((group_predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()`**: False Positive Rate
-  - Формула: FP / (FP + TN)
-  - Диапазон: от 0 до 1
-  - Применение: метрика для отрицательного класса
-  - Интерпретация: доля ложных срабатываний
+- Formula: FP / (FP + TN)
+- Range: from 0 to 1
+- Application: metrics for negative class
+- Interpretation: percentage of false operations
 
-- **`tpr_diff = max(tpr_values) - min(tpr_values)`**: Разность TPR между группами
-  - Результат: разность между максимальным и минимальным TPR
-  - Диапазон: от 0 до 1
-  - Применение: мера справедливости по TPR
-  - Интерпретация: чем меньше, тем справедливее
+- **'tpr_diff = max(tpr_valutes) - min(tpr_valutes) `**: TPR difference between groups
+- Result: difference between maximum and minimum TPR
+- Range: from 0 to 1
+- Application: Justice on TPR
+- Interpretation: the less, the more fair
 
-- **`fpr_diff = max(fpr_values) - min(fpr_values)`**: Разность FPR между группами
-  - Результат: разность между максимальным и минимальным FPR
-  - Диапазон: от 0 до 1
-  - Применение: мера справедливости по FPR
-  - Интерпретация: чем меньше, тем справедливее
+- **'fpr_diff = max(fpr_valutes) - min(fpr_valutes)'**: FPR difference between groups
+- Result: difference between maximum and minimum FPR
+- Range: from 0 to 1
+- Application: Justice on FPR
+- Interpretation: the less, the more fair
 
-- **`equalized_odds_difference': max(tpr_diff, fpr_diff)`**: Разность уравненных шансов
-  - Результат: максимальная разность между TPR и FPR
-  - Диапазон: от 0 до 1
-  - Применение: общая мера справедливости
-  - Интерпретация: чем меньше, тем справедливее
+- ** `equated_odds_disference': max(tpr_diff, fpr_diff) `**: The difference in equal chances
+Outcome: maximum difference between TPR and FPR
+- Range: from 0 to 1
+Application: a general measure of fairness
+- Interpretation: the less, the more fair
 
-**Метрики справедливости:**
+**Metrics justice:**
 
 - **Statistical Parity Difference (SPD)**:
-  - Формула: max(P(Ŷ=1|A=a)) - min(P(Ŷ=1|A=a))
-  - Применение: проверка равных возможностей
-  - Ограничения: может конфликтовать с точностью
-  - Порог: < 0.1 для справедливости
+- Formula: max(P(x)=1\A=a) - min(P(\\1\A=a))
+- Application: check of equal opportunities
+- Limitations: may conflict with accuracy
+- Threshold: < 0.1 for equity
 
 - **Equalized Odds Difference (EOD)**:
-  - Формула: max(|TPR_A - TPR_B|, |FPR_A - FPR_B|)
-  - Применение: проверка равной производительности
-  - Преимущества: учитывает истинные метки
-  - Порог: < 0.1 для справедливости
+- Formula: max(\TPR_A - TPR_B
+Application: check equal performance
+- Benefits: takes into account true labels
+- Threshold: < 0.1 for equity
 
 - **Demographic Parity Difference (DPD)**:
-  - Формула: max(P(Ŷ=1|A=a)) - min(P(Ŷ=1|A=a))
-  - Применение: равное распределение предсказаний
-  - Ограничения: может быть несправедливым
-  - Порог: < 0.1 для справедливости
+- Formula: max(P(x)=1\A=a) - min(P(\\1\A=a))
+Application: Equal distribution of preferences
+Limitations: may be unfair
+- Threshold: < 0.1 for equity
 
-**Практические рекомендации:**
+** Practical recommendations:**
 
-- **Выбор метрик**: SPD для равных возможностей, EOD для равной производительности
-- **Пороги справедливости**: 0.1 (10%) для большинства случаев
-- **Баланс**: между справедливостью и точностью
-- **Мониторинг**: регулярная проверка метрик справедливости
-- **Корректировка**: адаптация порогов в зависимости от контекста
+- **Selection of metric**: SPD for Equal Opportunities, EOD for Equal Performance
+- ** Equity thresholds**: 0.1 (10%) for most cases
+**Balance**: between fairness and accuracy
+- **Monitoring**: regular check metric of justice
+- **Correct**: adaptation of thresholds in terms of context
 ```
 
 ### 2. Bias Mitigation
 
 ```python
 class BiasMitigation:
-    """Методы снижения смещений"""
-    
-    def __init__(self):
-        self.mitigation_strategies = {}
-    
-    def preprocess_bias_mitigation(self, X, y, sensitive_attributes):
-        """Предобработка для снижения смещений"""
-        
-        # Удаление чувствительных атрибутов
-        X_processed = X.drop(columns=sensitive_attributes)
-        
-        # Балансировка классов
-        from imblearn.over_sampling import SMOTE
-        smote = SMOTE(random_state=42)
-        X_balanced, y_balanced = smote.fit_resample(X_processed, y)
-        
-        return X_balanced, y_balanced
-    
-    def inprocess_bias_mitigation(self, model, X, y, sensitive_attributes):
-        """Снижение смещений в процессе обучения"""
-        
-        # Добавление fairness constraints
-        def fairness_loss(y_true, y_pred, sensitive_attr):
-            # Основная функция потерь
-            main_loss = F.cross_entropy(y_pred, y_true)
-            
-            # Fairness penalty
-            groups = sensitive_attr.unique()
-            fairness_penalty = 0
-            
-            for group in groups:
-                group_mask = sensitive_attr == group
-                group_predictions = y_pred[group_mask]
-                group_positive_rate = group_predictions.mean()
-                fairness_penalty += (group_positive_rate - 0.5) ** 2
-            
-            return main_loss + 0.1 * fairness_penalty
-        
-        return fairness_loss
-    
-    def postprocess_bias_mitigation(self, predictions, sensitive_attributes, threshold=0.5):
-        """Постобработка для снижения смещений"""
-        
-        # Калибровка порогов для разных групп
-        adjusted_predictions = predictions.copy()
-        
-        for group in sensitive_attributes.unique():
-            group_mask = sensitive_attributes == group
-            group_predictions = predictions[group_mask]
-            
-            # Адаптивный порог для группы
-            group_threshold = self.calculate_fair_threshold(
-                group_predictions, group
-            )
-            
-            # Применение адаптивного порога
-            adjusted_predictions[group_mask] = (
-                group_predictions > group_threshold
-            ).astype(int)
-        
-        return adjusted_predictions
-    
-    def calculate_fair_threshold(self, predictions, group):
-        """Расчет справедливого порога для группы"""
-        
-        # Простая эвристика - можно заменить на более сложные методы
-        return 0.5
+"methods of displacement reduction."
+
+ def __init__(self):
+ self.mitigation_strategies = {}
+
+ def preprocess_bias_mitigation(self, X, y, sensitive_attributes):
+"Preparation for displacement reduction."
+
+# remove sensitive attributes
+ X_processed = X.drop(columns=sensitive_attributes)
+
+# Class balance
+ from imblearn.over_sampling import SMOTE
+ smote = SMOTE(random_state=42)
+ X_balanced, y_balanced = smote.fit_resample(X_processed, y)
+
+ return X_balanced, y_balanced
+
+ def inprocess_bias_mitigation(self, model, X, y, sensitive_attributes):
+"The reduction of displacements in learning"
+
+ # add fairness constraints
+ def fairness_loss(y_true, y_pred, sensitive_attr):
+# Main loss
+ main_loss = F.cross_entropy(y_pred, y_true)
+
+ # Fairness penalty
+ groups = sensitive_attr.unique()
+ fairness_penalty = 0
+
+ for group in groups:
+ group_mask = sensitive_attr == group
+ group_predictions = y_pred[group_mask]
+ group_positive_rate = group_predictions.mean()
+ fairness_penalty += (group_positive_rate - 0.5) ** 2
+
+ return main_loss + 0.1 * fairness_penalty
+
+ return fairness_loss
+
+ def postprocess_bias_mitigation(self, predictions, sensitive_attributes, threshold=0.5):
+"""""""""""""""""
+
+# Calibration of thresholds for different groups
+ adjusted_predictions = predictions.copy()
+
+ for group in sensitive_attributes.unique():
+ group_mask = sensitive_attributes == group
+ group_predictions = predictions[group_mask]
+
+# An adaptive threshold for a group
+ group_threshold = self.calculate_fair_threshold(
+ group_predictions, group
+ )
+
+# Application of adaptive threshold
+ adjusted_predictions[group_mask] = (
+ group_predictions > group_threshold
+ ).astype(int)
+
+ return adjusted_predictions
+
+ def calculate_fair_threshold(self, predictions, group):
+"A fair threshold for a group."
+
+# Simple heuristics - can be replaced on more complex methhods
+ return 0.5
 ```
 
 ## Responsible AI Framework
 
-<img src="images/optimized/ethics_checklist.png" alt="Чеклист этичности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.6: Чеклист этичности AI системы - категории и критерии оценки*
+<img src="images/optimized/ethics_checkList.png" alt="Ethics" style"="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+*Picture 19.6: AA System Ethics Checklist - categories and evaluation criteria*
 
-**Категории чеклиста этичности:**
-- **Data Quality**: Качество данных, отсутствие пропусков, баланс классов
-- **Bias Assessment**: Оценка смещений, статистический паритет, уравненные шансы
-- **Privacy Protection**: Защита приватности, дифференциальная приватность, анонимизация
-- **Transparency & Explainability**: Прозрачность решений, объяснимость моделей
-- **Accountability & Safety**: Ответственность, безопасность, человеческий надзор
-- **Fairness & Equity**: Справедливость, равные возможности, отсутствие дискриминации
+**Categorry of ethical chess:**
+**data Quality**: Data quality, absence of passes, class balance
+- **Bias Assessment**: Assessment of displacements, statistical parity, equal chances
+- **Privacy Protection**: Protection of privacy, differential privacy, anonymousization
+- **Transparency & Exploinability**: Transparent solutions, understandable models
+- **accountability & Safety**: Responsibility, security, human oversight
+**Fairness & Equity**: Justice, equal opportunity, non-discrimination
 
-**Критерии оценки этичности:**
-- **Отсутствие пропусков**: Минимальное количество пропущенных значений
-- **Баланс классов**: Равномерное представление всех классов
-- **Качество данных**: Репрезентативность и актуальность данных
-- **Статистический паритет**: Равные доли положительных исходов
-- **Уравненные шансы**: Равные TPR и FPR для всех групп
-- **Демографический паритет**: Справедливое распределение предсказаний
+** Ethics evaluation criteria:**
+- ** No pass**: Minimum number of missing values
+- ** Class Balance**: Equal representation of all classes
+- ** Data quality**: representativeness and relevance
+- **Statistical parity**: Equal shares of positive outcomes
+- ** Equivalent odds**: Equivalent TPR and FPR for all groups
+- ** Demographic parity**: Fair distribution of preferences
 
-### 1. AI Ethics Checklist
+### 1. AI Ethics checkList
 
 ```python
-class AIEthicsChecklist:
-    """Чеклист этичности AI системы"""
-    
-    def __init__(self):
-        self.checklist = {
-            'data_quality': [],
-            'bias_assessment': [],
-            'privacy_protection': [],
-            'transparency': [],
-            'accountability': [],
-            'fairness': [],
-            'safety': []
-        }
-    
-    def assess_data_quality(self, data, sensitive_attributes):
-        """Оценка качества данных"""
-        
-        checks = []
-        
-        # Проверка на пропущенные значения
-        missing_ratio = data.isnull().sum().sum() / (len(data) * len(data.columns))
-        checks.append({
-            'check': 'Missing values ratio',
-            'value': missing_ratio,
-            'passed': missing_ratio < 0.1,
-            'recommendation': 'Clean missing values' if missing_ratio >= 0.1 else None
-        })
-        
-        # Проверка на дубликаты
-        duplicate_ratio = data.duplicated().sum() / len(data)
-        checks.append({
-            'check': 'Duplicate ratio',
-            'value': duplicate_ratio,
-            'passed': duplicate_ratio < 0.05,
-            'recommendation': 'Remove duplicates' if duplicate_ratio >= 0.05 else None
-        })
-        
-        # Проверка баланса чувствительных атрибутов
-        for attr in sensitive_attributes:
-            value_counts = data[attr].value_counts()
-            min_ratio = value_counts.min() / value_counts.sum()
-            checks.append({
-                'check': f'Balance of {attr}',
-                'value': min_ratio,
-                'passed': min_ratio > 0.1,
-                'recommendation': f'Balance {attr} groups' if min_ratio <= 0.1 else None
-            })
-        
-        self.checklist['data_quality'] = checks
-        return checks
-    
-    def assess_bias(self, model, X_test, y_test, sensitive_attributes):
-        """Оценка смещений"""
-        
-        bias_detector = BiasDetector()
-        checks = []
-        
-        for attr in sensitive_attributes:
-            # Статистический паритет
-            spd_result = bias_detector.statistical_parity_difference(
-                model.predict(X_test), X_test[attr]
-            )
-            checks.append({
-                'check': f'Statistical parity for {attr}',
-                'value': spd_result['statistical_parity_difference'],
-                'passed': spd_result['is_fair'],
-                'recommendation': f'Address bias in {attr}' if not spd_result['is_fair'] else None
-            })
-            
-            # Уравненные шансы
-            eod_result = bias_detector.equalized_odds_difference(
-                model.predict(X_test), y_test, X_test[attr]
-            )
-            checks.append({
-                'check': f'Equalized odds for {attr}',
-                'value': eod_result['equalized_odds_difference'],
-                'passed': eod_result['is_fair'],
-                'recommendation': f'Address equalized odds for {attr}' if not eod_result['is_fair'] else None
-            })
-        
-        self.checklist['bias_assessment'] = checks
-        return checks
-    
-    def generate_ethics_report(self):
-        """Генерация отчета по этичности"""
-        
-        report = {
-            'overall_score': 0,
-            'category_scores': {},
-            'recommendations': [],
-            'passed_checks': 0,
-            'total_checks': 0
-        }
-        
-        for category, checks in self.checklist.items():
-            if checks:
-                passed = sum(1 for check in checks if check['passed'])
-                total = len(checks)
-                score = passed / total if total > 0 else 0
-                
-                report['category_scores'][category] = score
-                report['passed_checks'] += passed
-                report['total_checks'] += total
-                
-                # Сбор рекомендаций
-                for check in checks:
-                    if check.get('recommendation'):
-                        report['recommendations'].append({
-                            'category': category,
-                            'check': check['check'],
-                            'recommendation': check['recommendation']
-                        })
-        
-        report['overall_score'] = report['passed_checks'] / report['total_checks'] if report['total_checks'] > 0 else 0
-        
-        return report
+class AIEthicscheckList:
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+ def __init__(self):
+ self.checkList = {
+ 'data_quality': [],
+ 'bias_assessment': [],
+ 'privacy_protection': [],
+ 'transparency': [],
+ 'accountability': [],
+ 'fairness': [],
+ 'safety': []
+ }
+
+ def assess_data_quality(self, data, sensitive_attributes):
+""""""""""""""
+
+ checks = []
+
+# check on missing values
+ Missing_ratio = data.isnull().sum().sum() / (len(data) * len(data.columns))
+ checks.append({
+ 'check': 'Missing values ratio',
+ 'value': Missing_ratio,
+ 'passed': Missing_ratio < 0.1,
+ 'recommendation': 'clean Missing values' if Missing_ratio >= 0.1 else None
+ })
+
+# Check on duplicates
+ duplicate_ratio = data.duplicated().sum() / len(data)
+ checks.append({
+ 'check': 'Duplicate ratio',
+ 'value': duplicate_ratio,
+ 'passed': duplicate_ratio < 0.05,
+ 'recommendation': 'Remove duplicates' if duplicate_ratio >= 0.05 else None
+ })
+
+# Check balance of sensitive attributes
+ for attr in sensitive_attributes:
+ value_counts = data[attr].value_counts()
+ min_ratio = value_counts.min() / value_counts.sum()
+ checks.append({
+ 'check': f'Balance of {attr}',
+ 'value': min_ratio,
+ 'passed': min_ratio > 0.1,
+ 'recommendation': f'Balance {attr} groups' if min_ratio <= 0.1 else None
+ })
+
+ self.checkList['data_quality'] = checks
+ return checks
+
+ def assess_bias(self, model, X_test, y_test, sensitive_attributes):
+""""""""""""""
+
+ bias_detector = BiasDetector()
+ checks = []
+
+ for attr in sensitive_attributes:
+# Statistical parity
+ spd_result = bias_detector.statistical_parity_difference(
+ model.predict(X_test), X_test[attr]
+ )
+ checks.append({
+ 'check': f'Statistical parity for {attr}',
+ 'value': spd_result['statistical_parity_difference'],
+ 'passed': spd_result['is_fair'],
+ 'recommendation': f'Address bias in {attr}' if not spd_result['is_fair'] else None
+ })
+
+# Equivalent odds
+ eod_result = bias_detector.equalized_odds_difference(
+ model.predict(X_test), y_test, X_test[attr]
+ )
+ checks.append({
+ 'check': f'Equalized odds for {attr}',
+ 'value': eod_result['equalized_odds_difference'],
+ 'passed': eod_result['is_fair'],
+ 'recommendation': f'Address equalized odds for {attr}' if not eod_result['is_fair'] else None
+ })
+
+ self.checkList['bias_assessment'] = checks
+ return checks
+
+ def generate_ethics_Report(self):
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+ Report = {
+ 'overall_score': 0,
+ 'category_scores': {},
+ 'recommendations': [],
+ 'passed_checks': 0,
+ 'total_checks': 0
+ }
+
+ for category, checks in self.checkList.items():
+ if checks:
+ passed = sum(1 for check in checks if check['passed'])
+ total = len(checks)
+ score = passed / total if total > 0 else 0
+
+ Report['category_scores'][category] = score
+ Report['passed_checks'] += passed
+ Report['total_checks'] += total
+
+# Collection of recommendations
+ for check in checks:
+ if check.get('recommendation'):
+ Report['recommendations'].append({
+ 'category': category,
+ 'check': check['check'],
+ 'recommendation': check['recommendation']
+ })
+
+ Report['overall_score'] = Report['passed_checks'] / Report['total_checks'] if Report['total_checks'] > 0 else 0
+
+ return Report
 ```
 
-## Заключение
+## Conclusion
 
-<img src="images/optimized/ethics_workflow.png" alt="Workflow этичности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.7: Workflow внедрения этичности в AI - этапы и процессы*
+<img src="images/optimized/ethics_workflow.png" alt="Workflow ethics" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 19.7: Workflow the introduction of ethics in AI - phases and processes*
 
-**Этапы внедрения этичности:**
-- **Ethics Planning**: Планирование этических принципов и требований
-- **Data Assessment**: Оценка качества и справедливости данных
-- **Model Development**: Разработка этичных моделей
-- **Bias Testing**: Тестирование на смещения и предвзятость
-- **Privacy Review**: Проверка защиты приватности
-- **Legal Compliance**: Соответствие правовым требованиям
-- **Deployment Monitoring**: Мониторинг этичности в продакшене
-- **Continuous Improvement**: Непрерывное улучшение этичности
+**Ethics for the introduction of ethics:**
+- **Ethics Planning**: Planning ethical principles and requirements
+**data Assessment**: Assessment of data quality and fairness
+- **Model Development**: Ethical Modeling
+- **Bias test**: Test on displacement and bias
+- **Privacy ReView**: heck privacy protection
+- ** Legal Compliance**: Compliance with legal requirements
+- **deployment Monitoring**: Monitoring ethics in sales
+- **Continuous Improvisation**: Continuous improvey of ethics
 
-Этика и ответственный AI - это не просто дополнительные требования, а фундаментальные принципы разработки ML-систем. Ключевые аспекты:
+Ethics and responsible AI are simply additional requirements and fundamental principles for the development of ML systems.
 
-1. **Справедливость** - обеспечение равного обращения со всеми группами
-2. **Прозрачность** - возможность объяснения решений модели
-3. **Приватность** - защита персональных данных
-4. **Соответствие правовым требованиям** - GDPR, AI Act и другие
-5. **Обнаружение и снижение смещений** - активная работа с предвзятостью
-6. **Ответственность** - четкое определение ответственности за решения AI
+1. **justice** - ensuring equal treatment of all groups
+2. ** Transparency** - possible explanation of model decisions
+3. **Purity** - Personal data protection
+4. ** Compliance with legal requirements** - GDPR, AI Act and others
+5. ** Detection and reduction of displacement** - Active Working with bias
+6. ** Responsibility** - clear definition of responsibility for AI decisions
 
-Внедрение этих принципов не только обеспечивает соответствие правовым требованиям, но и повышает качество, надежность и общественное доверие к AI-системам.
+The introduction of these principles not only ensures compliance with legal requirements, but also enhances the quality, reliability and public confidence in AI systems.

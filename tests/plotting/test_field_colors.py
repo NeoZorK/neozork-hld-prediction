@@ -2,7 +2,11 @@
 # tests/plotting/test_field_colors.py
 
 """
+<<<<<<< HEAD
 Tests for field color assignment functionality.
+=======
+tests for field color assignment functionality.
+>>>>>>> origin/master
 """
 
 import pytest
@@ -17,11 +21,16 @@ from plotting.term_chunked_plot import _get_field_color, _get_field_color_enhanc
 
 class TestFieldColorAssignment:
     """Test cases for field color assignment."""
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/master
     def test_get_field_color_returns_valid_color(self):
         """Test that _get_field_color returns a valid color name."""
         field_name = "pressure"
         color = _get_field_color(field_name)
+<<<<<<< HEAD
         
         # Check that color is a string
         assert isinstance(color, str)
@@ -32,29 +41,59 @@ class TestFieldColorAssignment:
         # Check that color is not empty
         assert len(color) > 0
     
+=======
+
+        # check that color is a string
+        assert isinstance(color, str)
+
+        # check that color ends with "+" (plotext bright colors)
+        assert color.endswith("+")
+
+        # check that color is not empty
+        assert len(color) > 0
+
+>>>>>>> origin/master
     def test_get_field_color_consistent_for_same_field(self):
         """Test that the same field always gets the same color."""
         field_name = "predicted_high"
         color1 = _get_field_color(field_name)
         color2 = _get_field_color(field_name)
+<<<<<<< HEAD
         
         assert color1 == color2
     
+=======
+
+        assert color1 == color2
+
+>>>>>>> origin/master
     def test_get_field_color_different_for_different_fields(self):
         """Test that different fields get different colors."""
         field1 = "pressure"
         field2 = "pressure_vector"
         field3 = "predicted_low"
+<<<<<<< HEAD
         
         color1 = _get_field_color(field1)
         color2 = _get_field_color(field2)
         color3 = _get_field_color(field3)
         
+=======
+
+        color1 = _get_field_color(field1)
+        color2 = _get_field_color(field2)
+        color3 = _get_field_color(field3)
+
+>>>>>>> origin/master
         # At least some colors should be different
         colors = [color1, color2, color3]
         unique_colors = set(colors)
         assert len(unique_colors) > 1
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/master
     def test_get_field_color_valid_colors(self):
         """Test that all returned colors are from the valid color palette."""
         valid_colors = {
@@ -63,6 +102,7 @@ class TestFieldColorAssignment:
             "light_green+", "light_blue+", "light_red+", "light_yellow+",
             "light_magenta+", "light_cyan+", "light_white+", "light_orange+"
         }
+<<<<<<< HEAD
         
         # Test multiple fields to ensure we get valid colors
         test_fields = ["pressure", "pressure_vector", "predicted_high", "predicted_low", "volume"]
@@ -71,11 +111,22 @@ class TestFieldColorAssignment:
             color = _get_field_color(field)
             assert color in valid_colors
     
+=======
+
+        # Test multiple fields to ensure we get valid colors
+        test_fields = ["pressure", "pressure_vector", "predicted_high", "predicted_low", "volume"]
+
+        for field in test_fields:
+            color = _get_field_color(field)
+            assert color in valid_colors
+
+>>>>>>> origin/master
     def test_get_field_color_case_sensitive(self):
         """Test that field names are case sensitive for color assignment."""
         field1 = "pressure"
         field2 = "Pressure"
         field3 = "PRESSURE"
+<<<<<<< HEAD
         
         color1 = _get_field_color(field1)
         color2 = _get_field_color(field2)
@@ -84,16 +135,31 @@ class TestFieldColorAssignment:
         # Different cases should get different colors
         assert color1 != color2 or color2 != color3 or color1 != color3
     
+=======
+
+        color1 = _get_field_color(field1)
+        color2 = _get_field_color(field2)
+        color3 = _get_field_color(field3)
+
+        # Different cases should get different colors
+        assert color1 != color2 or color2 != color3 or color1 != color3
+
+>>>>>>> origin/master
     def test_get_field_color_special_characters(self):
         """Test that field names with special characters work correctly."""
         field1 = "pressure_high"
         field2 = "pressure-high"
         field3 = "pressure.high"
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> origin/master
         # Should not raise exceptions
         color1 = _get_field_color(field1)
         color2 = _get_field_color(field2)
         color3 = _get_field_color(field3)
+<<<<<<< HEAD
         
         assert isinstance(color1, str)
         assert isinstance(color2, str)
@@ -111,17 +177,41 @@ class TestFieldColorAssignment:
         field = "давление_вектор"
         color = _get_field_color(field)
         
+=======
+
+        assert isinstance(color1, str)
+        assert isinstance(color2, str)
+        assert isinstance(color3, str)
+
+    def test_get_field_color_empty_string(self):
+        """Test that empty field name works correctly."""
+        color = _get_field_color("")
+
+        assert isinstance(color, str)
+        assert color.endswith("+")
+
+    def test_get_field_color_unicode(self):
+        """Test that unicode field names work correctly."""
+        field = "pressure_vector"
+        color = _get_field_color(field)
+
+>>>>>>> origin/master
         assert isinstance(color, str)
         assert color.endswith("+")
 
 
 class TestEnhancedFieldColorAssignment:
     """Test cases for enhanced field color assignment."""
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/master
     def test_get_field_color_enhanced_returns_valid_color(self):
         """Test that _get_field_color_enhanced returns a valid color name."""
         field_name = "pressure"
         color = _get_field_color_enhanced(field_name)
+<<<<<<< HEAD
         
         # Check that color is a string
         assert isinstance(color, str)
@@ -132,14 +222,32 @@ class TestEnhancedFieldColorAssignment:
         # Check that color is not empty
         assert len(color) > 0
     
+=======
+
+        # check that color is a string
+        assert isinstance(color, str)
+
+        # check that color ends with "+" (plotext bright colors)
+        assert color.endswith("+")
+
+        # check that color is not empty
+        assert len(color) > 0
+
+>>>>>>> origin/master
     def test_get_field_color_enhanced_consistent_for_same_field(self):
         """Test that the same field always gets the same color in enhanced system."""
         field_name = "predicted_high"
         color1 = _get_field_color_enhanced(field_name)
         color2 = _get_field_color_enhanced(field_name)
+<<<<<<< HEAD
         
         assert color1 == color2
     
+=======
+
+        assert color1 == color2
+
+>>>>>>> origin/master
     def test_get_field_color_enhanced_valid_colors(self):
         """Test that all returned colors are from the valid enhanced color palette."""
         valid_colors = {
@@ -148,6 +256,7 @@ class TestEnhancedFieldColorAssignment:
             "light_green+", "light_blue+", "light_red+", "light_yellow+",
             "light_magenta+", "light_cyan+", "light_white+", "light_orange+"
         }
+<<<<<<< HEAD
         
         # Test multiple fields to ensure we get valid colors
         test_fields = ["pressure", "pressure_vector", "predicted_high", "predicted_low", "volume"]
@@ -168,9 +277,35 @@ class TestEnhancedFieldColorAssignment:
             assert original_color.endswith("+")
             assert enhanced_color.endswith("+")
             
+=======
+
+        # Test multiple fields to ensure we get valid colors
+        test_fields = ["pressure", "pressure_vector", "predicted_high", "predicted_low", "volume"]
+
+        for field in test_fields:
+            color = _get_field_color_enhanced(field)
+            assert color in valid_colors
+
+    def test_enhanced_vs_original_system(self):
+        """Test that enhanced system may give different colors than original."""
+        test_fields = ["pressure", "pressure_vector", "predicted_high", "predicted_low"]
+
+        for field in test_fields:
+            original_color = _get_field_color(field)
+            enhanced_color = _get_field_color_enhanced(field)
+
+            # Both should be valid colors
+            assert original_color.endswith("+")
+            assert enhanced_color.endswith("+")
+
+>>>>>>> origin/master
             # They may be the same or different, both are valid
             # (enhanced system prioritizes different colors but may have same hash results)
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     pytest.main([__file__])
+=======
+ pytest.main([__file__])
+>>>>>>> origin/master

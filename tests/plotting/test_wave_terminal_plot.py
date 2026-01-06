@@ -11,6 +11,11 @@ import numpy as np
 from unittest.mock import patch, MagicMock
 
 from src.plotting.term_chunked_plot import _add_wave_indicator_to_subplot
+<<<<<<< HEAD
+=======
+# Also import directly from indicators module for testing
+from src.plotting.term_chunked_plot_indicators import _add_wave_indicator_to_subplot as _add_wave_indicator_direct
+>>>>>>> origin/master
 
 
 class TestWaveTerminalPlot:
@@ -34,7 +39,11 @@ class TestWaveTerminalPlot:
         x_values = list(range(len(chunk)))
         
         # Mock plotext
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_indicators.plt') as mock_plt:
+>>>>>>> origin/master
             _add_wave_indicator_to_subplot(chunk, x_values)
             
             # Verify that plot was called
@@ -56,7 +65,11 @@ class TestWaveTerminalPlot:
         
         x_values = list(range(len(chunk)))
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_indicators.plt') as mock_plt:
+>>>>>>> origin/master
             _add_wave_indicator_to_subplot(chunk, x_values)
             
             # Check that plot was called for BUY signals
@@ -80,7 +93,11 @@ class TestWaveTerminalPlot:
         
         x_values = list(range(len(chunk)))
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_indicators.plt') as mock_plt:
+>>>>>>> origin/master
             _add_wave_indicator_to_subplot(chunk, x_values)
             
             # Check that plot was called for SELL signals
@@ -101,7 +118,11 @@ class TestWaveTerminalPlot:
         
         x_values = list(range(len(chunk)))
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_indicators.plt') as mock_plt:
+>>>>>>> origin/master
             _add_wave_indicator_to_subplot(chunk, x_values)
             
             # Should still work without errors
@@ -122,7 +143,11 @@ class TestWaveTerminalPlot:
         
         x_values = list(range(len(chunk)))
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_indicators.plt') as mock_plt:
+>>>>>>> origin/master
             _add_wave_indicator_to_subplot(chunk, x_values)
             
             # Should work with lowercase column names
@@ -144,7 +169,11 @@ class TestWaveTerminalPlot:
         
         x_values = list(range(len(chunk)))
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_indicators.plt') as mock_plt:
+>>>>>>> origin/master
             _add_wave_indicator_to_subplot(chunk, x_values)
             
             # Should still work with zero values
@@ -166,7 +195,11 @@ class TestWaveTerminalPlot:
         
         x_values = list(range(len(chunk)))
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_indicators.plt') as mock_plt:
+>>>>>>> origin/master
             _add_wave_indicator_to_subplot(chunk, x_values)
             
             # Should handle mixed signals correctly

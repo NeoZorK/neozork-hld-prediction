@@ -1,244 +1,244 @@
-# SCHR Levels AutoML - Руководство по использованию
+# SCHR Livels AutoML - Guide on Use
 
-## 🎯 Обзор
+## ♪ Review
 
-SCHR Levels AutoML - это автоматизированный пайплайн машинного обучения для анализа данных SCHR Levels индикаторов. Пайплайн решает 3 основные задачи предсказания:
+SCHR Livels AutoML is an automated user-based modeling for data analysis by SCHR Lovels indicators.
 
-1. **`pressure_vector_sign`** - Предсказание знака PRESSURE_VECTOR (положительный/отрицательный)
-2. **`price_direction_5periods`** - Предсказание направления цены на 5 периодов вперед
-3. **`level_breakout`** - Предсказание пробоя уровней PREDICTED_HIGH/PREDICTED_LOW
+1. ** `Pressure_vector_sign'**-Pedication sign PRESURE_VECTOR (positive/negative)
+2. **'preception_direction_5periods'**-Pedication priority for 5 periods forward
+3. **'level_breakout'** - PREDICTED_HIGH/PREDICTED_LOW
 
-## 🚀 Быстрый старт
+## 🚀 Quick start
 
-### 1. Простой тест
+###1 # A simple test
 ```bash
-cd /Users/rostsh/Documents/DIS/REPO/neozork-hld-prediction
+cd /Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction
 uv run python test_schr_pipeline.py
 ```
 
-### 2. Полный анализ
+♪##2 ♪ Full analysis
 ```bash
 uv run python schr-levels-gluon.py
 ```
 
-## 📊 Результаты последнего анализа
+## ♪ The results of the last Analisis
 
-### Модель 1: pressure_vector_sign
-- **Точность**: 61.76%
+### Model 1: Presure_vector_sign
+- **Definity**: 61.76 per cent
 - **Precision**: 68.68%
 - **Recall**: 61.76%
 - **F1-score**: 56.23%
 - **Walk Forward**: 61.90% ± 13.61%
 - **Monte Carlo**: 63.57% ± 10.14%
-- **Стабильность**: 84.05%
+- **Stability**: 84.05 per cent
 
-### Модель 2: price_direction_5periods
-- **Точность**: 14.71%
+### Model 2: Price_direction_5periods
+- **Definity**: 14.71%
 - **Precision**: 2.16%
 - **Recall**: 14.71%
 - **F1-score**: 3.77%
 - **Walk Forward**: 28.57% ± 7.01%
 - **Monte Carlo**: 35.35% ± 16.40%
-- **Стабильность**: 53.60%
+- **Stability**: 53.60%
 
-### Модель 3: level_breakout
-- **Точность**: 67.65%
+### Model 3: Live_breakout
+- **Definity**: 67.65 per cent
 - **Precision**: 68.26%
 - **Recall**: 67.65%
 - **F1-score**: 67.66%
 - **Walk Forward**: 63.49% ± 2.24%
 - **Monte Carlo**: 52.80% ± 12.09%
-- **Стабильность**: 77.10%
+- ** Stability**: 77.10 per cent
 
-## 🔧 Использование в коде
+## ♪ Use in code
 
-### Базовое использование
+### Basic use
 ```python
 from schr_levels_gluon import SCHRLevelsAutoMLPipeline
 
-# Создаем пайплайн
+# Creating Pipeline
 pipeline = SCHRLevelsAutoMLPipeline()
 
-# Загружаем данные
+# Loading data
 data = pipeline.load_schr_data('BTCUSD', 'MN1')
 
-# Создаем целевые переменные
+# Creating target variables
 data = pipeline.create_target_variables(data)
 
-# Создаем признаки
+# Creating the signs
 data = pipeline.create_features(data)
 
-# Обучаем модель
+# Learning the model
 results = pipeline.train_model(data, 'pressure_vector_sign')
-print(f"Точность: {results['metrics']['accuracy']:.2%}")
+pint(f "Totality: {results['metrics']['accuracy':2%}")
 
-# Делаем предсказание
-prediction = pipeline.predict(data.tail(1), 'pressure_vector_sign')
-print(f"Предсказание: {prediction.iloc[0]}")
+# We're doing Predation
+Prediction = pipeline.predict(data.tail(1), 'pressure_vector_sign')
+print(f"Prediction: {Prediction.iloc[0]}")
 ```
 
-### Предсказания для торговли
+### Premonitions for trading
 ```python
-# Детальные предсказания с вероятностями
+# Detailed predictions with probabilities
 trading_pred = pipeline.predict_for_trading(data.tail(1), 'pressure_vector_sign')
-print(f"Предсказание: {trading_pred['predictions'].iloc[0]}")
-print(f"Вероятности: {trading_pred['probabilities'].iloc[0].to_dict()}")
+print(f"Prediction: {trading_pred['predictions'].iloc[0]}")
+Print(f"Probability: {trade_pred['probabilities'].iloc[0].to_dict()})
 ```
 
-### Валидация моделей
+♪# # Validation of models
 ```python
-# Walk Forward валидация
+# Walk Forward validation
 wf_results = pipeline.walk_forward_validation(data, 'pressure_vector_sign', n_splits=5)
-print(f"Средняя точность: {wf_results['mean_accuracy']:.2%}")
+prent(f"Average accuracy: {wf_results['mean_accuracy']:2%}})
 
-# Monte Carlo валидация
+# Monte Carlo validation
 mc_results = pipeline.monte_carlo_validation(data, 'pressure_vector_sign', n_iterations=10)
-print(f"Средняя точность: {mc_results['mean_accuracy']:.2%}")
+prent(f"Average accuracy: {mc_results['mean_accuracy']:2%}})
 ```
 
-## 📁 Структура файлов
+## 📁 File Structure
 
 ```
 models/schr_levels_production/
-├── pressure_vector_sign_model.pkl      # Модель для предсказания знака PRESSURE_VECTOR
-├── price_direction_5periods_model.pkl  # Модель для предсказания направления цены
-├── level_breakout_model.pkl           # Модель для предсказания пробоя уровней
-└── analysis_results.pkl               # Результаты анализа
+== sync, corrected by elderman == @elder_man
+♪ Price_direction_5periods_model.pkl # Model for predicting pric direction
+# Model for predicting levels
+== sync, corrected by elderman == @elder_man
 
-logs/
-└── schr_levels_*.log                  # Логи работы пайплайна
+Logs/
+== sync, corrected by elderman == @elder_man
 
 results/
-└── plots/                            # Графики и визуализации
+* Graphs and visualizations
 ```
 
-## 🎯 Доступные данные
+## ♪ Accessible data
 
-### Символы
-- BTCUSD, GBPUSD, EURUSD, и другие
+### Symbols
+- BTCUSD, GBPUSD, EURUSD, and others
 
-### Таймфреймы
-- MN1 (месячные), W1 (недельные), D1 (дневные)
-- H4 (4-часовые), H1 (часовые)
-- M15 (15-минутные), M5 (5-минутные), M1 (минутные)
+### Timeframes
+- MN1 (monthly), W1 (weekly), D1 (day)
+- H4 (4-hour), H1 (hour)
+- M15 (15-minutes), M5 (5-minutes), M1 (minutes)
 
-### Загрузка разных данных
+### uploading different data
 ```python
-# Разные символы
+# Different symbols
 data_btc = pipeline.load_schr_data('BTCUSD', 'MN1')
 data_gbp = pipeline.load_schr_data('GBPUSD', 'MN1')
 
-# Разные таймфреймы
+# Different Timeframes
 data_daily = pipeline.load_schr_data('BTCUSD', 'D1')
 data_hourly = pipeline.load_schr_data('BTCUSD', 'H4')
 ```
 
-## ⚙️ Настройка параметров
+## \configuring parameters
 
-### Время обучения
+### Time of study
 ```python
-# Быстрое обучение (5 минут)
+# Rapid learning (5 minutes)
 results = pipeline.train_model(data, 'pressure_vector_sign', time_limit=300)
 
-# Качественное обучение (30 минут)
+# Quality education (30 minutes)
 results = pipeline.train_model(data, 'pressure_vector_sign', time_limit=1800)
 ```
 
-### Исключение моделей
+### Deletion of models
 ```python
-# В файле schr-levels-gluon.py можно настроить:
+# In Schr-levels-gluon.py file you can set:
 fit_args = {
-    'excluded_model_types': ['NN_TORCH', 'FASTAI'],  # Исключить нейронные сети
-    'use_gpu': False,  # Отключить GPU
-    'num_gpus': 0
+'Excluded_model_types': ['NN_TORCH', 'FASTAI'] # Delete neural networks
+'Use_gpu':False, # Disable GPU
+ 'num_gpus': 0
 }
 ```
 
-## 🔍 Анализ результатов
+♪ ♪ Analysis of results
 
-### Проверка качества данных
+### check data quality
 ```python
-# Статистика по целевым переменным
-print("Распределение target_pv_sign:")
+# Statistics on target variables
+"Target_pv_sign:")
 print(data['target_pv_sign'].value_counts())
 
-print("Распределение target_price_direction:")
+"Target_price_direction:")
 print(data['target_price_direction'].value_counts())
 ```
 
-### Важность признаков
+### The importance of signs
 ```python
-# Получить важность признаков
+# Get the importance of the signs
 feature_importance = pipeline.get_feature_importance('pressure_vector_sign')
 print(feature_importance.head(10))
 ```
 
-## 🚨 Устранение проблем
+## ♪ Overcoming problems
 
-### Ошибка "No such file or directory"
+### Mistake "No dry file or direction"
 ```bash
-# Проверьте наличие файлов данных
+# Check the file files
 ls data/cache/csv_converted/
 ```
 
-### Ошибка "Not enough data"
+### Mistake "Not Enough Data"
 ```python
-# Проверьте размер данных
-print(f"Размер данных: {len(data)} записей")
-print(f"Колонки: {list(data.columns)}")
+# Check the data size
+"data measurement: {len(data)} records")
+(pint(f"Calls: {List(data.columns)})
 ```
 
-### Низкая точность модели
+### Low model accuracy
 ```python
-# Попробуйте увеличить время обучения
-results = pipeline.train_model(data, 'pressure_vector_sign', time_limit=3600)  # 1 час
+# Try to increase your learning time
+results = pipeline.train_model(data, 'pressure_vector_sign', time_limit=3600) #1 hour
 ```
 
-## 📈 Примеры использования
+## * * examples of use
 
-### Ежедневный анализ
+### Daily analysis
 ```python
-# Загружаем свежие данные
+# Loading fresh data
 data = pipeline.load_schr_data('BTCUSD', 'D1')
 data = pipeline.create_target_variables(data)
 data = pipeline.create_features(data)
 
-# Обучаем модель
+# Learning the model
 results = pipeline.train_model(data, 'pressure_vector_sign')
 
-# Делаем предсказание на завтра
-tomorrow_prediction = pipeline.predict(data.tail(1), 'pressure_vector_sign')
-print(f"Завтра PRESSURE_VECTOR будет: {'положительным' if tomorrow_prediction.iloc[0] == 1 else 'отрицательным'}")
+# We're doing Predation on tomorrow
+tomorrow_Prediction = pipeline.predict(data.tail(1), 'pressure_vector_sign')
+"Tomorrow PRESURE_VECTOR will be: {'positive' if tomorrow_Predication.iloc[0] = = 1 else 'negative'})
 ```
 
-### Анализ разных таймфреймов
+### Analysis of different Times
 ```python
-timeframes = ['MN1', 'W1', 'D1', 'H4']
+Timeframes = ['MN1', 'W1', 'D1', 'H4']
 
 for tf in timeframes:
-    data = pipeline.load_schr_data('BTCUSD', tf)
-    data = pipeline.create_target_variables(data)
-    data = pipeline.create_features(data)
-    
-    results = pipeline.train_model(data, 'pressure_vector_sign')
-    print(f"{tf}: Точность {results['metrics']['accuracy']:.2%}")
+ data = pipeline.load_schr_data('BTCUSD', tf)
+ data = pipeline.create_target_variables(data)
+ data = pipeline.create_features(data)
+
+ results = pipeline.train_model(data, 'pressure_vector_sign')
+Print(f) {tf}: Accuracy {results['metrics']['accuracy':2%}})
 ```
 
-## 🎉 Готовые скрипты
+♪ ♪ Ready scripts ♪
 
-### Быстрый тест
+♪ ♪ Quick test
 ```bash
 uv run python test_schr_pipeline.py
 ```
 
-### Полный анализ
+### Full analysis
 ```bash
 uv run python schr-levels-gluon.py
 ```
 
-### Кастомный анализ
+### Castle analysis
 ```python
-# Создайте свой скрипт
+# Make your script
 from schr_levels_gluon import SCHRLevelsAutoMLPipeline
 
 pipeline = SCHRLevelsAutoMLPipeline()
@@ -246,20 +246,20 @@ data = pipeline.load_schr_data('BTCUSD', 'MN1')
 data = pipeline.create_target_variables(data)
 data = pipeline.create_features(data)
 
-# Обучаем все 3 модели
+# Learning all 3 models
 for task in ['pressure_vector_sign', 'price_direction_5periods', 'level_breakout']:
-    results = pipeline.train_model(data, task)
-    print(f"{task}: Точность {results['metrics']['accuracy']:.2%}")
+ results = pipeline.train_model(data, task)
+Print(f) {task}: Accuracy {results['metrics']['accuracy': 2 per cent}})
 ```
 
-## 📞 Поддержка
+## ♪ Support
 
-При возникновении проблем:
-1. Проверьте логи в папке `logs/`
-2. Убедитесь, что данные загружены корректно
-3. Проверьте наличие всех зависимостей: `uv run pip list`
+In case of problems:
+1. Check Logs in `Logs/' folder
+2. Make sure the data are loaded correctly
+3. Check the priority all dependencies: `uv run pip List'
 
 ---
 
-**Последнее обновление**: 28 сентября 2025
-**Версия**: 1.0.0
+** Last update**: 28 September 2025
+** Version**: 1.0.0

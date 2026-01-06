@@ -8,11 +8,11 @@ metadata:
     platform: apple-silicon
     version: "1.0.0"
 spec:
-  image: python:3.11-slim
+  image: python:3.14-slim
   architecture: arm64
   resources:
-    memory: "4Gi"
-    cpu: "2"
+    memory: "8Gi"
+    cpu: "4"
     storage: "10Gi"
   volumes:
     - name: data-volume
@@ -47,11 +47,19 @@ spec:
     - UV_ONLY=true
     - UV_CACHE_DIR=/app/.uv_cache
     - UV_VENV_DIR=/app/.venv
+    - UV_LINK_MODE=copy
     - DOCKER_CONTAINER=false
     - NATIVE_CONTAINER=true
     - LOG_LEVEL=INFO
     - MCP_SERVER_TYPE=pycharm_copilot
     - MPLBACKEND=Agg
+    - MPLCONFIGDIR=/tmp/matplotlib-cache
+    - MAX_JOBS=4
+    - CMAKE_BUILD_PARALLEL_LEVEL=4
+    - MAKEFLAGS=-j4
+    - CFLAGS="-O2 -pipe -march=native"
+    - CXXFLAGS="-O2 -pipe -march=native"
+    - UV_NO_BUILD_ISOLATION=1
     - NEOZORK_TEST=1
   ports:
     - containerPort: 8000

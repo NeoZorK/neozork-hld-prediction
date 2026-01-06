@@ -63,7 +63,11 @@ class TestNativeContainerSetup:
         
         # Check spec
         spec = config['spec']
+<<<<<<< HEAD
         assert spec['image'] == 'python:3.11-slim'
+=======
+        assert spec['image'] == 'python:3.14-slim'
+>>>>>>> origin/master
         assert spec['architecture'] == 'arm64'
         assert 'memory' in spec['resources']
         assert 'cpu' in spec['resources']

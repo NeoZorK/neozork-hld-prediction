@@ -1,116 +1,116 @@
-# Руководства по запуску и тестированию / Run and Test Guides
+# Run and Test Guides / Run and Test Guides
 
-## 📁 Структура / Structure
+## 📁 Structure / Structure
 
 ```
 docs/run-and-test-guides/
-├── index.md                           # Главная страница / Main page
-├── project-structure.md              # Структура проекта / Project structure
-├── troubleshooting.md                # Устранение неполадок / Troubleshooting
-├── faq.md                           # Часто задаваемые вопросы / FAQ
-├── russian/                         # Русская версия / Russian version
-│   ├── complete-manual-ru.md        # Полное руководство / Complete manual
-│   ├── quick-start-ru.md            # Быстрый старт / Quick start
-│   ├── testing-guide-ru.md          # Руководство по тестированию / Testing guide
-│   └── deployment-guide-ru.md       # Руководство по развертыванию / Deployment guide
-└── english/                         # Английская версия / English version
-    ├── complete-manual-en.md        # Complete manual
-    ├── quick-start-en.md            # Quick start
-    ├── testing-guide-en.md          # Testing guide
-    └── deployment-guide-en.md       # Deployment guide
+├── index.md # main page / main page
+├── project-Structure.md # Project Structure / Project Structure
+├── Troubleshooting.md # Troubleshooting / Troubleshooting
+├── faq.md # Frequently Asked Questions / FAQ
+├── russian/ # Russian Version / Russian Version
+│ ├── complete-manual-ru.md # Complete guide / Complete manual
+│ ├── quick-start-ru.md # Quick start / Quick start
+│ ├── testing-guide-ru.md # guide on testing / testing guide
+│ └── deployment-guide-ru.md # guide on deployment / deployment guide
+└── english/ # English Version / English Version
+ ├── complete-manual-en.md # Complete manual
+ ├── quick-start-en.md # Quick start
+ ├── testing-guide-en.md # testing guide
+ └── deployment-guide-en.md # deployment guide
 ```
 
-## 🚀 Быстрый доступ / Quick Access
+## ♪ Quick access / Quick Access
 
-### Русская версия / Russian Version
-- [Полное руководство](russian/complete-manual-ru.md) - Подробное руководство по всем компонентам
-- [Быстрый старт](russian/quick-start-ru.md) - Запуск за 5 минут
-- [Руководство по тестированию](russian/testing-guide-ru.md) - Все о тестировании
-- [Руководство по развертыванию](russian/deployment-guide-ru.md) - Развертывание в продакшне
+### Russian Version / Russian Version
+- [Complete guide](russian/complete-manual-ru.md) - Detailed guide on all components
+- [Quick Start] (Russian/Quick-start-ru.md) - Launch for 5 minutes
+- [Guide on test] (russian/testing-guide-ru.md) - All about testing
+- [Guide on release] (russian/development-guid-ru.md) - Deployment in sales
 
 ### English Version
 - [Complete Manual](english/complete-manual-en.md) - Comprehensive guide for all components
-- [Quick Start](english/quick-start-en.md) - Get running in 5 minutes
-- [Testing Guide](english/testing-guide-en.md) - Everything about testing
-- [Deployment Guide](english/deployment-guide-en.md) - Production deployment
+- [Quick start](english/quick-start-en.md) - Get running in 5 minutes
+- [testing Guide](english/testing-guide-en.md) - Everything about testing
+- [deployment Guide](english/deployment-guide-en.md) - Production deployment
 
-## 📋 Компоненты системы / System Components
+## ♪ components of the system / system components
 
-### Основные компоненты / Main Components
-1. **Основной анализ** (`run_analysis.py`) - Ручное построение графиков / Manual charting
-2. **Интерактивная система** (`interactive/`) - ML торговые стратегии / ML trading strategies
-3. **SaaS платформа** (`src/saas/`) - Облачная платформа / Cloud platform
-4. **Pocket Hedge Fund** (`src/pocket_hedge_fund/`) - Хедж-фонд / Hedge fund
-5. **Мобильное приложение** (`src/mobile_app/`) - React Native приложение / React Native app
-6. **Админ панель** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
-7. **Мониторинг** (`src/monitoring/`) - Система мониторинга / Monitoring system
+### Basic components / Main components
+1. ** Basic analysis** ( `run_Analis.py') - Manual charting / Manual charting
+2. ** Interactive system** (`interactive/') - ML trade strategies / ML trading strategies
+3. **Saaas platform** (`src/saas/') - Cloud tableform / Cloud tableform
+4. **Pocket Hedge fund** (`src/pocket_hedge_fund/`) - Hedge fund / Hedge fund
+5. **mobile application** (`src/mobile_app/`) - React Native application / React Native app
+6. **Admin panel** (`src/admin_panel/') - Vue.js admin / Vue.js admin penel
+7. **Monitoring** (`src/Monitoring/') - Monitoring system
 
-### Тестирование / Testing
-- **Многопоточное тестирование** / Multithreaded testing
-- **Автоматическое определение окружения** / Automatic environment detection
-- **Покрытие кода** / Code coverage
-- **Специализированные тесты** / Specialized tests
+### Test / Testing
+- ** Multiple test** / Multihreaded test
+- **Automatic environmental definition**/Automatic environmental release
+- ** Code cover**/ Code control
+- **Specialized tests** / Specialized tests
 
-### Развертывание / Deployment
-- **Локальное развертывание** / Local deployment
-- **Docker контейнеры** / Docker containers
-- **Apple Silicon нативные контейнеры** / Apple Silicon native containers
-- **Kubernetes кластеры** / Kubernetes clusters
-- **Продакшн развертывание** / Production deployment
+### Deploy/deployment
+- ** Local deployment**/ Local release
+- **Docker containers**
+- **Apple Silicon fixed containers** / Apple Silicon native containers
+- **Kubernetes clusters** / Kubernetes clusters
+- ** Production deployment**/ Production release
 
-## 🛠️ Полезные команды / Useful Commands
+## ♪ Useful team / Useful Commands
 
-### Запуск / Launch
+### Launch / Launch
 ```bash
-# Основной анализ / Main analysis
-uv run run_analysis.py demo --rule PHLD
+# Basic analysis / Main Analysis
+uv run run_Analysis.py demo --rule PHLD
 
-# Интерактивная система / Interactive system
+# Interactive system / Interactive system
 uv run python interactive/neozork.py
 
-# SaaS платформа / SaaS platform
+# SaaS platform / SaaS platform
 uv run python run_saas.py
 
-# Pocket Hedge Fund
+# Pocket Hedge fund
 uv run python run_pocket_hedge_fund.py
 ```
 
-### Тестирование / Testing
+### Test / Testing
 ```bash
-# Все тесты / All tests
+# All tests / all tests
 uv run pytest tests -n auto
 
-# Безопасный режим / Safe mode
+# Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
 
-# С покрытием / With coverage
+# with coverage / With coverage
 uv run pytest tests/ --cov=src -n auto
 ```
 
 ### Docker / Docker
 ```bash
-# Запуск сервисов / Launch services
+# Launch services / Launch services
 docker-compose up -d
 
-# Остановка / Stop
+# Stop / Stop
 docker-compose down
 
-# Тесты в Docker / Tests in Docker
+# Tests in Docker / tests in Docker
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
 ```
 
-## 🆘 Поддержка / Support
+## Support / Support
 
-### Устранение неполадок / Troubleshooting
-- [Устранение неполадок](troubleshooting.md) - Частые проблемы и решения
-- [FAQ](faq.md) - Часто задаваемые вопросы
+### Troubleshooting / Troubleshooting
+- [Troubleshooting] (Troubleshooting.md) - Common Issues and Decisions
+- [FAQ](faq.md) - Frequently Asked Questions
 
-### Дополнительные ресурсы / Additional Resources
-- [Структура проекта](project-structure.md) - Подробная структура проекта
-- [Основная документация](../index.md) - Главная страница документации
+### Additional resources / Additional Resources
+- [Project Structure] (project-Structure.md) - Detailed Project Structure
+- [Main documentation](../index.md) - main page documentation
 
 ---
 
-**Версия / Version**: 1.0.0  
-**Последнее обновление / Last Updated**: $(date)  
-**Автор / Author**: NeoZork Development Team
+** Version / Version**: 1.0.
+** Last update / Last Update**: $(data)
+**Author**: NeoZork Development Team

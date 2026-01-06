@@ -8,6 +8,10 @@ plus a secondary chart below showing the selected indicator.
 """
 
 import os
+<<<<<<< HEAD
+=======
+import sys
+>>>>>>> origin/master
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,6 +21,12 @@ from typing import Dict, Any, Optional
 
 from src.common import logger
 
+<<<<<<< HEAD
+=======
+# Increase recursion limit to handle matplotlib deepcopy operations
+sys.setrecursionlimit(3000)
+
+>>>>>>> origin/master
 
 def _create_wave_line_segments(index, values, mask):
     """
@@ -83,6 +93,16 @@ def plot_dual_chart_mpl(
     Returns:
         matplotlib.figure.Figure: Figure object
     """
+<<<<<<< HEAD
+=======
+    # Increase recursion limit to handle matplotlib deepcopy operations
+    old_recursion_limit = sys.getrecursionlimit()
+    try:
+        sys.setrecursionlimit(5000)
+    except:
+        pass
+    
+>>>>>>> origin/master
     # Set default output path only if not None
     if output_path is None:
         # This will be handled in the display logic at the end
@@ -151,17 +171,31 @@ def plot_dual_chart_mpl(
         sell_signals = display_df[display_df['Direction'] == 2]
         
         if not buy_signals.empty:
+<<<<<<< HEAD
             ax1.scatter(buy_signals.index, buy_signals['Low'] * 0.995, 
                        color='#2ECC71', marker='^', s=80, label='Buy Signal', zorder=5, alpha=0.9)
         
         if not sell_signals.empty:
             ax1.scatter(sell_signals.index, sell_signals['High'] * 1.005, 
                        color='#E74C3C', marker='v', s=80, label='Sell Signal', zorder=5, alpha=0.9)
+=======
+            # Use string marker to avoid deepcopy recursion issues
+            ax1.scatter(buy_signals.index, buy_signals['Low'] * 0.995, 
+                       c='#2ECC71', marker='^', s=80, label='Buy Signal', zorder=5, alpha=0.9)
+        
+        if not sell_signals.empty:
+            # Use string marker to avoid deepcopy recursion issues
+            ax1.scatter(sell_signals.index, sell_signals['High'] * 1.005, 
+                       c='#E74C3C', marker='v', s=80, label='Sell Signal', zorder=5, alpha=0.9)
+>>>>>>> origin/master
     
     ax1.set_ylabel('Price', fontsize=11, fontweight='bold')
     
     # Format x-axis for main chart
+<<<<<<< HEAD
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+=======
+>>>>>>> origin/master
     # Calculate appropriate interval based on data length and time range
     data_length = len(display_df)
     date_range = display_df.index.max() - display_df.index.min()
@@ -179,7 +213,13 @@ def plot_dual_chart_mpl(
     else:  # Less than 3 months
         ax1.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days_range // 10)))
     
+<<<<<<< HEAD
     plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
+=======
+    # Set formatter and tick parameters - avoid calling get_majorticklabels() which triggers deepcopy
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    ax1.tick_params(axis='x', rotation=45, labelsize=9)
+>>>>>>> origin/master
     
     # Indicator chart
     indicator_name = rule.split(':', 1)[0].lower().strip()
@@ -925,7 +965,18 @@ def plot_dual_chart_mpl(
         ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
 
     # Add legend to main chart after all signals are added
+<<<<<<< HEAD
     ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+=======
+    try:
+        ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    except RecursionError:
+        # Fallback for Python 3.14.2 compatibility - use simple legend without markers
+        try:
+            ax1.legend(loc='upper right', framealpha=0.9, fontsize=9)
+        except Exception:
+            pass  # Skip legend if it still fails
+>>>>>>> origin/master
     
     # Set y-axis label
     ax2.set_ylabel(y_axis_label, fontsize=11, fontweight='bold')
@@ -936,12 +987,24 @@ def plot_dual_chart_mpl(
     ax2.set_axisbelow(True)  # Put grid behind data
     
     # Enhanced legend
+<<<<<<< HEAD
     ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+=======
+    try:
+        ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    except RecursionError:
+        # Fallback for Python 3.14.2 compatibility - use simple legend without markers
+        try:
+            ax2.legend(loc='upper right', framealpha=0.9, fontsize=9)
+        except Exception:
+            pass  # Skip legend if it still fails
+>>>>>>> origin/master
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     # Use the same locator as main chart for consistency
     ax2.xaxis.set_major_locator(ax1.xaxis.get_major_locator())
+<<<<<<< HEAD
     plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Adjust layout
@@ -954,6 +1017,39 @@ def plot_dual_chart_mpl(
     else:
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         logger.print_info(f"Dual chart saved to: {output_path}")
+=======
+    # Set tick label rotation - avoid calling get_majorticklabels() which triggers deepcopy
+    ax2.tick_params(axis='x', rotation=45)
+    
+    # Adjust layout - wrap in try-except to handle recursion errors
+    try:
+        plt.tight_layout()
+    except RecursionError:
+        # If recursion error occurs, use basic layout adjustment
+        fig.tight_layout(rect=[0, 0, 1, 0.96])
+    
+    # Restore recursion limit
+    try:
+        sys.setrecursionlimit(old_recursion_limit)
+    except:
+        pass
+    
+    # Display plot if output_path is None, otherwise save
+    if output_path is None:
+        try:
+            plt.show()
+            logger.print_info("Dual chart displayed.")
+        except RecursionError:
+            logger.print_warning("Recursion error during display, but plot was created successfully")
+    else:
+        try:
+            plt.savefig(output_path, dpi=300, bbox_inches='tight')
+            logger.print_info(f"Dual chart saved to: {output_path}")
+        except RecursionError:
+            # Fallback: save without tight layout
+            plt.savefig(output_path, dpi=300)
+            logger.print_warning(f"Dual chart saved to: {output_path} (with basic layout due to recursion error)")
+>>>>>>> origin/master
     
     return fig
 
@@ -971,7 +1067,11 @@ def plot_dual_chart_mpl_display(
     Create and display dual chart for mpl mode without saving to file.
     
     Args:
+<<<<<<< HEAD
         df (pd.DataFrame): OHLCV data with indicators
+=======
+        df (pd.DataFrame): OHLCV data with indicators (should already have indicators calculated)
+>>>>>>> origin/master
         rule (str): Rule string (e.g., 'macd:12,26,9,close')
         title (str): Plot title
         width (int): Plot width
@@ -982,8 +1082,14 @@ def plot_dual_chart_mpl_display(
     Returns:
         Any: Plot object
     """
+<<<<<<< HEAD
     # Calculate additional indicator first
     from src.plotting.dual_chart_plot import calculate_additional_indicator
     df_with_indicator = calculate_additional_indicator(df, rule)
     
     return plot_dual_chart_mpl(df_with_indicator, rule, title, None, width, height, layout, **kwargs) 
+=======
+    # Directly call plot_dual_chart_mpl without recalculating indicators
+    # Indicators should already be calculated by plot_dual_chart_results
+    return plot_dual_chart_mpl(df, rule, title, None, width, height, layout, **kwargs) 
+>>>>>>> origin/master

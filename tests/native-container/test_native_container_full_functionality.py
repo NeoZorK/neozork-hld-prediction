@@ -353,7 +353,11 @@ class TestNativeContainerFullFunctionality:
         # Check for required configuration
         config_features = [
             "neozork-hld-prediction",
+<<<<<<< HEAD
             "python:3.11-slim",
+=======
+            "python:3.14-slim",
+>>>>>>> origin/master
             "arm64",
             "USE_UV=true",
             "NATIVE_CONTAINER=true"

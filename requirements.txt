@@ -1,13 +1,13 @@
 # NeoZork Pocket Hedge Fund - Python Dependencies
 
 # Core Framework
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
 
 # Database
-asyncpg==0.29.0
+asyncpg>=0.30.0
 psycopg2-binary==2.9.9
-sqlalchemy==2.0.23
+sqlalchemy>=2.0.36
 
 # Authentication & Security
 PyJWT==2.8.0
@@ -26,8 +26,8 @@ textblob>=0.17.1
 
 # Utilities
 python-dotenv==1.0.0
-pydantic==2.5.0
-python-multipart==0.0.6
+pydantic>=2.12.0
+python-multipart>=0.0.18
 psutil>=5.9.0
 watchdog>=3.0.0
 email-validator>=2.0.0
@@ -41,7 +41,7 @@ hypothesis>=6.0.0
 
 # Data fetching libraries
 yfinance==0.2.25
-polygon-api-client
+# polygon-api-client  # Not compatible with Python 3.14 (KeyError: '__annotations__')
 python-binance==1.0.17
 
 # Additional data processing
@@ -62,4 +62,4 @@ pytest-mock>=3.14.0
 pytest-timeout>=2.1.0
 
 # Optional: For production deployment
-gunicorn==21.2.0
+gunicorn>=22.0.0

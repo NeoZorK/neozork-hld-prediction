@@ -1,280 +1,280 @@
-# Устранение неполадок / Troubleshooting
+# Troubleshooting / Troubleshooting
 
-## 🆘 Частые проблемы / Common Issues
+## 🆘 Common Issues / Common Issues
 
-### Проблемы с установкой / Installation Issues
+### installation Issues / installation Issues
 
-#### UV не установлен / UV not installed
+#### UV not installed / UV not installed
 ```bash
-# Установка UV / Install UV
+# installation UV / install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Проверка установки / Check installation
+# installation check / installation check
 uv --version
 ```
 
-#### Ошибки зависимостей / Dependency errors
+#### dependencies / Dependency errors Errors
 ```bash
-# Очистка кэша UV / Clean UV cache
+# clean cache UV / clean UV cache
 uv cache clean
 
-# Переустановка зависимостей / Reinstall dependencies
+# reinstall dependencies / reinstall dependencies
 uv pip install -r requirements.txt --force-reinstall
 ```
 
-#### Проблемы с Node.js / Node.js issues
+#### with Node.js / Node.js issues Issues
 ```bash
-# Очистка кэша npm / Clean npm cache
+# clean cache npm / clean npm cache
 npm cache clean --force
 
-# Переустановка зависимостей / Reinstall dependencies
+# reinstall dependencies / reinstall dependencies
 rm -rf node_modules package-lock.json
 npm install
 ```
 
-### Проблемы с запуском / Launch Issues
+### Launch Issues / Launch Issues
 
-#### Ошибки импорта / Import errors
+#### import / import Errors Errors
 ```bash
-# Проверка PYTHONPATH / Check PYTHONPATH
+# check PYTHONPATH / check PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-# Проверка установки пакета / Check package installation
-uv pip list | grep neozork
+# check package installation / check package installation
+uv pip List | grep neozork
 ```
 
-#### Проблемы с портами / Port issues
+#### with ports / Port Issues Issues
 ```bash
-# Проверка занятых портов / Check occupied ports
+# check occupied ports / check occupied ports
 lsof -i :8080
 lsof -i :3000
 lsof -i :9090
 
-# Освобождение портов / Free ports
+# Free ports / Free ports
 kill -9 $(lsof -t -i:8080)
 ```
 
-#### Проблемы с базой данных / Database issues
+#### with database / database issues Issues
 ```bash
-# Проверка подключения к PostgreSQL / Check PostgreSQL connection
-psql -h localhost -U neozork_user -d neozork_fund
+# check PostgreSQL connection / check PostgreSQL connection
+psql -h localhost -U neozork_User -d neozork_fund
 
-# Перезапуск PostgreSQL / Restart PostgreSQL
-sudo systemctl restart postgresql
+# Restart PostgreSQL / Restart PostgreSQL
+sudo systemctl Restart PostgreSQL
 ```
 
-### Проблемы с тестированием / Testing Issues
+### Issues with testing / testing Issues
 
-#### Тесты не запускаются / Tests don't run
+#### tests do not start / tests don't run
 ```bash
-# Безопасный режим / Safe mode
+# Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
 
-# Запуск с отладкой / Run with debugging
+# Launch with debugging / Run with debugging
 uv run pytest tests/ -v -s
 
-# Запуск конкретного теста / Run specific test
+# Launch specific test / Run specific test
 uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 ```
 
-#### Проблемы с покрытием / Coverage issues
+#### with coverage / coverage issues Issues
 ```bash
-# Очистка кэша покрытия / Clean coverage cache
+# clean coverage cache / clean coverage cache
 rm -rf .coverage htmlcov/
 
-# Запуск с покрытием / Run with coverage
-uv run pytest tests/ --cov=src --cov-report=html -n auto
+# Launch with coverage / Run with coverage
+uv run pytest tests/ --cov=src --cov-Report=html -n auto
 ```
 
-#### Медленные тесты / Slow tests
+#### Slow tests / Slow tests
 ```bash
-# Запуск с таймаутом / Run with timeout
+# Launch with timeout / Run with timeout
 ./scripts/run_tests_with_timeout.sh
 
-# Запуск с ограниченными потоками / Run with limited threads
+# Launch with limited threads / Run with limited threads
 uv run pytest tests/ -n 2
 ```
 
-### Проблемы с Docker / Docker Issues
+### Issues with Docker / Docker Issues
 
-#### Контейнеры не запускаются / Containers don't start
+#### Containers do not start / Containers don't start
 ```bash
-# Пересборка контейнеров / Rebuild containers
+# Rebuild containers / Rebuild containers
 docker-compose build --no-cache
 
-# Очистка Docker / Clean Docker
+# clean Docker / clean Docker
 docker system prune -a
 
-# Перезапуск Docker / Restart Docker
-sudo systemctl restart docker
+# Restart Docker / Restart Docker
+sudo systemctl Restart Docker
 ```
 
-#### Проблемы с volumes / Volume issues
+#### with volumes / Volume issues Issues
 ```bash
-# Просмотр volumes / View volumes
+# View volumes / View volumes
 docker volume ls
 
-# Очистка volumes / Clean volumes
+# clean volumes / clean volumes
 docker volume prune
 
-# Создание volumes / Create volumes
+# create volumes / Create volumes
 docker volume create neozork_data
 ```
 
-#### Проблемы с сетью / Network issues
+#### with network / network issues Issues
 ```bash
-# Просмотр сетей / View networks
+# View networks / View networks
 docker network ls
 
-# Очистка сетей / Clean networks
+# clean networks / clean networks
 docker network prune
 
-# Создание сети / Create network
+# create network / create network
 docker network create neozork_network
 ```
 
-### Проблемы с Kubernetes / Kubernetes Issues
+### Issues with Kubernetes / Kubernetes Issues
 
-#### Pods не запускаются / Pods don't start
+#### pods not start / pods don't start
 ```bash
-# Просмотр событий / View events
+# View events / View events
 kubectl get events
 
-# Описание pod / Describe pod
+# describe pod / describe pod
 kubectl describe pod <pod-name>
 
-# Логи pod / Pod logs
-kubectl logs <pod-name>
+# pod Logs / pod Logs
+kubectl Logs <pod-name>
 ```
 
-#### Проблемы с сервисами / Service issues
+#### with services / service issues Issues
 ```bash
-# Просмотр сервисов / View services
+# View services / View services
 kubectl get services
 
-# Описание сервиса / Describe service
+# describe service / describe service
 kubectl describe service <service-name>
 
-# Проверка endpoints / Check endpoints
+# check endpoints / check endpoints
 kubectl get endpoints
 ```
 
-#### Проблемы с развертыванием / Deployment issues
+#### with deployment / deployment issues Issues
 ```bash
-# Просмотр развертываний / View deployments
+# View deployments / View deployments
 kubectl get deployments
 
-# Описание развертывания / Describe deployment
+# describe deployment / describe deployment
 kubectl describe deployment <deployment-name>
 
-# Откат развертывания / Rollback deployment
+# Rollback deployment / Rollback deployment
 kubectl rollout undo deployment/<deployment-name>
 ```
 
-## 🔧 Отладочные команды / Debug Commands
+## ♪ Debug Commands
 
-### Проверка статуса системы / System Status Check
+### check system status / system Status check
 ```bash
-# Проверка UV / Check UV
+# check UV / check UV
 python scripts/utilities/check_uv_mode.py --verbose
 
-# Проверка MCP / Check MCP
+# check MCP / check MCP
 python scripts/check_mcp_status.py
 
-# Проверка Docker / Check Docker
+# check Docker / check Docker
 docker-compose ps
 docker images
 docker volume ls
 ```
 
-### Анализ логов / Log Analysis
+### Laundry analysis / Log Analysis
 ```bash
-# Просмотр всех логов / View all logs
-find logs/ -name "*.log" -exec tail -f {} \;
+# View all logs
+find Logs/ -name "*.log" -exec tail -f {} \;
 
-# Поиск ошибок / Search for errors
-grep -r "ERROR" logs/
+# Searching for Errors
+grep -r "ERROR" Logs/
 
-# Поиск предупреждений / Search for warnings
-grep -r "WARNING" logs/
+# Searching for Warnings / Search for Warnings
+grep -r "WARNING" Logs/
 
-# Анализ производительности / Performance analysis
-grep -r "performance" logs/
+# Performance analysis / Performance Analysis
+grep -r "performance" Logs/
 ```
 
-### Отладочные скрипты / Debug Scripts
+### Debug Scripts
 ```bash
-# Отладка данных / Debug data
+# Data debug data
 python scripts/debug/debug_yfinance.py
 python scripts/debug/debug_binance.py
 python scripts/debug/debug_polygon.py
 
-# Отладка индикаторов / Debug indicators
+# Debug indicators
 python scripts/debug/debug_rsi_signals.py
 python scripts/debug/debug_wave_indicator.py
 
-# Отладка системы / Debug system
+# Debug system debug system
 python scripts/debug_docker_processes.py
 python scripts/mcp/debug_mcp_detection.py
 ```
 
-## 🛠️ Восстановление системы / System Recovery
+## ♪ Recovery system / system Recovery
 
-### Полное восстановление / Full Recovery
+### Full recovery / Full Recovery
 ```bash
-# Остановка всех сервисов / Stop all services
+# Stopping all services
 docker-compose down
 ./scripts/native-container/stop.sh
 
-# Очистка системы / Clean system
+# Clear System / Clear System
 uv cache clean
 docker system prune -a
 ./scripts/native-container/cleanup.sh --all --force
 
-# Переустановка зависимостей / Reinstall dependencies
+# reinstall dependencies / reinstall dependencies
 uv pip install -r requirements.txt --force-reinstall
 cd src/mobile_app && npm install && cd ../..
 cd src/admin_panel && npm install && cd ../..
 
-# Запуск сервисов / Start services
+# Launch services / start services
 docker-compose up -d
 ```
 
-### Восстановление данных / Data Recovery
+### Data recovery / data Recovery
 ```bash
-# Резервное копирование / Backup
-docker-compose exec neozork-hld pg_dump -U neozork_user neozork_fund > backup.sql
+# Backup / Backup
+docker-compose exec neozork-hld pg_dump -U neozork_User neozork_fund > backup.sql
 
-# Восстановление / Restore
-docker-compose exec neozork-hld psql -U neozork_user neozork_fund < backup.sql
+# Recovery / Restore
+docker-compose exec neozork-hld psql -U neozork_User neozork_fund < backup.sql
 ```
 
-### Восстановление конфигурации / Configuration Recovery
+### Reconfiguring configuration / Configuring Recovery
 ```bash
-# Резервное копирование конфигурации / Backup configuration
+# Backup configration backup
 tar -czf config-backup.tar.gz .env docker-compose.yml k8s/
 
-# Восстановление конфигурации / Restore configuration
+# Restore configuration / Restore conference
 tar -xzf config-backup.tar.gz
 ```
 
-## 📞 Получение помощи / Getting Help
+## * Get help / Getting Help
 
-### Логи и диагностика / Logs and Diagnostics
+### Logs and diagnostics / Logs and Diagnostics
 ```bash
-# Сбор диагностической информации / Collect diagnostic information
+# Collection of diagnostic information / Collection Diagnostic information
 ./scripts/utilities/collect_diagnostics.sh
 
-# Отправка логов / Send logs
-./scripts/utilities/send_logs.sh
+# Sending logs / Sand Logs
+./scripts/utilities/send_Logs.sh
 ```
 
-### Сообщество / Community
-- **GitHub Issues**: https://github.com/username/neozork-hld-prediction/issues
+### Community / Community
+- **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 
-### Документация / Documentation
-- [Полное руководство / Complete Manual](russian/complete-manual-ru.md)
-- [Руководство по тестированию / Testing Guide](russian/testing-guide-ru.md)
-- [Руководство по развертыванию / Deployment Guide](russian/deployment-guide-ru.md)
+### documentation / Documentation
+- [Complete guide / Complete Manual](russian/complete-manual-ru.md)
+- [guide on testing / testing Guide](russian/testing-guide-ru.md)
+- [guide on deployment / deployment Guide](russian/deployment-guide-ru.md)

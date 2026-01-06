@@ -1,112 +1,112 @@
 # Wave Indicator Fast Mode Fixes Summary
 
-## 🐛 Проблемы, которые были исправлены
+## ♪ Problems that have been corrected
 
-### 1. **Отсутствие сигналов покупки/продажи на верхнем графике**
-**Проблема**: Сигналы не отображались на candlestick chart в `-d fast` режиме.
+###1. ** No purchase/sale signals on top chart**
+**Challenge**: No signals were displayed on candelick chart in `-d fast' mode.
 
-**Причина**: Код искал сигналы только в колонке `'Direction'`, но wave indicator использует колонку `'_Signal'`.
+** Reason**: The code only looked for signals in the column `'direction'', but the wave indexor uses the column `'_signal'.
 
-**Исправление**: 
+**fix**:
 ```python
-# Добавлена поддержка обеих колонок
+# Added support to both columns
 signal_col = None
-if '_Signal' in display_df.columns:
-    signal_col = '_Signal'
+if '_signal' in display_df.columns:
+ signal_col = '_signal'
 elif 'Direction' in display_df.columns:
-    signal_col = 'Direction'
+ signal_col = 'Direction'
 ```
 
-### 2. **Неправильное отображение линий индикатора**
-**Проблема**: 
-- "Wave (BUY)" и "MA Line" были идентичны (обе красные)
-- "Wave (SELL)" и "Fast Line" были идентичны (синие)
-- Цвета и стили линий не соответствовали спецификации
+###2. ** Wrong display of indicator lines**
+** Problem**:
+- "Wave (BUY)" and "MA Line" were identical (both red)
+- "Wave (SELL)" and "Fast Line" were identical (blue)
+- Line colours and styles not conformed to specifications
 
-**Исправления**:
+**/ Corrections**:
 
-#### A. Добавлена основная Wave Line
+### A. Added main Wave Line
 ```python
 # Add main wave line (black) for all valid data points
 if valid_data_mask.any():
-    wave_data = display_df[valid_data_mask]
-    wave_source = ColumnDataSource(wave_data)
-    indicator_fig.line(
-        'index', plot_wave_col,
-        source=wave_source,
-        line_color='black',
-        line_width=1,
-        legend_label='Wave Line',
-        alpha=0.3
-    )
+ wave_data = display_df[valid_data_mask]
+ wave_source = ColumndataSource(wave_data)
+ indicator_fig.line(
+ 'index', plot_wave_col,
+ source=wave_source,
+ line_color='black',
+ line_width=1,
+ legend_label='Wave Line',
+ alpha=0.3
+ )
 ```
 
-#### B. Исправлены цвета и стили линий
-- **Wave Line (BUY)**: Красная линия (ширина: 2) для сигналов покупки
-- **Wave Line (SELL)**: Синяя линия (ширина: 2) для сигналов продажи  
-- **Fast Line**: Красная пунктирная линия (ширина: 1)
-- **MA Line**: Светло-синяя линия (ширина: 1)
+### B. Colors and line styles corrected
+- **Wave Line (BUY)**: Red Line (wide: 2) for purchase signals
+- **Wave Line (SELL)**: Blue Line (wide: 2) for sales signals
+- **Fast Line**: Red dotted line (wide: 1)
+- **MA Line**: Light blue line (width: 1)
 
-## ✅ Результат после исправлений
+## ♪ The result after the corrections
 
-### Визуальные улучшения:
-1. **Сигналы на верхнем графике**: Теперь отображаются зеленые треугольники (покупка) и красные перевернутые треугольники (продажа)
-2. **Правильные цвета линий**: Каждая линия имеет свой уникальный цвет и стиль
-3. **Четкая легенда**: Все линии правильно подписаны в легенде
+### Visual improvements:
+1. ** Signs on upper graph**: Green triangles (purchases) and red inverted triangles (sales) are now displayed
+2. ** Routine colours of lines**: Each line has its own unique colour and style
+3. **Clear legend**: All lines correctly signed in legend
 
-### Технические улучшения:
-1. **Гибкость колонок**: Поддержка как `_Signal` так и `Direction` колонок
-2. **Обработка ошибок**: Graceful handling отсутствующих данных
-3. **Производительность**: Оптимизированное отображение только валидных данных
+♪ ♪ Technical improvements:
+1. **columns flexibility**: Support both `_signal' and `direction' columns
+2. ** Error management**: Graceful handling missing data
+3. **Performance**: Optimized display of valed data only
 
-## 🧪 Тестирование
+♪ ♪ Testing ♪
 
-### Созданы тесты:
-- ✅ `test_wave_indicator_fast_mode_basic` - базовая функциональность
-- ✅ `test_wave_indicator_fast_mode_columns` - поддержка разных названий колонок
-- ✅ `test_wave_indicator_fast_mode_signals` - отображение сигналов
+### The tests have been created:
+== sync, corrected by elderman ==
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
 - ✅ `test_wave_indicator_fast_mode_hover_tool` - hover tooltips
-- ✅ `test_wave_indicator_fast_mode_empty_data` - обработка пустых данных
-- ✅ `test_wave_indicator_fast_mode_missing_columns` - отсутствующие колонки
-- ✅ `test_wave_indicator_fast_mode_integration` - интеграционное тестирование
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
 
-### Результаты тестирования:
+### Test results:
 ```
 ✅ Passed: 7
 ❌ Failed: 0
-⏭️  Skipped: 0
+⏭️ Skipped: 0
 💥 Errors: 0
 📈 Total: 7
 ```
 
-## 🎯 Команды для тестирования
+## ♪ Team for testing
 
-### Базовое тестирование:
+### Basic testing:
 ```bash
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
 
-### Запуск тестов:
+### Launch tests:
 ```bash
 uv run pytest tests/plotting/test_wave_fast_mode.py -v
 ```
 
-## 📊 Статистика исправлений
+## ♪ The correct statistics
 
-- **Файлы изменены**: 2
-  - `src/plotting/dual_chart_fast.py` - основная логика
-  - `tests/plotting/test_wave_fast_mode.py` - тесты
-- **Строк кода добавлено**: ~50
-- **Тестов создано**: 7
-- **Время разработки**: ~2 часа
+- ** Files changed**: 2
+== sync, corrected by elderman == @elder_man
+- `tests/plotting/test_wave_fast_mode.py' - tests
+Code line added**: ~50
+- **tests created**: 7
+- ** Development time**: ~ 2 hours
 
-## 🎉 Заключение
+♪ ♪ The ending ♪
 
-Wave indicator теперь полностью работает с `-d fast` режимом:
-- ✅ Сигналы отображаются на верхнем графике
-- ✅ Линии индикатора отображаются с правильными цветами и стилями
-- ✅ Hover tooltips работают корректно
-- ✅ Все тесты проходят успешно
-- ✅ Код покрыт тестами на 100%
+Wave indexer is now fully Workinget with `-d fast' mode:
+The signals are displayed on the top graph.
+- The indicator lines are displayed with correct colors and styles
+- Hover tooltips Working correctly
+- All tests are successful
+- Code covered with tests on 100%
 
-**Wave indicator готов к использованию в fast режиме!** 🚀
+**Wave indicator ready to be used in front mode!**

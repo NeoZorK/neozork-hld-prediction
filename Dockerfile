@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm AS builder
+FROM python:3.14-slim-bookworm AS builder
 
 # Force UV usage - no fallback to pip
 ARG USE_UV=true
@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     curl \
+    libpq-dev \
+    postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -32,17 +34,23 @@ ENV PATH="/root/.local/bin:$PATH"
 
 # Copy configuration and requirements
 COPY uv.toml /app/uv.toml
-COPY requirements.txt .
+COPY pyproject.toml /app/pyproject.toml
+COPY requirements.txt /app/requirements.txt
 
-# Install dependencies using UV only - no pip fallback
-RUN uv pip install --no-cache -r requirements.txt \
-    && find /opt/venv -name '*.pyc' -delete \
+# Install dependencies using uv pip install
+# Install psycopg2 from source (not binary) for Python 3.14 compatibility
+RUN cd /app && \
+    grep -v "^psycopg2-binary" requirements.txt > /tmp/req_no_pg.txt && \
+    uv pip install --no-cache -r /tmp/req_no_pg.txt && \
+    uv pip install --no-cache "psycopg2>=2.9.11" --no-binary psycopg2 && \
+    rm -f /tmp/req_no_pg.txt && \
+    find /opt/venv -name '*.pyc' -delete \
     && find /opt/venv -name '__pycache__' -delete \
     && find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf \
     && rm -rf /root/.cache /tmp/* /var/tmp/* /root/.cargo /root/.local/share/uv
 
 # Final stage - copy only necessary files
-FROM python:3.11-slim-bookworm
+FROM python:3.14-slim-bookworm
 
 WORKDIR /app
 
@@ -95,6 +103,7 @@ ENV UV_VENV_DIR=/app/.venv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     imagemagick \
+    libpq5 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc
@@ -102,7 +111,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Create a non-root user to run the application
 RUN groupadd -r neozork && useradd -r -g neozork -s /bin/bash -d /home/neozork neozork \
     && mkdir -p /home/neozork \
-    && chown -R neozork:neozork /home/neozork /app
+    && chown -R neozork:neozork /home/neozork /app \
+    && chown -R neozork:neozork /opt/venv
 
 # Switch to non-root user
 USER neozork

@@ -4,13 +4,32 @@
 # This script handles initialization and startup of the NeoZork HLD Prediction container
 # Full feature parity with Docker container
 
+# Exit on error for proper error handling
 set -e
+
+# Function to keep container alive - will be called on exit
+keep_alive() {
+    echo "Keeping container alive..." >&2
+    # Check if running in interactive mode
+    if [ -t 0 ]; then
+        # Interactive mode - start bash shell
+        exec bash
+    else
+        # Non-interactive mode - start keep-alive process
+        exec sleep infinity
+    fi
+}
+
+# Set trap to ensure container stays alive on any exit
+# This must be set early to catch any unexpected exits
+trap keep_alive EXIT INT TERM
 
 # UV-only mode enforcement
 export USE_UV=true
 export UV_ONLY=true
 export UV_CACHE_DIR=/app/.uv_cache
 export UV_VENV_DIR=/app/.venv
+export UV_LINK_MODE=copy
 export NATIVE_CONTAINER=true
 export DOCKER_CONTAINER=false
 
@@ -18,6 +37,19 @@ export DOCKER_CONTAINER=false
 export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR=/tmp/matplotlib-cache
+
+# Optimize parallel compilation for speed (container has 8GB RAM and 4 CPUs)
+# Use 4 jobs for faster compilation while staying within memory limits
+export MAX_JOBS=4
+export CMAKE_BUILD_PARALLEL_LEVEL=4
+export MAKEFLAGS=-j4
+export NINJA_STATUS="[%f/%t] "
+# Optimize compiler flags for speed
+export CFLAGS="-O2 -pipe -march=native"
+export CXXFLAGS="-O2 -pipe -march=native"
+# Prefer binary wheels over source builds when available (but allow source if needed)
+# Note: PIP_ONLY_BINARY=:all: might block some packages, so we use --prefer-binary flag instead
+export UV_NO_BUILD_ISOLATION=1
 
 # Function to log messages with timestamps
 log_message() {
@@ -52,19 +84,31 @@ create_directories() {
 verify_uv() {
     log_message "=== UV Package Manager Status ==="
     if command -v uv &> /dev/null; then
+        # Save the real uv path before creating wrappers
+        export REAL_UV_PATH=$(command -v uv)
         echo -e "\033[1;32m✅ UV is available: $(uv --version)\033[0m"
     else
         echo -e "\033[1;33m⚠️  UV is not available - installing UV...\033[0m"
         
         # Install UV using pip
-        pip install uv
+        pip install uv || true
         
         if command -v uv &> /dev/null; then
+            # Save the real uv path
+            export REAL_UV_PATH=$(command -v uv)
             echo -e "\033[1;32m✅ UV installed successfully: $(uv --version)\033[0m"
         else
             echo -e "\033[1;31m❌ Failed to install UV - this is required for UV-only mode\033[0m"
             echo -e "\033[1;33m⚠️  Container will continue without UV-only mode\033[0m"
             export UV_ONLY=false
+            # Try to find uv in common locations
+            if [ -f "/root/.cargo/bin/uv" ]; then
+                export REAL_UV_PATH="/root/.cargo/bin/uv"
+            elif [ -f "/usr/local/bin/uv" ]; then
+                export REAL_UV_PATH="/usr/local/bin/uv"
+            else
+                export REAL_UV_PATH="uv"
+            fi
         fi
     fi
 
@@ -80,9 +124,105 @@ verify_uv() {
     fi
 }
 
+# Install system dependencies required for building Python packages
+install_system_dependencies() {
+    log_message "Installing system dependencies for building Python packages..."
+    
+    # Check if we're on Debian/Ubuntu (python:3.14-slim is Debian-based)
+    if ! command -v apt-get &> /dev/null; then
+        echo -e "\033[1;33m⚠️  apt-get not available - skipping system dependencies installation\033[0m"
+        return 1
+    fi
+    
+    # Check if gcc, pkg-config and matplotlib dependencies are already installed
+    if command -v gcc &> /dev/null && \
+       command -v pkg-config &> /dev/null && \
+       [ -f /usr/include/zlib.h ] && \
+       [ -f /usr/include/jpeglib.h ] && \
+       [ -f /usr/include/png.h ] && \
+       [ -f /usr/include/freetype2/freetype/freetype.h ]; then
+        echo -e "\033[1;32m✅ Build tools and matplotlib dependencies already installed\033[0m"
+        return 0
+    fi
+    
+    echo -e "\033[1;33m📦 Installing build tools, PostgreSQL libraries, and matplotlib dependencies...\033[0m"
+    
+    # Set non-interactive mode
+    export DEBIAN_FRONTEND=noninteractive
+    
+    # Update package list and install build dependencies with error handling
+    if apt-get update -qq >/dev/null 2>&1; then
+        if apt-get install -y --no-install-recommends \
+            build-essential \
+            gcc \
+            g++ \
+            pkg-config \
+            ninja-build \
+            cmake \
+            libpq-dev \
+            libpq5 \
+            libffi-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            curl \
+            zlib1g-dev \
+            libjpeg-dev \
+            libjpeg62-turbo \
+            libpng-dev \
+            libpng16-16 \
+            libfreetype6-dev \
+            libfreetype6 \
+            liblcms2-dev \
+            liblcms2-2 \
+            libtiff-dev \
+            libtiff6 \
+            libwebp-dev \
+            libwebp7 \
+            libopenjp2-7-dev \
+            libopenjp2-7 \
+            >/dev/null 2>&1; then
+            apt-get clean >/dev/null 2>&1
+            rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+            
+            # Update library cache after installation
+            ldconfig >/dev/null 2>&1 || true
+            
+            # Verify installation
+            if command -v gcc &> /dev/null && \
+               command -v pkg-config &> /dev/null && \
+               [ -f /usr/include/zlib.h ] && \
+               [ -f /usr/include/jpeglib.h ] && \
+               [ -f /usr/include/png.h ] && \
+               [ -f /usr/include/freetype2/freetype/freetype.h ]; then
+                echo -e "\033[1;32m✅ System dependencies installed successfully (including matplotlib dependencies)\033[0m"
+                return 0
+            else
+                echo -e "\033[1;33m⚠️  Installation completed but some dependencies may be missing\033[0m"
+                return 1
+            fi
+        else
+            echo -e "\033[1;33m⚠️  Failed to install packages - some packages may fail to build\033[0m"
+            return 1
+        fi
+    else
+        echo -e "\033[1;33m⚠️  Failed to update package list\033[0m"
+        return 1
+    fi
+}
+
 # Setup UV environment and install dependencies
 setup_uv_environment() {
     log_message "=== Setting up UV Environment and Dependencies ==="
+    
+    # Skip system dependencies installation in entrypoint - exec.sh will handle it
+    # This prevents lock conflicts when both entrypoint and exec.sh try to install at the same time
+    # Check if system dependencies are already installed
+    if command -v gcc >/dev/null 2>&1 && command -v pkg-config >/dev/null 2>&1; then
+        echo -e "\033[1;32m✅ System dependencies already installed\033[0m"
+    else
+        echo -e "\033[1;33m⚠️  System dependencies will be installed on first shell access\033[0m"
+        echo -e "\033[1;33m💡 Or install manually: install-system-deps\033[0m"
+    }
     
     # Check if virtual environment exists
     if [ ! -d "/app/.venv" ]; then
@@ -114,7 +254,7 @@ setup_uv_environment() {
             echo -e "\033[1;33m🔄 Checking for dependency updates...\033[0m"
             
             # Update dependencies if needed (don't fail on error)
-            if uv pip install --upgrade -r /app/requirements.txt; then
+            if uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt; then
                 echo -e "\033[1;32m✅ Dependencies updated successfully\033[0m"
             else
                 echo -e "\033[1;33m⚠️  Dependency update had issues - continuing anyway\033[0m"
@@ -136,8 +276,59 @@ setup_uv_environment() {
 install_dependencies() {
     echo -e "\033[1;33m📦 Installing dependencies from requirements.txt...\033[0m"
     
-    # Install dependencies (don't fail on error)
-    if uv pip install -r /app/requirements.txt; then
+    # Skip system dependencies installation - exec.sh will handle it
+    # This prevents lock conflicts when both entrypoint and exec.sh try to install at the same time
+    # Check if system dependencies are available
+    if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+        echo -e "\033[1;33m⚠️  System dependencies not installed yet\033[0m"
+        echo -e "\033[1;33m💡 They will be installed automatically on first shell access\033[0m"
+        echo -e "\033[1;33m💡 Or install manually: install-system-deps\033[0m"
+        echo -e "\033[1;33m⚠️  Some packages may fail to build without system dependencies\033[0m"
+    else
+        echo -e "\033[1;32m✅ System dependencies are available\033[0m"
+    fi
+    
+    # Set environment variables for optimized parallel compilation
+    # Use 4 jobs for faster compilation (container has 8GB RAM and 4 CPUs)
+    export MAX_JOBS=4
+    export CMAKE_BUILD_PARALLEL_LEVEL=4
+    export MAKEFLAGS=-j4
+    export CFLAGS="-O2 -pipe -march=native"
+    export CXXFLAGS="-O2 -pipe -march=native"
+    # Prefer binary wheels over source builds (but allow source if needed)
+    # Note: Using --prefer-binary flag instead of PIP_ONLY_BINARY=:all: to allow source builds if wheels unavailable
+    export UV_NO_BUILD_ISOLATION=1
+    
+    # First, ensure all build dependencies are installed (required for building packages like pandas)
+    echo -e "\033[1;33m📦 Installing build tools (setuptools, wheel, mesonpy, etc.)...\033[0m"
+    # Install basic build tools
+    uv pip install --no-build-isolation --prefer-binary --upgrade setuptools>=78.1.1 wheel || {
+        echo -e "\033[1;33m⚠️  Failed to install setuptools/wheel, continuing anyway\033[0m"
+    }
+    # Install mesonpy dependencies (required for pandas)
+    uv pip install --no-build-isolation --prefer-binary --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install mesonpy dependencies, continuing anyway\033[0m"
+    }
+    # Install mesonpy from git (required for pandas on Python 3.14)
+    uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install mesonpy, continuing anyway\033[0m"
+    }
+    # Install other build dependencies
+    uv pip install --no-build-isolation --prefer-binary --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install other build dependencies, continuing anyway\033[0m"
+    }
+    # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+    uv pip install --no-build-isolation --prefer-binary --quiet numpy >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install numpy, continuing anyway\033[0m"
+    }
+    # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
+    uv pip install --no-build-isolation --prefer-binary --quiet scipy >/dev/null 2>&1 || {
+        echo -e "\033[1;33m⚠️  Failed to install scipy, continuing anyway\033[0m"
+    }
+    
+    # Install dependencies with optimizations for speed
+    # Use --no-build-isolation and --prefer-binary for faster installation
+    if uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt; then
         echo -e "\033[1;32m✅ Dependencies installed successfully\033[0m"
         return 0
     else
@@ -233,6 +424,16 @@ fi
 # Add /tmp/bin to PATH for command wrappers
 export PATH="/tmp/bin:\$PATH"
 
+# Check system dependencies on shell startup (only once per session)
+if [ -z "\$SYSTEM_DEPS_CHECKED" ]; then
+    if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+        echo -e "\033[1;33m⚠️  System dependencies (gcc, pkg-config) not found\033[0m"
+        echo -e "\033[1;33m💡 Run 'install-system-deps' to install build tools\033[0m"
+        echo -e "\033[1;33m💡 Or run 'uv-install' which will install them automatically\033[0m"
+    fi
+    export SYSTEM_DEPS_CHECKED=1
+fi
+
 # Show available commands
 if [ -f "/tmp/neozork_commands.txt" ]; then
     echo -e "\033[1;36m💡 Available commands: cat /tmp/neozork_commands.txt\033[0m"
@@ -270,7 +471,19 @@ EOF
 #!/bin/bash
 echo "Installing dependencies using UV..."
 source /app/.venv/bin/activate
-uv pip install -r /app/requirements.txt
+
+# First, ensure system dependencies are installed
+if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+    echo "Installing system dependencies..."
+    install-system-deps
+fi
+
+# Ensure setuptools and wheel are installed first (required for Python 3.14)
+echo "Installing build tools (setuptools, wheel)..."
+uv pip install --no-build-isolation --prefer-binary --upgrade setuptools>=78.1.1 wheel
+
+# Install all dependencies with optimizations for speed
+uv pip install --no-build-isolation --prefer-binary -r /app/requirements.txt
 EOF
     chmod +x /tmp/bin/uv-install
 
@@ -278,7 +491,7 @@ EOF
 #!/bin/bash
 echo "Updating dependencies using UV..."
 source /app/.venv/bin/activate
-uv pip install --upgrade -r /app/requirements.txt
+uv pip install --no-build-isolation --prefer-binary --upgrade -r /app/requirements.txt
 EOF
     chmod +x /tmp/bin/uv-update
 
@@ -327,6 +540,84 @@ source /app/.venv/bin/activate
 python /app/scripts/check_mcp_status.py
 EOF
     chmod +x /tmp/bin/mcp-check
+
+    # Create system dependencies installer wrapper
+    cat > /tmp/bin/install-system-deps << 'EOF'
+#!/bin/bash
+echo "Installing system dependencies for building Python packages (including matplotlib and pandas)..."
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq -y
+apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    pkg-config \
+    ninja-build \
+    cmake \
+    libpq-dev \
+    libpq5 \
+    libffi-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
+    libjpeg-dev \
+    libjpeg62-turbo \
+    libpng-dev \
+    libpng16-16 \
+    libfreetype6-dev \
+    libfreetype6 \
+    liblcms2-dev \
+    liblcms2-2 \
+    libtiff-dev \
+    libtiff6 \
+    libwebp-dev \
+    libwebp7 \
+    libopenjp2-7-dev \
+    libopenjp2-7 \
+    >/dev/null 2>&1
+apt-get clean >/dev/null 2>&1
+rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+ldconfig >/dev/null 2>&1 || true
+echo "System dependencies installed successfully (including matplotlib and pandas build dependencies)"
+EOF
+    chmod +x /tmp/bin/install-system-deps
+
+    # Create uv run wrapper that checks system dependencies
+    # Use the saved real uv path, or try to find it
+    if [ -z "$REAL_UV_PATH" ]; then
+        REAL_UV_PATH=$(command -v uv 2>/dev/null || echo "")
+        if [ -z "$REAL_UV_PATH" ]; then
+            # Try common locations
+            if [ -f "/root/.cargo/bin/uv" ]; then
+                REAL_UV_PATH="/root/.cargo/bin/uv"
+            elif [ -f "/usr/local/bin/uv" ]; then
+                REAL_UV_PATH="/usr/local/bin/uv"
+            else
+                REAL_UV_PATH="uv"  # Fallback to PATH lookup
+            fi
+        fi
+    fi
+    
+    cat > /tmp/bin/uv << EOF
+#!/bin/bash
+# Wrapper for uv command that ensures system dependencies are installed
+if [ "\$1" = "run" ]; then
+    # Check if system dependencies are installed
+    if ! command -v gcc &> /dev/null || ! command -v pkg-config &> /dev/null; then
+        echo "⚠️  System dependencies (gcc, pkg-config) not found"
+        echo "💡 Installing system dependencies..."
+        install-system-deps || {
+            echo "❌ Failed to install system dependencies"
+            echo "💡 You can install them manually: install-system-deps"
+            echo "⚠️  Continuing anyway, but some packages may fail to build"
+        }
+    fi
+fi
+
+# Call the real uv command
+$REAL_UV_PATH "\$@"
+EOF
+    chmod +x /tmp/bin/uv
 
     export PATH="/tmp/bin:$PATH"
 }
@@ -515,6 +806,7 @@ show_usage_guide() {
 
     # Show UV-specific tips
     echo -e "\n\033[1;36m=== UV Package Manager Commands ===\033[0m"
+    echo -e "\033[1;36m- install-system-deps: Install system dependencies for building Python packages\033[0m"
     echo -e "\033[1;36m- uv-install: Install dependencies using UV\033[0m"
     echo -e "\033[1;36m- uv-update: Update dependencies using UV\033[0m"
     echo -e "\033[1;36m- uv-test: Run UV environment test\033[0m"
@@ -542,6 +834,9 @@ show_usage_guide() {
 # Create a file with common commands for the interactive shell
 create_commands_file() {
     cat > /tmp/neozork_commands.txt << EOL
+# System Dependencies
+install-system-deps
+
 # UV Package Manager Commands
 uv-install
 uv-update
@@ -601,65 +896,103 @@ post_start() {
 
 # Main execution
 main() {
+    # Ensure we can log even if something fails early
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting NeoZork HLD Prediction container..." >&2
     log_message "Starting NeoZork HLD Prediction container..."
     
     # Handle command line arguments
     case "${1:-}" in
         "init")
             init_container
+            # Don't exit - let it fall through to keep container alive
             ;;
         "post-start")
             post_start
+            # Don't exit - let it fall through to keep container alive
             ;;
         *)
             # Default behavior - full container initialization
             log_message "=== Full Container Initialization ==="
             
-            # Step 1: Create directories
-            create_directories
+            # Step 1: Create directories (don't fail on error)
+            create_directories || {
+                echo -e "\033[1;33m⚠️  Directory creation had issues - continuing anyway\033[0m"
+            }
             
-            # Step 2: Verify UV
-            verify_uv
+            # Step 2: Verify UV (don't fail on error)
+            verify_uv || {
+                echo -e "\033[1;33m⚠️  UV verification had issues - continuing anyway\033[0m"
+            }
             
             # Step 3: Setup UV environment and install dependencies
-            setup_uv_environment
+            # Don't fail if setup fails - allow manual installation later
+            setup_uv_environment || {
+                echo -e "\033[1;33m⚠️  UV environment setup had issues - you can install dependencies manually later\033[0m"
+                echo -e "\033[1;33m💡 Run 'uv-install' inside the container to install dependencies\033[0m"
+            }
             
-            # Step 4: Setup bash environment
-            setup_bash_environment
+            # Step 4: Setup bash environment (don't fail on error)
+            setup_bash_environment || {
+                echo -e "\033[1;33m⚠️  Bash environment setup had issues - continuing anyway\033[0m"
+            }
             
-            # Step 5: Create command wrappers
-            create_command_wrappers
+            # Step 5: Create command wrappers (don't fail on error)
+            create_command_wrappers || {
+                echo -e "\033[1;33m⚠️  Command wrapper creation had issues - continuing anyway\033[0m"
+            }
             
-            # Step 6: Initialize bash history
-            init_bash_history
+            # Step 6: Initialize bash history (don't fail on error)
+            init_bash_history || {
+                echo -e "\033[1;33m⚠️  Bash history initialization had issues - continuing anyway\033[0m"
+            }
             
-            # Step 7: Create commands file
-            create_commands_file
+            # Step 7: Create commands file (don't fail on error)
+            create_commands_file || {
+                echo -e "\033[1;33m⚠️  Commands file creation had issues - continuing anyway\033[0m"
+            }
             
-            # Step 8: Show usage guide
-            show_usage_guide
+            # Step 8: Show usage guide (don't fail on error)
+            show_usage_guide || {
+                echo -e "\033[1;33m⚠️  Usage guide display had issues - continuing anyway\033[0m"
+            }
             
-            # Step 9: Run data feed tests (interactive)
-            run_data_feed_tests
+            # Step 9: Run data feed tests (interactive) - skip if not interactive
+            if [ -t 0 ]; then
+                run_data_feed_tests || {
+                    echo -e "\033[1;33m⚠️  Data feed tests had issues - continuing anyway\033[0m"
+                }
+            fi
             
-            # Step 10: Start MCP server (interactive)
-            start_mcp_server
+            # Step 10: Start MCP server (interactive) - skip if not interactive
+            if [ -t 0 ]; then
+                start_mcp_server || {
+                    echo -e "\033[1;33m⚠️  MCP server startup had issues - continuing anyway\033[0m"
+                }
+            fi
             
             log_message "=== Container initialization completed ==="
             
+            # Always keep container running
+            # This ensures container stays alive even if initialization had issues
+            log_message "Container is ready for use. Keeping container alive..."
+            
+            # CRITICAL: Always keep container running
             # Check if running in interactive mode
             if [ -t 0 ]; then
-                log_message "Container is ready for use. Entering interactive mode..."
-                # Start interactive bash shell
+                # Interactive mode - start bash shell
+                log_message "Starting interactive bash shell"
                 exec bash
             else
-                log_message "Container is ready for use. Running in non-interactive mode..."
-                # Keep container running in background
-                tail -f /dev/null
+                # Non-interactive mode - start keep-alive process
+                log_message "Non-interactive mode detected, starting keep-alive process"
+                exec sleep infinity
             fi
             ;;
     esac
 }
 
 # Run main function
-main "$@" 
+main "$@"
+
+# If we reach here, main completed normally
+# The trap will ensure keep_alive is called on exit 

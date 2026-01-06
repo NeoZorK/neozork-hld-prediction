@@ -10,7 +10,15 @@ and necessary mapping utilities for use by data_acquisition.
 from .csv_fetcher import fetch_csv_data
 from .demo_fetcher import get_demo_data
 from .yfinance_fetcher import fetch_yfinance_data
-from .polygon_fetcher import fetch_polygon_data
+# Polygon fetcher - optional import for Python 3.14 compatibility
+try:
+    from .polygon_fetcher import fetch_polygon_data
+except (ImportError, KeyError):
+    # Define a dummy function if polygon is not available
+    def fetch_polygon_data(*args, **kwargs):
+        from src.common import logger
+        logger.print_error("Polygon API client is not available (not compatible with Python 3.14)")
+        return None, {"error_message": "polygon-api-client not available"}
 from .binance_fetcher import fetch_binance_data
 from .exrate_fetcher import fetch_exrate_data
 

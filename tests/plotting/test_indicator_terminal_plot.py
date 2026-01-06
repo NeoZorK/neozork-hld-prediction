@@ -85,7 +85,11 @@ class TestIndicatorTerminalPlot(unittest.TestCase):
             'Direction': np.random.choice([0, 1, 2], 50)
         }, index=dates)
 
+<<<<<<< HEAD
     @patch('src.plotting.term_chunked_plot.plt')
+=======
+    @patch('src.plotting.term_chunked_plot_indicator.plt')
+>>>>>>> origin/master
     def test_plot_indicator_chunks(self, mock_plt):
         """Test plot_indicator_chunks function."""
         try:

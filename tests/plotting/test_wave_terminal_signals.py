@@ -29,6 +29,7 @@ class TestWaveTerminalSignals:
         
         assert _has_trading_signals(chunk) == True
 
+<<<<<<< HEAD
     def test_has_trading_signals_with_wave_signal(self):
         """Test _has_trading_signals function with _Signal column."""
         # Create sample data with wave indicator signals
@@ -42,6 +43,8 @@ class TestWaveTerminalSignals:
         
         assert _has_trading_signals(chunk) == True
 
+=======
+>>>>>>> origin/master
     def test_has_trading_signals_with_direction(self):
         """Test _has_trading_signals function with Direction column."""
         # Create sample data with standard Direction column
@@ -80,7 +83,11 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2, 3]
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
+>>>>>>> origin/master
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should call scatter for BUY signals (indices 1 and 3)
@@ -90,6 +97,7 @@ class TestWaveTerminalSignals:
             scatter_calls = mock_plt.scatter.call_args_list
             assert len(scatter_calls) >= 1  # At least one scatter call
 
+<<<<<<< HEAD
     def test_add_trading_signals_to_chunk_wave_signal(self):
         """Test _add_trading_signals_to_chunk with wave _Signal signals."""
         # Create sample data with wave indicator signals
@@ -109,6 +117,8 @@ class TestWaveTerminalSignals:
             # Should call scatter for signals
             assert mock_plt.scatter.called
 
+=======
+>>>>>>> origin/master
     def test_add_trading_signals_to_chunk_mixed_signals(self):
         """Test _add_trading_signals_to_chunk with mixed signal types."""
         # Create sample data with mixed signal types
@@ -123,7 +133,11 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2, 3]
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
+>>>>>>> origin/master
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should handle mixed signals correctly
@@ -142,7 +156,11 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2]
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
+>>>>>>> origin/master
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should not call scatter when no signals
@@ -161,7 +179,11 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2]
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
+>>>>>>> origin/master
             # Mock plt.scatter to raise an exception
             mock_plt.scatter.side_effect = Exception("Test error")
             
@@ -185,7 +207,11 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2]
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
+>>>>>>> origin/master
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should use _Signal signals (0, 1, 2)
@@ -204,7 +230,11 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2, 3, 4]
         
+<<<<<<< HEAD
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+=======
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
+>>>>>>> origin/master
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should handle all signal types correctly

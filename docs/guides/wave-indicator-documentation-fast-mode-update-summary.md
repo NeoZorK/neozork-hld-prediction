@@ -1,207 +1,207 @@
 # Wave Indicator Documentation Fast Mode Update Summary
 
-## 🎯 Задача
-Обновить документацию и туториалы для wave indicator с поддержкой `-d fast` режима, включая обновление индексов и создание новых руководств.
+## ♪ Task
+Update the documentation and the tortories for wave indicator with support for `-d fast' regime, including up-date indices and the creation of new manuals.
 
-## ✅ Выполненная работа
+♪ ♪ Worked out
 
-### 1. **Обновление существующих туториалов**
+### 1. **update of existing tutorals**
 
-#### A. Основной туториал Wave Indicator
-**Файл:** `docs/guides/adding-wave-indicator-tutorial.md`
+### A. Main Totoral Wave Indexer
+**Fail:** `docs/guids/adding-wave-indicator-tutoreal.md'
 
-**Обновления:**
-- ✅ Добавлены примеры использования с `-d fast` режимом
-- ✅ Добавлен раздел "Display Modes Support" с описанием всех режимов
-- ✅ Добавлен раздел "Fast Mode Integration Test"
-- ✅ Обновлен раздел "Completed Features" с информацией о fast mode
-- ✅ Добавлены примеры команд для тестирования fast режима
+**Renewed:**
+- Added examples of use with `-d fast' mode
+- Added section "Display Modes Support" with description of all modes
+- Added section "Fast Mode integration test"
+- Updated section "COMPLETED Features" with information on fast mode
+- Examples of command for fast mode testing added
 
-**Новые разделы:**
+** New sections:**
 ```bash
 # Wave with fast display mode (Bokeh-based)
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
 # Wave with real data in fast mode
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
 
-#### B. Документация Wave Indicator
-**Файл:** `docs/reference/indicators/trend/wave-indicator.md`
+#### B. documentation Wave Indicator
+** File:** `docs/reference/indicators/trend/wave-indicator.md'
 
-**Обновления:**
-- ✅ Добавлен раздел "Display Modes" с подробным описанием всех режимов
-- ✅ Добавлены примеры использования fast режима
-- ✅ Добавлено описание особенностей fast режима
-- ✅ Обновлены примеры CLI команд
+**Renewed:**
+- Added section "Display Modes" with detailed description of all modes
+- Added examples using fast mode
+- Added describe features of fast mode
+- updated examples CLI commands
 
-**Новый раздел Display Modes:**
+** New Display Modes:**
 ```markdown
 ### Fast Mode (`-d fast`) ⭐ **NEW**
 - **Technology**: Bokeh-based dual chart
 - **Features**: Real-time updates and responsive interface
 - **Wave Visualization**: Discontinuous lines (only where signals exist)
-- **Signal Display**: Color-coded signals (red=BUY, blue=SELL)
+- **signal Display**: Color-coded signals (red=BUY, blue=SELL)
 - **Hover Tooltips**: Detailed information on hover
-- **Best For**: Real-time monitoring and fast analysis
+- **Best For**: Real-time Monitoring and fast Analysis
 ```
 
-### 2. **Создание новых документов**
+###2. **create new documents**
 
-#### A. Новый туториал с fast режимом
-**Файл:** `docs/guides/adding-wave-indicator-fast-mode-tutorial.md`
+#### A. New Tutorial with Fast Mode
+**Fail:** `docs/guids/adding-wave-indicator-fast-mode-tutoral.md'
 
-**Содержание:**
-- ✅ Полный пошаговый туториал по реализации fast режима
-- ✅ Детальное описание функций для прерывистых линий
-- ✅ Примеры кода для всех компонентов
-- ✅ Тестирование и отладка
-- ✅ Лучшие практики и решения проблем
+** Content:**
+- complete step-by-step thutorium on the implementation of the present mode
+- Detailed describe functions for breakable lines
+- examples code for all components
+- Testing and debugging
+- Best practices and solutions
 
-#### B. Документы по реализации
-- ✅ `docs/guides/wave-indicator-fast-mode-support.md` - Детали реализации
-- ✅ `docs/guides/wave-indicator-fast-fastest-parity-final-summary.md` - Визуальная идентичность
-- ✅ `docs/guides/wave-indicator-discontinuous-lines-final-summary.md` - Прерывистые линии
+#### B. Implementation documents
+- o `docs/guids/wave-indicator-fast-mode-support.md' - details implementation
+- `docs/guids/wave-indicator-fast-fast-parity-final-summary.md' - Visual identity
+- `docs/guids/wave-indicator-discontinuous-lines-final-summary.md' - Interrupted lines
 
-### 3. **Обновление индексов документации**
+### 3. **update index documentation**
 
-#### A. Главный индекс
-**Файл:** `docs/index.md`
+#### A. Main index
+**Fail:** `docs/index.md'
 
-**Обновления:**
-- ✅ Обновлен раздел "Wave Indicator Tutorials" с информацией о fast режиме
-- ✅ Добавлены ссылки на новые документы
-- ✅ Отмечены новые функции звездочками ⭐ **NEW**
+**Renewed:**
+- Updated section of "Wave Indexer Tutorials" with information on present mode
+- Added links on new documents
+- ♪ New functions are marked with stars ♪ ♪ New**
 
-#### B. Индекс guides
-**Файл:** `docs/guides/index.md`
+#### B. index guides
+**Fail:** `docs/guids/index.md'
 
-**Обновления:**
-- ✅ Обновлено описание основного туториала Wave Indicator
-- ✅ Добавлен новый туториал "Adding Wave Indicator with Fast Mode"
-- ✅ Добавлены документы по fast mode support и parity
-- ✅ Обновлены highlights с информацией о fast режиме
+**Renewed:**
+- updated describe of the main Totoral of the Wave Index
+- Add a new tutorial "Adding Weave Index with Fast Mode"
+- Added documents on fast mode support and parency
+- Up-to-date highlights with fast mode information
 
 #### C. README.md
-**Файл:** `README.md`
+**Fail:** `README.md'
 
-**Обновления:**
-- ✅ Добавлены примеры использования fast режима
-- ✅ Обновлено описание Wave Indicator с упоминанием fast режима
-- ✅ Добавлены команды для тестирования fast режима
+**Renewed:**
+- Added examples using fast mode
+- updated describe Wave Indexer with reference to present mode
+- Added team for fast mode testing
 
-### 4. **Ключевые особенности fast режима**
+♪## 4. ♪ Key features of the fast mode**
 
-#### A. Визуальные особенности
-- **Discontinuous Wave Lines**: Линии отображаются только там, где есть сигналы
-- **Color-Coded Signals**: Красные линии для BUY, синие для SELL
-- **Signal Markers**: Зеленые/красные треугольники на основном графике
-- **Hover Tooltips**: Детальная информация при наведении
+#### A. Visual features
+- **Discontinuous Wave Lines**: Lines are displayed only where there are signals
+- **Color-Coded Signals**: Red lines for BUY, blue for SELL
+- **signal Markers**: Green/red triangles on main graph
+- **Hover Tooltips**: Detailed information in guidance
 
-#### B. Технические особенности
-- **Bokeh-based Interface**: Интерактивный интерфейс с реальным временем
-- **Responsive Design**: Адаптивный дизайн для разных экранов
-- **Fast Rendering**: Быстрая отрисовка и обновления
-- **Error Handling**: Обработка ошибок и отсутствующих данных
+♪## B. Technical features
+- **Bokeh-based interface**: Interactive interface with real time
+- **Responsive Design**: Adaptive design for different screens
+- **Fast Rendering**: Rapid drawing and updating
+- **Error Handling**: Processing errors and missing data
 
-### 5. **Примеры использования**
+###5. **examples of use**
 
-#### A. Базовые команды
+#### A. Basic team
 ```bash
-# Wave с fast режимом
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+# Wave with fast mode
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
-# Wave с реальными данными в fast режиме
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+# Wave with real data in fast mode
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 
-# Сравнение fast vs fastest режимов
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
+# Comparison fast vs fastest modes
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
 ```
 
-#### B. Тестирование
+♪## B. Testing
 ```bash
-# Тест прерывистых линий
-uv run run_analysis.py demo --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,22,open -d fast
+# Test of breakable lines
+uv run run_Analysis.py demo --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,22,open -d fast
 
-# Тест отображения сигналов
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close -d fast
+# Signal display test
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close -d fast
 ```
 
-### 6. **Тестирование и валидация**
+### 6. **Teaching and validation**
 
-#### A. Unit тесты
-- ✅ Создан полный набор тестов в `tests/plotting/test_wave_fast_mode.py`
-- ✅ Покрытие всех основных функций
-- ✅ Тестирование обработки ошибок
-- ✅ Валидация визуальных элементов
+#### A. Unit tests
+== sync, corrected by elderman == @elder_man
+- Covering all basic functions
+- Error processing testing
+- Validation of visual elements
 
-#### B. Интеграционные тесты
-- ✅ Тестирование с demo данными
-- ✅ Тестирование с реальными данными
-- ✅ Сравнение fast vs fastest режимов
-- ✅ Валидация CLI команд
+♪## B. Integration tests
+- Test with demo data
+- Testing with real data
+== sync, corrected by elderman ==
+- ♪ Validation CLI commands
 
-### 7. **Документация по решению проблем**
+###7. **documentation on problem solving**
 
-#### A. Частые проблемы
-- **Lines Not Displaying**: Проверка наличия колонок `_plot_wave` и `_plot_color`
-- **Signals Not Appearing**: Проверка колонки `_Signal` и значений 1/2
-- **Color Issues**: Валидация значений в `_plot_color` (1=red, 2=blue, 0=no line)
-- **Hover Tool Issues**: Проверка совместимости имен колонок
+#### A. Common Issues
+- **Lines Not Displaying**: check availability of columns `_plot_wave' and `_plot_color'
+- **signals Not Appearing**: check columns `_signal' and values 1/2
+- **Color Issues**: calidization of values in `_plot_color' (1=red, 2=Blue, 0=no line)
+- **Hover Tool Issues**: check compatibility of names columns
 
-#### B. Лучшие практики
-- **Test Both Modes**: Всегда тестировать fast и fastest режимы
-- **Signal Validation**: Проверять правильность генерации и отображения сигналов
-- **Color Consistency**: Поддерживать согласованность цветового кодирования
-- **Performance**: Мониторить производительность рендеринга
+#### B. Best practices
+- **Test Both Modes**: Always test fast and fast modes
+- **signalValidation**: Check the correct generation and display of signals
+- **Color Consulting**: Support the consistency of colour coding
+- **Performance**: Monitor the performance of renting
 
-## 📊 Результаты
+## ♪ Results
 
-### ✅ **Полнота документации**
-- **Основной туториал**: Обновлен с поддержкой fast режима
-- **Техническая документация**: Добавлен раздел Display Modes
-- **Новые руководства**: Создано 4 новых документа
-- **Индексы**: Обновлены все основные индексы
+### ¶ * Full documentation**
+- ** Basic Tutorial**: Updated with support for fast regime
+- ** Technical documentation**: Added section of Display Modes
+- ** New guidelines**: 4 new documents established
+- **index**: All core indices updated
 
-### ✅ **Покрытие функциональности**
-- **Fast Mode Support**: Полная документация реализации
-- **Discontinuous Lines**: Детальное описание логики
-- **Color-Coded Signals**: Объяснение цветового кодирования
-- **Hover Tooltips**: Описание информационных подсказок
-- **Signal Markers**: Документация отображения сигналов
+♪# ♪ Operation cover**
+- **Fast Mode Support**: Full implementation documentation
+- **Discontinuous Lines**: Detailed describe Logski
+- **Color-Coded signs**: Explanation of colour coding
+- **Hover Tooltips**: describe information clues
+- **signal Markers**: documentation of signal display
 
-### ✅ **Примеры и тестирование**
-- **CLI Examples**: Множество примеров команд
-- **Testing Framework**: Полный набор тестов
-- **Troubleshooting**: Решения частых проблем
-- **Best Practices**: Рекомендации по использованию
+### *xamples and testing**
+- **CLI Examples**: Multiple examples of commands
+- **testing Framework**: Full set of tests
+- **Troubleshooting**: Solutions to frequent problems
+- **Best Practices**: Recommendations on use
 
-## 🎯 Заключение
+♪ ♪ The ending ♪
 
-Документация wave indicator полностью обновлена с поддержкой `-d fast` режима:
+documentation wave indicator fully updated with support `-d fast' mode:
 
-1. **Все существующие туториалы** обновлены с информацией о fast режиме
-2. **Созданы новые специализированные руководства** для fast режима
-3. **Обновлены все индексы документации** с новыми ссылками
-4. **Добавлены примеры использования** для всех сценариев
-5. **Создана документация по решению проблем** и лучшим практикам
+1. ** All existing tutorals** are updated with information on present mode
+2. ** New specialized manuals have been developed** for the front regime
+3. ** All documents index updates** with new references
+** Added use cases** for all scenarios
+5. ** Created document on problem solving** and best practices
 
-Wave indicator теперь имеет полную документацию для всех режимов отображения, включая новый fast режим с прерывистыми линиями и цветовым кодированием сигналов.
+Wave indexer now has complete documentation for all display modes, including a new present mode with intermittent lines and color coding of signals.
 
-## 📚 Ссылки на документацию
+## ♪ Sees on the documentation
 
-### Основные документы
+♪## Basic documents
 - [Wave Indicator Tutorial](docs/guides/adding-wave-indicator-tutorial.md)
 - [Wave Indicator Documentation](docs/reference/indicators/trend/wave-indicator.md)
 - [Fast Mode Tutorial](docs/guides/adding-wave-indicator-fast-mode-tutorial.md)
 
-### Специализированные документы
+### Specialized documents
 - [Fast Mode Support](docs/guides/wave-indicator-fast-mode-support.md)
 - [Fast-Fastest Parity](docs/guides/wave-indicator-fast-fastest-parity-final-summary.md)
 - [Discontinuous Lines](docs/guides/wave-indicator-discontinuous-lines-final-summary.md)
 
-### Индексы
-- [Main Documentation Index](docs/index.md)
-- [Guides Index](docs/guides/index.md)
+### Indexes
+- [main Documentation index](docs/index.md)
+- [Guides index](docs/guides/index.md)
 - [README.md](README.md)
